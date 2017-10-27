@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.camsys</groupId>
+    <artifactId>mta-otp-collector</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>mta-otp-collector</name>
+    <description>realtime collector/aggregator for NYC MTA</description>
+    <url>https://github.com/camsys/mta-otp-collector</url>
+
+    <properties>
+    </properties>
+    <repositories>
+        <repository>
+            <id>releases-camsys-repo</id>
+            <url>http://archiva.obaweb.org/archiva/repository/releases/</url>
+        </repository>
+        <repository>
+            <id>snapshots-camsys-repo</id>
+            <url>http://archiva.obaweb.org/archiva/repository/snapshots/</url>
+        </repository>
+        <repository>
+            <id>public.onebusaway.org</id>
+            <url>http://nexus.onebusaway.org/content/groups/public/</url>
+        </repository>
+    </repositories>
+
+    <scm>
+        <connection>scm:git:http://github.com/camsys/mta-otp-collector.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/camsys/mta-otp-collector.git</developerConnection>
+        <url>http://github.com/camsys/mta-otp-collector</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>releases-obaweb-repo</id>
+            <name>OneBusAway OBAWEB Release Repo</name>
+            <url>http://repo.obaweb.org:8080/archiva/repository/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots-obaweb-repo</id>
+            <name>OneBusAway OBAWEB Snapshot Repo</name>
+            <url>http://repo.obaweb.org:8080/archiva/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <modules>
+        <module>mta-otp-proxy</module>
+    </modules>
+</project>

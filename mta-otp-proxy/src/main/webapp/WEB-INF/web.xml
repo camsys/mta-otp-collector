@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="proxy" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>onebusaway-admin-webapp</display-name>
+    <servlet>
+        <servlet-name>MTASUBWY</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://localhost:8181/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>MTABUS</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://gtfsrt.dev.obanyc.com:8080/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>NYCWF</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>NJB</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>LIRR</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://mnorth.prod.acquia-sites.com/wse/LIRR/gtfsrt/realtime/610034dd391346cdd69a5f884f30f663/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>MTASUBWY</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTASUBWY/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MTABUS</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTABUS/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NYCWF</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NYCWF/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NJB</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NJB/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LIRR</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>
