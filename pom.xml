@@ -11,7 +11,11 @@
     <url>https://github.com/camsys/mta-otp-collector</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    
     <repositories>
         <repository>
             <id>releases-camsys-repo</id>

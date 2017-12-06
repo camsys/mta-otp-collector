@@ -4,18 +4,55 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>onebusaway-admin-webapp</display-name>
+
+    <!-- spring config -->
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:data-sources.xml
+        </param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
     <servlet>
-        <servlet-name>MTASUBWY</servlet-name>
-        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
-        <init-param>
-            <param-name>targetUri</param-name>
-            <param-value>http://localhost:8181/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>log</param-name>
-            <param-value>true</param-value>
-        </init-param>
+        <servlet-name>subwayTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>subwayServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>mnrTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>subwayTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTASUBWY/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>subwayServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTASUBWY/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mnrTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MNR/tripUpdates</url-pattern>
+    </servlet-mapping>
+
+    <!-- proxy config -->
 
     <servlet>
         <servlet-name>MTABUS</servlet-name>
@@ -61,34 +98,14 @@
         <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
         <init-param>
             <param-name>targetUri</param-name>
-            <param-value>http://mnorth.prod.acquia-sites.com/wse/LIRR/gtfsrt/realtime/610034dd391346cdd69a5f884f30f663/</param-value>
+            <param-value>http://mnorth.prod.acquia-sites.com/wse/LIRR/gtfsrt/realtime/610034dd391346cdd69a5f884f30f663/proto</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>
             <param-value>true</param-value>
         </init-param>
-        <init-param>
-            <param-name>http.protocol.handle-redirects</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>preserveCookies</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <!--<init-param>-->
-            <!--<param-name>preserveHost</param-name>-->
-            <!--<param-value>true</param-value>-->
-        <!--</init-param>-->
-        <init-param>
-            <param-name>forwardip</param-name>
-            <param-value>false</param-value>
-        </init-param>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>MTASUBWY</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MTASUBWY/*</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>MTABUS</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTABUS/*</url-pattern>
@@ -103,7 +120,8 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LIRR</servlet-name>
-        <url-pattern>/realtime/gtfsrt/LIRR/*</url-pattern>
+        <url-pattern>/realtime/gtfsrt/LIRR/tripUpdates</url-pattern>
     </servlet-mapping>
+
 
 </web-app>
