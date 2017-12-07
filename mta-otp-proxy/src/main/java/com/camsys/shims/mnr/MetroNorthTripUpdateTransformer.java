@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
@@ -52,40 +53,53 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     @Override
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
-        TripUpdate.Builder tub = fe.getTripUpdate().toBuilder();
+        TripUpdate tu = fe.getTripUpdate();
+        TripUpdate.Builder tub = TripUpdate.newBuilder();
         String routeId = null, tripShortName = null, startDate = null;
-        if (tub.hasTrip() && tub.getTrip().hasRouteId()) {
-            routeId = tub.getTrip().getRouteId();
+        if (tu.hasTrip() && tu.getTrip().hasRouteId()) {
+            routeId = tu.getTrip().getRouteId();
         }
-        if (tub.hasTrip() && tub.getTrip().hasStartDate()) {
-            startDate = tub.getTrip().getStartDate();
+        if (tu.hasTrip() && tu.getTrip().hasStartDate()) {
+            startDate = tu.getTrip().getStartDate();
         }
         if (fe.hasVehicle() && fe.getVehicle().hasVehicle() && fe.getVehicle().getVehicle().hasLabel()) {
             tripShortName = fe.getVehicle().getVehicle().getLabel();
         }
         if (routeId == null || tripShortName == null || startDate == null) {
-            _log.info("not enough info for tripUpdate");
-            return tub;
+            _log.info("not enough info for tripUpdate routeId={} tripShortName={} startDate={}", routeId, tripShortName, startDate);
+            return null;
         }
-        Trip trip = findCorrectTrip(routeId, tripShortName, startDate);
+        ServiceDate sd = parseDate(startDate);
+        Trip trip = findCorrectTrip(routeId, tripShortName, sd);
         if (trip == null) {
             // error message in findCorrectTrip
-            return tub;
+            return null;
         }
         tub.getTripBuilder().setTripId(trip.getId().getId());
+        tub.getTripBuilder().setStartDate(formatDate(sd));
+        tub.getTripBuilder().setRouteId(routeId);
 
-        for (StopTimeUpdate.Builder stu : tub.getStopTimeUpdateBuilderList()) {
-            MnrStopTimeUpdate ext = stu.getExtension(GtfsRealtimeMNR.mnrStopTimeUpdate);
-            NyctStopTimeUpdate.Builder nyctExt = NyctStopTimeUpdate.newBuilder();
-            nyctExt.setActualTrack(ext.getTrack());
-            stu.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
+        Set<String> stopIds = _dao.getStopTimesForTrip(trip).stream()
+                .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
+
+        for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
+            if (!stopIds.contains(stu.getStopId())) {
+                continue;
+            }
+            StopTimeUpdate.Builder stub = stu.toBuilder();
+            MnrStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMNR.mnrStopTimeUpdate);
+            if (ext.hasTrack()) {
+                NyctStopTimeUpdate.Builder nyctExt = NyctStopTimeUpdate.newBuilder();
+                nyctExt.setActualTrack(ext.getTrack());
+                stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
+            }
+            tub.addStopTimeUpdate(stub);
         }
 
         return tub;
     }
 
-    private Trip findCorrectTrip(String route, String tripShortName, String startDate) {
-        ServiceDate sd = parseDate(startDate);
+    private Trip findCorrectTrip(String route, String tripShortName, ServiceDate sd) {
         if (sd == null)
             return null;
         Route r = _dao.getRouteForId(new AgencyAndId("1", route));
@@ -113,6 +127,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             _log.error("Error parsing date " + date);
         }
         return null;
+    }
+
+    private String formatDate(ServiceDate sd) {
+        return new SimpleDateFormat("yyyyMMdd").format(sd.getAsDate());
     }
 
 }

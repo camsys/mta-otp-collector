@@ -20,13 +20,18 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
 
     @Override
     public FeedMessage transform(FeedMessage message) {
-        FeedMessage.Builder builder = message.toBuilder();
-        for (int i = 0; i < builder.getEntityCount(); i++) {
-            FeedEntity entity = builder.getEntity(i);
+        FeedMessage.Builder builder = FeedMessage.newBuilder();
+        builder.setHeader(message.getHeader());
+        for (int i = 0; i < message.getEntityCount(); i++) {
+            FeedEntity entity = message.getEntity(i);
             if (entity.hasTripUpdate()) {
-                FeedEntity.Builder fe = entity.toBuilder().setTripUpdate(
-                        transformTripUpdate(entity));
-                builder.setEntity(i, fe);
+                TripUpdate.Builder tu = transformTripUpdate(entity);
+                if (tu != null) {
+                    FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
+                    builder.addEntity(feb);
+                }
+            } else {
+                builder.addEntity(entity);
             }
         }
         return builder.build();
