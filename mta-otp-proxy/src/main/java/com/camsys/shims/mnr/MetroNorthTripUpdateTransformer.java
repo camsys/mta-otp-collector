@@ -88,7 +88,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         ServiceDate sd = parseDate(startDate);
         if (sd == null)
             return null;
-        Route r = _dao.getRouteForId(new AgencyAndId("MNR", route));
+        Route r = _dao.getRouteForId(new AgencyAndId("1", route));
         Set<AgencyAndId> serviceIds = _csd.getServiceIdsForDate(sd);
         List<Trip> candidates = new ArrayList<>();
         for (Trip t : _dao.getTripsForRoute(r)) {
