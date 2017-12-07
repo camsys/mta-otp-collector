@@ -13,7 +13,13 @@
 package com.camsys.shims.mnr;
 
 import com.camsys.shims.util.TripUpdateTransformer;
+import com.google.transit.realtime.GtfsRealtime.FeedEntity;
+import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
+import com.google.transit.realtime.GtfsRealtimeMNR;
+import com.google.transit.realtime.GtfsRealtimeMNR.MnrStopTimeUpdate;
+import com.google.transit.realtime.GtfsRealtimeNYCT;
+import com.google.transit.realtime.GtfsRealtimeNYCT.NyctStopTimeUpdate;
 import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
@@ -45,20 +51,20 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     }
 
     @Override
-    public TripUpdate.Builder transformTripUpdate(TripUpdate tu) {
-        TripUpdate.Builder tub = tu.toBuilder();
+    public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
+        TripUpdate.Builder tub = fe.getTripUpdate().toBuilder();
         String routeId = null, tripShortName = null, startDate = null;
-        if (tub.hasTrip() && tu.getTrip().hasRouteId()) {
-            routeId = tu.getTrip().getRouteId();
+        if (tub.hasTrip() && tub.getTrip().hasRouteId()) {
+            routeId = tub.getTrip().getRouteId();
         }
-        if (tub.hasTrip() && tu.getTrip().hasStartDate()) {
-            startDate = tu.getTrip().getStartDate();
+        if (tub.hasTrip() && tub.getTrip().hasStartDate()) {
+            startDate = tub.getTrip().getStartDate();
         }
-        if (tub.hasVehicle()) {
-            tripShortName = tub.getVehicle().getLabel();
+        if (fe.hasVehicle() && fe.getVehicle().hasVehicle() && fe.getVehicle().getVehicle().hasLabel()) {
+            tripShortName = fe.getVehicle().getVehicle().getLabel();
         }
         if (routeId == null || tripShortName == null || startDate == null) {
-            _log.info("not enough info for tripUpdate {}", tu);
+            _log.info("not enough info for tripUpdate");
             return tub;
         }
         Trip trip = findCorrectTrip(routeId, tripShortName, startDate);
@@ -67,6 +73,14 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             return tub;
         }
         tub.getTripBuilder().setTripId(trip.getId().getId());
+
+        for (StopTimeUpdate.Builder stu : tub.getStopTimeUpdateBuilderList()) {
+            MnrStopTimeUpdate ext = stu.getExtension(GtfsRealtimeMNR.mnrStopTimeUpdate);
+            NyctStopTimeUpdate.Builder nyctExt = NyctStopTimeUpdate.newBuilder();
+            nyctExt.setActualTrack(ext.getTrack());
+            stu.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
+        }
+
         return tub;
     }
 

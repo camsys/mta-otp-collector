@@ -14,7 +14,6 @@ package com.camsys.shims.servlet;
 
 import com.google.protobuf.Message;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.HttpRequestHandler;
 
 import javax.servlet.ServletException;

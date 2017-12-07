@@ -16,7 +16,8 @@ import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 
-public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer {
+public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<FeedMessage> {
+
     @Override
     public FeedMessage transform(FeedMessage message) {
         FeedMessage.Builder builder = message.toBuilder();
@@ -24,12 +25,12 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer {
             FeedEntity entity = builder.getEntity(i);
             if (entity.hasTripUpdate()) {
                 FeedEntity.Builder fe = entity.toBuilder().setTripUpdate(
-                        transformTripUpdate(entity.getTripUpdate()));
+                        transformTripUpdate(entity));
                 builder.setEntity(i, fe);
             }
         }
         return builder.build();
     }
 
-    public abstract TripUpdate.Builder transformTripUpdate(TripUpdate tu);
+    public abstract TripUpdate.Builder transformTripUpdate(FeedEntity fe);
 }

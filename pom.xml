@@ -52,5 +52,6 @@
 
     <modules>
         <module>mta-otp-proxy</module>
+        <module>mta-otp-elevators</module>
     </modules>
 </project>

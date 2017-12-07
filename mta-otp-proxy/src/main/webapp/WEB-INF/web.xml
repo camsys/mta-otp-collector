@@ -39,17 +39,28 @@
         </servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>elevatorAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>subwayTripUpdates</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MTASUBWY/tripUpdates</url-pattern>
+        <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>subwayServiceAlerts</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MTASUBWY/alerts</url-pattern>
+        <url-pattern>/realtime/gtfsrt/MTASBWY/alerts</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>mnrTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MNR/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>elevatorAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/elevators</url-pattern>
     </servlet-mapping>
 
     <!-- proxy config -->
