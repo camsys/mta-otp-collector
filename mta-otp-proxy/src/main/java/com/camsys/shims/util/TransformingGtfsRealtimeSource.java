@@ -31,21 +31,21 @@ public class TransformingGtfsRealtimeSource<T> implements GtfsRealtimeSource {
 
     private static final Logger _log = LoggerFactory.getLogger(TransformingGtfsRealtimeSource.class);
 
-    private FeedMessage _feedMessage;
+    protected FeedMessage _feedMessage;
 
-    private GtfsRealtimeTransformer<T> _transformer;
+    protected GtfsRealtimeTransformer<T> _transformer;
 
-    private HttpClientConnectionManager _connectionManager;
+    protected HttpClientConnectionManager _connectionManager;
 
-    private CloseableHttpClient _httpClient;
+    protected CloseableHttpClient _httpClient;
 
-    private Deserializer<T> _deserializer;
+    protected Deserializer<T> _deserializer;
 
-    private int _nTries = 5;
+    protected int _nTries = 5;
 
-    private int _retryDelay = 5;
+    protected int _retryDelay = 5;
 
-    private String _sourceUrl;
+    protected String _sourceUrl;
 
     public void setConnectionManager(HttpClientConnectionManager connectionManager) {
         _connectionManager = connectionManager;
@@ -72,30 +72,35 @@ public class TransformingGtfsRealtimeSource<T> implements GtfsRealtimeSource {
     }
 
     public void update() {
+        T message = getMessage(_sourceUrl, _deserializer);
+
+        if (message != null) {
+            _feedMessage = _transformer.transform(message);
+        }
+    }
+
+    public T getMessage(String sourceUrl, Deserializer<T> deserializer){
         if (_httpClient == null)
             _httpClient = HttpClientBuilder.create().setConnectionManager(_connectionManager).build();
 
-        HttpGet get = new HttpGet(_sourceUrl);
-        get.setHeader("accept", _deserializer.getMimeType());
+        HttpGet get = new HttpGet(sourceUrl);
+        get.setHeader("accept", deserializer.getMimeType());
 
         T message = null;
         for (int tries = 0; tries < _nTries; tries++) {
             try {
                 CloseableHttpResponse response = _httpClient.execute(get);
                 try (InputStream streamContent = response.getEntity().getContent()) {
-                    message = _deserializer.deserialize(streamContent);
+                    message = deserializer.deserialize(streamContent);
                     if (message != null)
-                        break;
+                        return message;
                     Thread.sleep(_retryDelay * 1000);
                 }
             } catch (Exception e) {
-                _log.error("Error parsing protocol feed: {}", _sourceUrl);
+                _log.error("Error parsing protocol feed: {}", sourceUrl);
             }
         }
-
-        if (message != null) {
-            _feedMessage = _transformer.transform(message);
-        }
+        return null;
     }
 
     public FeedMessage getFeed() {
