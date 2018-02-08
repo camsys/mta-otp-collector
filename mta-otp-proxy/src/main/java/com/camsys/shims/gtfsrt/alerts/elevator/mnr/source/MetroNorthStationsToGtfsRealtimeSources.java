@@ -1,9 +1,11 @@
-package com.camsys.shims.util;
+package com.camsys.shims.gtfsrt.alerts.elevator.mnr.source;
 
-import com.camsys.shims.model.mnrelevators.Station;
-import com.camsys.shims.model.mnrelevators.StationResults;
-import com.camsys.shims.model.mnrelevators.Status;
-import com.camsys.shims.model.mnrelevators.StatusResults;
+
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.Station;
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StationResults;
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StatusResults;
+import com.camsys.shims.util.Deserializer;
+import com.camsys.shims.util.TransformingGtfsRealtimeSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +13,11 @@ import java.util.List;
 /**
  * Created by lcaraballo on 2/1/18.
  */
-public class StationsTransformingGtfsRealtimeSource<T> extends TransformingGtfsRealtimeSource{
+public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfsRealtimeSource {
 
     private String _statusSourceUrl;
 
     private Deserializer<T> _statusDeserializer;
-
-    private static final String STATUS_WORKING = "working";
 
     public void setStatusSourceUrl(String statusSourceUrl) {_statusSourceUrl = statusSourceUrl;}
 

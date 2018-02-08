@@ -10,11 +10,9 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-package com.camsys.shims.mnrelevators;
+package com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer;
 
-import com.camsys.mta.elevators.NYCOutagesType;
-import com.camsys.shims.model.mnrelevators.Station;
-import com.camsys.shims.model.mnrelevators.StationResults;
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StatusResults;
 import com.camsys.shims.util.Deserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,18 +20,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class StationResultsDeserializer implements Deserializer<StationResults> {
+public class StatusResultsDeserializer implements Deserializer<StatusResults> {
 
     private ObjectMapper _mapper;
 
-    public StationResultsDeserializer() {
+    public StatusResultsDeserializer() {
         _mapper = new ObjectMapper();
     }
 
     @Override
-    public StationResults deserialize(InputStream inputStream) throws IOException {
+    public StatusResults deserialize(InputStream inputStream) throws IOException {
         try {
-            StationResults results = _mapper.readValue(inputStream,StationResults.class);
+            StatusResults results = _mapper.readValue(inputStream,StatusResults.class);
             return results;
         } catch(JsonMappingException jme){
             jme.printStackTrace();

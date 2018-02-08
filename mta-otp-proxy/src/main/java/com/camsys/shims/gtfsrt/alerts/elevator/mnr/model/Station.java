@@ -1,4 +1,4 @@
-package com.camsys.shims.model.mnrelevators;
+package com.camsys.shims.gtfsrt.alerts.elevator.mnr.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

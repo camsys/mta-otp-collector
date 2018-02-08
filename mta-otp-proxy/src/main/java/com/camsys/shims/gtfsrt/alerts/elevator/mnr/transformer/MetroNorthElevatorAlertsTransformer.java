@@ -10,14 +10,10 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-package com.camsys.shims.mnrelevators;
+package com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer;
 
-import com.camsys.mta.elevators.NYCOutagesType;
-import com.camsys.mta.elevators.OutageType;
-import com.camsys.shims.model.mnrelevators.Station;
-import com.camsys.shims.model.mnrelevators.StationResults;
-import com.camsys.shims.model.mnrelevators.Status;
-import com.camsys.shims.model.mnrelevators.StatusResults;
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.Status;
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StatusResults;
 import com.camsys.shims.util.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.*;
 import com.google.transit.realtime.GtfsRealtimeConstants;
@@ -26,16 +22,18 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-public class ElevatorsTransformer implements GtfsRealtimeTransformer<List<StatusResults>> {
+public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransformer<List<StatusResults>> {
 
-    private static Logger _log = LoggerFactory.getLogger(ElevatorsTransformer.class);
+    private static Logger _log = LoggerFactory.getLogger(MetroNorthElevatorAlertsTransformer.class);
 
     private static final SimpleDateFormat _dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 
-    private static final String STATUS_WORKING = "working";
+    private static final String OUT_OF_SERVICE = " Elevator is out of service.";
+
+    private static final String WORKING_STATUS = "1";
+
 
     @Override
     public FeedMessage transform(List<StatusResults> statusResultsList) {
@@ -50,7 +48,7 @@ public class ElevatorsTransformer implements GtfsRealtimeTransformer<List<Status
         for(StatusResults statusResults : statusResultsList){
             Status[] statuses = statusResults.getGetElevatorJsonResult();
             for (Status status : statuses) {
-                if (status != null && status.getStatus().equals(STATUS_WORKING)) {
+                if (status != null && !status.getStatusID().equals(WORKING_STATUS)) {
                     FeedEntity fe = statusToEntity(status);
                     message.addEntity(fe);
                 }
@@ -63,12 +61,9 @@ public class ElevatorsTransformer implements GtfsRealtimeTransformer<List<Status
     private FeedEntity statusToEntity(Status status) {
         Alert.Builder alert = Alert.newBuilder();
         alert.addInformedEntity(EntitySelector.newBuilder().setStopId(status.getStationID()));
-        String desc = status.getDescription();
-        alert.setHeaderText(translatedString(desc));
-        alert.setDescriptionText(translatedString(desc));
-      /*  alert.addActivePeriod(TimeRange.newBuilder()
-                .setStart(stringToDate(outage.getOutagedate()))
-                .setEnd(stringToDate(outage.getEstimatedreturntoservice())));*/
+        String desc = status.getDescription() + OUT_OF_SERVICE;
+        alert.setHeaderText(translatedString(desc ));
+        alert.setDescriptionText(translatedString(desc ));
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
                 .setId(status.getStationID());

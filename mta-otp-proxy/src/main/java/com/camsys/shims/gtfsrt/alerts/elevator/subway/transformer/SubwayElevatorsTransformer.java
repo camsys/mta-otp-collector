@@ -10,7 +10,7 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-package com.camsys.shims.elevators;
+package com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer;
 
 import com.camsys.mta.elevators.NYCOutagesType;
 import com.camsys.mta.elevators.OutageType;
@@ -30,9 +30,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class ElevatorsTransformer implements GtfsRealtimeTransformer<NYCOutagesType> {
+public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOutagesType> {
 
-    private static Logger _log = LoggerFactory.getLogger(ElevatorsTransformer.class);
+    private static Logger _log = LoggerFactory.getLogger(SubwayElevatorsTransformer.class);
 
     private static final SimpleDateFormat _dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 

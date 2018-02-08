@@ -10,7 +10,7 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-package com.camsys.shims.elevators;
+package com.camsys.shims.gtfsrt.alerts.elevator.subway.deserializer;
 
 import com.camsys.mta.elevators.NYCOutagesType;
 import com.camsys.shims.util.Deserializer;
@@ -23,11 +23,11 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ElevatorsDeserializer implements Deserializer<NYCOutagesType> {
+public class SubwayElevatorsDeserializer implements Deserializer<NYCOutagesType> {
 
     private Unmarshaller _um;
 
-    public ElevatorsDeserializer() throws JAXBException {
+    public SubwayElevatorsDeserializer() throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(NYCOutagesType.class);
         _um = jc.createUnmarshaller();
     }
