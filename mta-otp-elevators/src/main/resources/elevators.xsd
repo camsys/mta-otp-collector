@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="NYCOutages" type="NYCOutagesType"/>
+  <xs:complexType name="outageType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="station"/>
+      <xs:element name="borough">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="MN"/>
+            <xs:enumeration value="QNS"/>
+            <xs:enumeration value="BKN"/>
+            <xs:enumeration value="BX"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="trainno"/>
+      <xs:element type="xs:string" name="equipment"/>
+      <xs:element name="equipmenttype">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="EL"/>
+            <xs:enumeration value="ES"/>
+            <xs:enumeration value="PW"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="serving"/>
+      <xs:element name="ADA">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="N"/>
+            <xs:enumeration value="Y"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="outagedate"/>
+      <xs:element type="xs:string" name="estimatedreturntoservice"/>
+      <xs:element name="reason">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="REPAIR"/>
+            <xs:enumeration value="MAINTENANCE"/>
+            <xs:enumeration value="UNDER INVESTIGATION"/>
+            <xs:enumeration value="MODIFICATIONS IN PROGRESS"/>
+            <xs:enumeration value="STATION IS UNDER REHABILITATION"/>
+            <xs:enumeration value="WARRANTY REPAIR"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="isupcomingoutage">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="N"/>
+            <xs:enumeration value="Y"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="xs:string" name="ismaintenanceoutage"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="NYCOutagesType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="responsecode"/>
+      <xs:element type="xs:string" name="message"/>
+      <xs:element type="outageType" name="outage" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
