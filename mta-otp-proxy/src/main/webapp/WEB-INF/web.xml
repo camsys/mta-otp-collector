@@ -22,7 +22,7 @@
         <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
         <init-param>
             <param-name>targetUri</param-name>
-            <param-value>http://gtfsrt.dev.obanyc.com:8080/</param-value>
+            <param-value>http://gtfsrt.prod.obanyc.com/</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>
