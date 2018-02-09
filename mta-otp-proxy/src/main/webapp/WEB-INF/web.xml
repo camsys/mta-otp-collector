@@ -53,6 +53,13 @@
         </servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>lirrElevatorAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>subwayTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>
@@ -71,7 +78,11 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>mnrElevatorAlerts</servlet-name>
-        <url-pattern>/realtime/gtfsrt/mnrElevatorAlerts</url-pattern>
+        <url-pattern>/realtime/gtfsrt/MetroNorthElevatorAlerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>lirrElevatorAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LirrElevatorAlerts</url-pattern>
     </servlet-mapping>
 
     <!-- proxy config -->

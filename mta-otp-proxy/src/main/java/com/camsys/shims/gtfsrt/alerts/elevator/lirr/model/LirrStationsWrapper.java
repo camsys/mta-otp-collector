@@ -5,15 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Created by lcaraballo on 1/31/18.
  */
-public class LirrStations {
+public class LirrStationsWrapper {
     @JsonProperty("Stations")
-    LirrStation[] stations;
+    LirrStationIds stations;
 
-    public LirrStation[] getGetStationsJsonResult() {
+    public LirrStationIds getStationIds() {
         return this.stations;
     }
 
-    public void setStations(LirrStation[] stations) {
+    public void setStationsIds(LirrStationIds stations) {
         this.stations = stations;
     }
 }
