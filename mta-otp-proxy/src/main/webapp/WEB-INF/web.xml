@@ -47,14 +47,14 @@
     </servlet>
 
     <servlet>
-        <servlet-name>mnrElevatorAlerts</servlet-name>
+        <servlet-name>mnrServiceAlerts</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
         </servlet-class>
     </servlet>
 
     <servlet>
-        <servlet-name>lirrElevatorAlerts</servlet-name>
+        <servlet-name>lirrServiceAlerts</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
         </servlet-class>
@@ -77,12 +77,12 @@
         <url-pattern>/realtime/gtfsrt/elevators</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>mnrElevatorAlerts</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MetroNorthElevatorAlerts</url-pattern>
+        <servlet-name>mnrServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MNR/alerts</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>lirrElevatorAlerts</servlet-name>
-        <url-pattern>/realtime/gtfsrt/LirrElevatorAlerts</url-pattern>
+        <servlet-name>lirrServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/alerts</url-pattern>
     </servlet-mapping>
 
     <!-- proxy config -->

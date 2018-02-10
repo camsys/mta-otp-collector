@@ -27,7 +27,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.InputStream;
 
 // transform from type to source
-public class TransformingGtfsRealtimeSource<T> implements GtfsRealtimeSource {
+public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSource {
 
     private static final Logger _log = LoggerFactory.getLogger(TransformingGtfsRealtimeSource.class);
 
@@ -71,6 +71,7 @@ public class TransformingGtfsRealtimeSource<T> implements GtfsRealtimeSource {
         this._deserializer = deserializer;
     }
 
+    @Override
     public void update() {
         T message = getMessage(_sourceUrl, _deserializer);
 
