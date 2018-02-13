@@ -13,35 +13,20 @@
 package com.camsys.shims.gtfsrt.alerts.siri.deserializer;
 
 import com.amazonaws.util.IOUtils;
-import com.camsys.shims.util.Deserializer;
-import org.onebusaway.nyc.siri.support.SiriXmlSerializer;
 import uk.org.siri.siri.Siri;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SiriDeserializer implements Deserializer<Siri> {
-
-    private SiriXmlSerializer _siriXmlSerializer = new SiriXmlSerializer();
-
+// deserialize SIRI and modify LongDescription
+public class SiriDeserializerModifyLongDescription extends SiriDeserializer {
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
+        xml = xml.replace("<Description", "<LegacyDescription")
+            .replace("</Description>", "</LegacyDescription>")
+            .replace("<LongDescription>", "<Description>")
+            .replace("</LongDescription>", "</Description>");
         return deserialize(xml);
-    }
-
-    protected Siri deserialize(String xml) throws IOException {
-        try {
-            return _siriXmlSerializer.fromXml(xml);
-        } catch(JAXBException e) {
-            e.printStackTrace();
-            throw new IOException(e);
-        }
-    }
-
-    @Override
-    public String getMimeType() {
-        return "text/xml";
     }
 }
