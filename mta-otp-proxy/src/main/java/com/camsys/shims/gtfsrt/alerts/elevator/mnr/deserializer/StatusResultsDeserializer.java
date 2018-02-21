@@ -13,7 +13,7 @@
 package com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer;
 
 import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StatusResults;
-import com.camsys.shims.util.Deserializer;
+import com.camsys.shims.util.deserializer.Deserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

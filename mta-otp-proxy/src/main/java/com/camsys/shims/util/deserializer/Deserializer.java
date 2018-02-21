@@ -1,4 +1,4 @@
-package com.camsys.shims.util;
+package com.camsys.shims.util.deserializer;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package com.camsys.shims.util;
+package com.camsys.shims.util.source;
 
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
 

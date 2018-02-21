@@ -12,7 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer;
 
-import com.camsys.shims.util.TripUpdateTransformer;
+import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;

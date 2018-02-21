@@ -12,7 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.alerts.siri.transformer;
 
-import com.camsys.shims.util.GtfsRealtimeTransformer;
+import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.Alert;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedHeader;
@@ -21,12 +21,11 @@ import com.google.transit.realtime.GtfsRealtimeConstants;
 import org.onebusaway.nyc.gtfsrt.util.GtfsRealtimeLibrary;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
-import uk.org.siri.siri.PtSituationElementStructure;
 import uk.org.siri.siri.Siri;
 
 import java.util.List;
 
-public class SiriTransformer implements GtfsRealtimeTransformer<Siri> {
+public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
     @Override
     public FeedMessage transform(Siri siri) {
         List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri);

@@ -4,8 +4,8 @@ package com.camsys.shims.gtfsrt.alerts.elevator.mnr.source;
 import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.Station;
 import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StationResults;
 import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StatusResults;
-import com.camsys.shims.util.Deserializer;
-import com.camsys.shims.util.TransformingGtfsRealtimeSource;
+import com.camsys.shims.util.deserializer.Deserializer;
+import com.camsys.shims.util.source.TransformingGtfsRealtimeSource;
 
 import java.util.ArrayList;
 import java.util.List;

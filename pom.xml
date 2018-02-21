@@ -29,6 +29,16 @@
             <id>public.onebusaway.org</id>
             <url>http://nexus.onebusaway.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>snapshots.staging.obanyc.com</id>
+            <url>http://build.staging.obanyc.com/archiva/repository/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <scm>

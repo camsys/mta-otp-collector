@@ -60,6 +60,13 @@
         </servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>serviceStatus</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>subwayTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>
@@ -83,6 +90,26 @@
     <servlet-mapping>
         <servlet-name>lirrServiceAlerts</servlet-name>
         <url-pattern>/realtime/gtfsrt/LIRR/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MTABUS</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTABUS/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NYCWF</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NYCWF/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NJB</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NJB/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LIRR</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>serviceStatus</servlet-name>
+        <url-pattern>/realtime/serviceStatus</url-pattern>
     </servlet-mapping>
 
     <!-- proxy config -->
@@ -138,23 +165,4 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
-
-    <servlet-mapping>
-        <servlet-name>MTABUS</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MTABUS/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>NYCWF</servlet-name>
-        <url-pattern>/realtime/gtfsrt/NYCWF/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>NJB</servlet-name>
-        <url-pattern>/realtime/gtfsrt/NJB/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LIRR</servlet-name>
-        <url-pattern>/realtime/gtfsrt/LIRR/tripUpdates</url-pattern>
-    </servlet-mapping>
-
-
 </web-app>

@@ -15,7 +15,7 @@ package com.camsys.shims.gtfsrt.alerts.elevator.lirr.transformer;
 import com.camsys.shims.gtfsrt.alerts.elevator.lirr.model.Elevator;
 import com.camsys.shims.gtfsrt.alerts.elevator.lirr.model.LirrStation;
 import com.camsys.shims.gtfsrt.alerts.elevator.lirr.model.LirrStationsWrapper;
-import com.camsys.shims.util.GtfsRealtimeTransformer;
+import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.*;
 import com.google.transit.realtime.GtfsRealtimeConstants;
 import org.slf4j.Logger;
