@@ -1,0 +1,4 @@
+mta-otp-elevators/target
+mta-otp-proxy/target
+.idea
+*.iml
