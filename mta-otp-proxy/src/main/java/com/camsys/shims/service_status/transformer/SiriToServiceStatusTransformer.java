@@ -94,14 +94,14 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
             statusDetail.setStatusDescription(alertBean.getDescriptions().get(0).getValue());
         }
         if(alertBean.getCreationTime() > 0){
-            statusDetail.setCreationDate(getFormattedDateTime(alertBean.getCreationTime()));
+            statusDetail.setCreationDate(new Date(alertBean.getCreationTime()));
         }
         if(alertBean.getPublicationWindows() != null && alertBean.getPublicationWindows().size() > 0){
             TimeRangeBean publicationWindow = alertBean.getPublicationWindows().get(0);
             if(publicationWindow.getFrom() > 0)
-                statusDetail.setStartDate(getFormattedDateTime(publicationWindow.getFrom()));
+                statusDetail.setStartDate(new Date(publicationWindow.getFrom()));
             if(publicationWindow.getTo() > 0)
-                statusDetail.setEndDate(getFormattedDateTime(publicationWindow.getTo()));
+                statusDetail.setEndDate(new Date(publicationWindow.getTo()));
         }
         if(alertBean.getMessagePriority() != null){
             statusDetail.setPriority(alertBean.getMessagePriority());

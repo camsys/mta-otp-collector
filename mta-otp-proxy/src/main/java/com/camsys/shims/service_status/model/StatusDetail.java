@@ -1,8 +1,10 @@
 package com.camsys.shims.service_status.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 public class StatusDetail {
 
@@ -14,11 +16,11 @@ public class StatusDetail {
 
     private String direction;
 
-    private String creationDate;
+    private Date creationDate;
 
-    private String startDate;
+    private Date startDate;
 
-    private String endDate;
+    private Date endDate;
 
     @JsonProperty("statusSummary")
     public String getStatusSummary() {
@@ -57,29 +59,32 @@ public class StatusDetail {
     }
 
     @JsonProperty("creationDate")
-    public String getCreationDate() {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
     @JsonProperty("startDate")
-    public String getStartDate() {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     @JsonProperty("endDate")
-    public String getEndDate() {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 }

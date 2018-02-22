@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 import static com.camsys.shims.util.TimeUtils.*;
 
@@ -83,7 +84,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         T siri = getSiri(_sourceUrl, _deserializer);
         if (siri != null) {
             List<RouteDetail>  routeDetails = _transformer.transform(siri, _mode, _dao, _csd);
-            _serviceStatus = new ServiceStatus(getCurrentDateTime(), routeDetails);
+            _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }
 
