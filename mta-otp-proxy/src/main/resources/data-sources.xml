@@ -26,9 +26,7 @@
     <!-- subway - this is essentially equivalent to Kurt's ProxyModule class  -->
     <bean class="org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeExporterImpl" id="subwayTuExporter" />
     <bean class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" init-method="init" />
-    <bean id="subwayGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="/opt/nyct/google_transit.zip" />
-    </bean>
+
     <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType">
         <property name="gtfsRelationalDao" ref="subwayGtfs"/>
     </bean>
@@ -63,9 +61,6 @@
     </bean>
 
     <!-- Metro North -->
-    <bean id="mnrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="/opt/mnr/google_transit.zip" />
-    </bean>
     <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
         <property name="dao" ref="mnrGtfs" />
     </bean>
@@ -146,10 +141,6 @@
     <!-- service status -->
     <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
 
-    <bean id="busGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="/opt/mta/nyct_bus_merged_gtfs.zip" />
-    </bean>
-
     <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
@@ -166,17 +157,52 @@
         <property name="gtfsDao" ref="subwayGtfs" />
     </bean>
 
+    <bean id="mnrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusMNR.xml" />
+        <property name="mode" value="RAIL" />
+        <property name="gtfsDao" ref="mnrGtfs" />
+    </bean>
+
+    <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusLIRR.xml" />
+        <property name="mode" value="RAIL" />
+        <property name="gtfsDao" ref="lirrGtfs" />
+    </bean>
+
     <bean name="serviceStatusTask" class="com.camsys.shims.service_status.source.MergingServiceStatusSource">
         <constructor-arg>
             <list>
                 <ref bean="busServiceStatusTask" />
                 <ref bean="subwayServiceStatusTask" />
+                <ref bean="mnrServiceStatusTask" />
+                <ref bean="lirrServiceStatusTask" />
             </list>
         </constructor-arg>
     </bean>
 
     <bean id="serviceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">
         <property name="source" ref="serviceStatusTask" />
+    </bean>
+
+    <!-- gtfs files -->
+    <bean id="mnrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/mnr/google_transit.zip" />
+    </bean>
+
+    <bean id="lirrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/lirr/google_transit.zip" />
+    </bean>
+
+    <bean id="busGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/mta/nyct_bus_merged_gtfs.zip" />
+    </bean>
+
+    <bean id="subwayGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/nyct/google_transit.zip" />
     </bean>
 
     <!-- shared resources -->
@@ -194,7 +220,7 @@
         <task:scheduled ref="eleTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="mnrAlertTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="lirrAlertTask" method="update" fixed-delay="180000" />
-        <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="30000" />
+        <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="180000" />
     </task:scheduled-tasks>
 
     <task:scheduler id="myScheduler" pool-size="10"/>
