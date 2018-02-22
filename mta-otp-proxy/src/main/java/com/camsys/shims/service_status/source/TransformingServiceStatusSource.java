@@ -1,5 +1,6 @@
 package com.camsys.shims.service_status.source;
 
+import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
@@ -17,8 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import static com.camsys.shims.util.TimeUtils.*;
+import java.util.Map;
 
 public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 {
@@ -27,6 +29,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     protected ServiceStatus _serviceStatus;
 
     protected ServiceStatusTransformer _transformer;
+
+    protected GtfsRouteAdapter _gtfsAdapter;
 
     protected HttpClientConnectionManager _connectionManager;
 
@@ -45,6 +49,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     protected GtfsRelationalDao _dao;
 
     protected CalendarServiceData _csd;
+
+    private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
     public void setConnectionManager(HttpClientConnectionManager connectionManager) {
         _connectionManager = connectionManager;
@@ -70,6 +76,10 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         _transformer = transformer;
     }
 
+    public void setGtfsRouteAdapter(GtfsRouteAdapter gtfsAdapter) {
+        _gtfsAdapter = gtfsAdapter;
+    }
+
     public void setDeserializer(Deserializer<T> deserializer) {
         _deserializer = deserializer;
     }
@@ -83,7 +93,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     public void update() {
         T siri = getSiri(_sourceUrl, _deserializer);
         if (siri != null) {
-            List<RouteDetail>  routeDetails = _transformer.transform(siri, _mode, _dao, _csd);
+            List<RouteDetail>  routeDetails = _transformer.transform(siri, _mode, _dao, _csd, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }

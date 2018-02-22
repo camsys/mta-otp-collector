@@ -23,7 +23,7 @@ public class ServiceStatus {
     }
 
     @JsonProperty("lastUpdated")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "America/New_York")
     public Date getLastUpdated() {
         return _lastUpdated;
     }

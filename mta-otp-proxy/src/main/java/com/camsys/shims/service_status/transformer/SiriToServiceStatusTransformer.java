@@ -1,7 +1,9 @@
 package com.camsys.shims.service_status.transformer;
 
+import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.StatusDetail;
+import org.apache.commons.lang.StringUtils;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Trip;
@@ -24,57 +26,75 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     private static final Logger _log = LoggerFactory.getLogger(SiriToServiceStatusTransformer.class);
 
     @Override
-    public List<RouteDetail> transform(Siri siri, String mode, GtfsRelationalDao dao, CalendarServiceData csd) {
+    public List<RouteDetail> transform(Siri siri, String mode, GtfsRelationalDao dao, CalendarServiceData csd,
+                                       GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> routeDetailsMap) {
         List<ExtendedServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsExtendedServiceAlertBeans(siri);
-        return  getRouteDetails(serviceAlerts, mode, dao, csd);
+        return  getRouteDetails(serviceAlerts, mode, dao, csd, gtfsAdapter, routeDetailsMap);
     }
 
-    private List<RouteDetail> getRouteDetails(List<ExtendedServiceAlertBean> serviceAlerts, String mode, GtfsRelationalDao dao, CalendarServiceData csd){
+    private List<RouteDetail> getRouteDetails(List<ExtendedServiceAlertBean> serviceAlerts, String mode,
+                                              GtfsRelationalDao dao, CalendarServiceData csd,
+                                              GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> routeDetailsMap){
 
-        Map<String, RouteDetail> routeDetailsMap = new HashMap<>();
+        Map<String, RouteDetail> tempRouteDetailsMap = new HashMap<String, RouteDetail>(400);
+        Date lastUpdated = new Date();
 
-        generateRouteDetailsForAlerts(routeDetailsMap, serviceAlerts, mode, dao, csd);
-        generateRouteDetailsForAllRoutes(routeDetailsMap, mode, dao, csd);
+        generateRouteDetailsForAlerts(tempRouteDetailsMap, serviceAlerts, mode, dao, csd, gtfsAdapter, lastUpdated);
+        generateRouteDetailsForAllRoutes(tempRouteDetailsMap, mode, dao, csd, lastUpdated);
+        updateRouteDetailsMap(tempRouteDetailsMap, routeDetailsMap);
 
         List<RouteDetail> routeDetails = new ArrayList<>(routeDetailsMap.values());
 
         return routeDetails;
     }
 
-    private void generateRouteDetailsForAlerts(Map<String, RouteDetail> routeDetailsMap, List<ExtendedServiceAlertBean> serviceAlerts, String mode, GtfsRelationalDao dao, CalendarServiceData csd){
+    private void generateRouteDetailsForAlerts(Map<String, RouteDetail> tempRouteDetailsMap,
+                                               List<ExtendedServiceAlertBean> serviceAlerts,
+                                               String mode,
+                                               GtfsRelationalDao dao,
+                                               CalendarServiceData csd,
+                                               GtfsRouteAdapter gtfsAdapter,
+                                               Date lastUpdated){
+
         for(ExtendedServiceAlertBean alert : serviceAlerts){
             for(SituationAffectsBean affectsBean : alert.getAllAffects()){
                 String routeId = affectsBean.getRouteId();
                 Route route = getRoute(routeId, dao);
-
                 if(route != null) {
                     StatusDetail statusDetail = generateStatusDetail(alert, affectsBean);
-
-                    if (!routeDetailsMap.containsKey(routeId)) {
+                    if (!tempRouteDetailsMap.containsKey(routeId)) {
                         List<StatusDetail> statusDetails = new ArrayList<>();
                         statusDetails.add(statusDetail);
-                        RouteDetail routeDetail = generateRouteDetail(route, mode, dao, csd);
+                        RouteDetail routeDetail = generateRouteDetail(route, mode, dao, csd, lastUpdated);
                         routeDetail.setStatusDetailsList(statusDetails);
-                        routeDetailsMap.put(routeId, routeDetail);
+                        tempRouteDetailsMap.put(routeId, routeDetail);
                     } else {
-                        routeDetailsMap.get(routeId).getStatusDetailsList().add(statusDetail);
+                        tempRouteDetailsMap.get(routeId).getStatusDetailsList().add(statusDetail);
                     }
                 }
             }
         }
     }
 
-    private void generateRouteDetailsForAllRoutes(Map<String, RouteDetail> routeDetailsMap, String mode, GtfsRelationalDao dao, CalendarServiceData csd){
+    private void generateRouteDetailsForAllRoutes(Map<String, RouteDetail> tempRouteDetailsMap,
+                                                  String mode, GtfsRelationalDao dao,
+                                                  CalendarServiceData csd,
+                                                  Date lastUpdated){
         for(Route route : dao.getAllRoutes()){
             String routeId = route.getId().toString();
-            if(!routeDetailsMap.containsKey(routeId)){
-                RouteDetail routeDetail = generateRouteDetail(route, mode, dao, csd);
-                routeDetailsMap.put(routeId, routeDetail);
+            if(!tempRouteDetailsMap.containsKey(routeId)){
+                RouteDetail routeDetail = generateRouteDetail(route, mode, dao, csd, lastUpdated);
+                tempRouteDetailsMap.put(routeId, routeDetail);
             }
         }
     }
 
-    private RouteDetail generateRouteDetail(Route route, String mode, GtfsRelationalDao dao, CalendarServiceData csd){
+    private RouteDetail generateRouteDetail(Route route,
+                                            String mode,
+                                            GtfsRelationalDao dao,
+                                            CalendarServiceData csd,
+                                            Date lastUpdated){
+
         RouteDetail routeDetail = new RouteDetail();
         routeDetail.setRouteName(getRouteName(route));
         routeDetail.setColor(route.getColor());
@@ -82,13 +102,15 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         routeDetail.setRouteId(route.getId().toString());
         routeDetail.setAgency(route.getId().getAgencyId());
         routeDetail.setMode(mode);
+        routeDetail.setLastUpdated(lastUpdated);
         return routeDetail;
     }
 
     private StatusDetail generateStatusDetail(ExtendedServiceAlertBean alertBean, SituationAffectsBean affectsBean){
+
         StatusDetail statusDetail = new StatusDetail();
-        if(alertBean.getSummaries() != null && alertBean.getSummaries().size() > 0) {
-            statusDetail.setStatusSummary(alertBean.getSummaries().get(0).getValue());
+        if(StringUtils.isNotBlank(alertBean.getReason())){
+            statusDetail.setStatusSummary(alertBean.getReason());
         }
         if(alertBean.getDescriptions() != null && alertBean.getDescriptions().size() > 0){
             statusDetail.setStatusDescription(alertBean.getDescriptions().get(0).getValue());
@@ -141,5 +163,17 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
             }
         }
         return false;
+    }
+
+    private void updateRouteDetailsMap(Map<String, RouteDetail> tempRouteDetailsMap,
+                                       Map<String, RouteDetail> routeDetailMap){
+
+        for(Map.Entry<String, RouteDetail> entry : tempRouteDetailsMap.entrySet()){
+            if(routeDetailMap.get(entry.getKey()) == null ||
+                    !routeDetailMap.get(entry.getKey()).equals(entry.getValue())){
+                routeDetailMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        tempRouteDetailsMap = null;
     }
 }

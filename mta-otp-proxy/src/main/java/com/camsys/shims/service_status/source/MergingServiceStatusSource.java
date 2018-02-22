@@ -41,25 +41,23 @@ public class MergingServiceStatusSource implements ServiceStatusSource
 
     @Override
     public ServiceStatus getStatus(String updatesSince) {
-        filterServiceStatus(updatesSince);
+        if(updatesSince != null)
+            return getFilteredServiceStatus(updatesSince);
         return _serviceStatus;
     }
 
-    private void filterServiceStatus(String updatesSince){
-        if(updatesSince != null) {
-            try {
-                final Date updatesSinceDate = new SimpleDateFormat("yyyy-MM-dd").parse(updatesSince);
-                List<RouteDetail> routeDetails = _serviceStatus.getRouteDetailList();
+    private ServiceStatus getFilteredServiceStatus(String updatesSince){
+        try {
+            final Date updatesSinceDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(updatesSince);
+            List<RouteDetail> routeDetails = _serviceStatus.getRouteDetailList().stream()
+                    .filter(routeDetail -> updatesSinceDate.compareTo(routeDetail.getLastUpdated()) <= 0)
+                    .collect(Collectors.toList());
 
-                _serviceStatus.setRouteDetailList(routeDetails.stream()
-                        .filter(routeDetail -> routeDetail.getStatusDetailsList() == null ||
-                                routeDetail.getStatusDetailsList().stream()
-                                        .allMatch(status -> updatesSinceDate.compareTo(status.getCreationDate()) <= 0))
-                        .collect(Collectors.toList()));
+            return new ServiceStatus(_serviceStatus.getLastUpdated(), routeDetails);
 
-            } catch (ParseException pe) {
-                _log.error("Unable to parse updatesSince date param {}", updatesSince);
-            }
+        } catch (ParseException pe) {
+            _log.error("Unable to parse updatesSince date param {}", updatesSince);
         }
+        return _serviceStatus;
     }
 }

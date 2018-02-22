@@ -59,7 +59,7 @@ public class StatusDetail {
     }
 
     @JsonProperty("creationDate")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "America/New_York")
     public Date getCreationDate() {
         return creationDate;
     }
@@ -69,7 +69,7 @@ public class StatusDetail {
     }
 
     @JsonProperty("startDate")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "America/New_York")
     public Date getStartDate() {
         return startDate;
     }
@@ -79,12 +79,42 @@ public class StatusDetail {
     }
 
     @JsonProperty("endDate")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ssZ", timezone = "America/New_York")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ", timezone = "America/New_York")
     public Date getEndDate() {
         return endDate;
     }
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StatusDetail that = (StatusDetail) o;
+
+        if (statusSummary != null ? !statusSummary.equals(that.statusSummary) : that.statusSummary != null)
+            return false;
+        if (statusDescription != null ? !statusDescription.equals(that.statusDescription) : that.statusDescription != null)
+            return false;
+        if (priority != null ? !priority.equals(that.priority) : that.priority != null) return false;
+        if (direction != null ? !direction.equals(that.direction) : that.direction != null) return false;
+        if (creationDate != null ? !creationDate.equals(that.creationDate) : that.creationDate != null) return false;
+        if (startDate != null ? !startDate.equals(that.startDate) : that.startDate != null) return false;
+        return endDate != null ? endDate.equals(that.endDate) : that.endDate == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = statusSummary != null ? statusSummary.hashCode() : 0;
+        result = 31 * result + (statusDescription != null ? statusDescription.hashCode() : 0);
+        result = 31 * result + (priority != null ? priority.hashCode() : 0);
+        result = 31 * result + (direction != null ? direction.hashCode() : 0);
+        result = 31 * result + (creationDate != null ? creationDate.hashCode() : 0);
+        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
+        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        return result;
     }
 }
