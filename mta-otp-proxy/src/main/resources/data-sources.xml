@@ -23,10 +23,12 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+
+
     <!-- subway - this is essentially equivalent to Kurt's ProxyModule class  -->
     <bean class="org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeExporterImpl" id="subwayTuExporter" />
     <bean class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" init-method="init" />
-
     <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType">
         <property name="gtfsRelationalDao" ref="subwayGtfs"/>
     </bean>
@@ -141,36 +143,45 @@
     <!-- service status -->
     <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
 
+    <bean name="defaultGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.DefaultGtfsRouteAdapter" />
+    <bean name="lirrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.lirr.LirrGtfsRouteAdapter">
+        <property name="gtfsDao" ref="lirrGtfs" />
+    </bean>
+
     <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
         <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusBus.xml" />
-        <property name="mode" value="BUS" />
+        <property name="mode" value="bus" />
         <property name="gtfsDao" ref="busGtfs" />
+        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
 
     <bean id="subwayServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
         <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusSubway.xml" />
-        <property name="mode" value="SUBWAY" />
+        <property name="mode" value="subway" />
         <property name="gtfsDao" ref="subwayGtfs" />
+        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
 
     <bean id="mnrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
         <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusMNR.xml" />
-        <property name="mode" value="RAIL" />
+        <property name="mode" value="rail" />
         <property name="gtfsDao" ref="mnrGtfs" />
+        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
 
     <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
         <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusLIRR.xml" />
-        <property name="mode" value="RAIL" />
+        <property name="mode" value="rail" />
         <property name="gtfsDao" ref="lirrGtfs" />
+        <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
     </bean>
 
     <bean name="serviceStatusTask" class="com.camsys.shims.service_status.source.MergingServiceStatusSource">

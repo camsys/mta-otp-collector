@@ -93,7 +93,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     public void update() {
         T siri = getSiri(_sourceUrl, _deserializer);
         if (siri != null) {
-            List<RouteDetail>  routeDetails = _transformer.transform(siri, _mode, _dao, _csd, _gtfsAdapter, _routeDetailsMap);
+            List<RouteDetail>  routeDetails = _transformer
+                    .transform(siri, _mode, _dao, _csd, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }

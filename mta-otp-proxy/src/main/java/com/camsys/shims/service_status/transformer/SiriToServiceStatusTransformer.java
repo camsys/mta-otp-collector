@@ -19,7 +19,8 @@ import org.slf4j.LoggerFactory;
 import uk.org.siri.siri.Siri;
 
 import java.util.*;
-import static com.camsys.shims.util.TimeUtils.*;
+
+import static com.camsys.shims.util.TimeUtils.getServiceDate;
 
 public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<Siri>{
 
@@ -58,7 +59,7 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
 
         for(ExtendedServiceAlertBean alert : serviceAlerts){
             for(SituationAffectsBean affectsBean : alert.getAllAffects()){
-                String routeId = affectsBean.getRouteId();
+                String routeId = gtfsAdapter.getGtfsRouteId(affectsBean);
                 Route route = getRoute(routeId, dao);
                 if(route != null) {
                     StatusDetail statusDetail = generateStatusDetail(alert, affectsBean);

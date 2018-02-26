@@ -2,28 +2,35 @@ package com.camsys.shims.service_status.adapters.lirr;
 
 import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import org.onebusaway.gtfs.model.AgencyAndId;
+import org.onebusaway.gtfs.model.Route;
+import org.onebusaway.gtfs.services.GtfsRelationalDao;
+import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 public class LirrGtfsRouteAdapter implements GtfsRouteAdapter {
-    Map<String, String> siriToGtfsAgencyMap = new HashMap<String, String>();
-    private static final String DEFAULT_AGENCY = "LI";
+    private GtfsRelationalDao _dao;
 
-    public String getGtfsAgency(String siriLineRef){
-        AgencyAndId lineRef = AgencyAndId.convertFromString(siriLineRef);
-        String siriAgency = lineRef.getAgencyId();
-        if(siriAgency != null){
-            return siriToGtfsAgencyMap.get(siriAgency);
+    public void setGtfsDao(GtfsRelationalDao dao) {
+        _dao = dao;
+    }
+
+    @Override
+    public String getGtfsRouteId(SituationAffectsBean affectsBean) {
+        AgencyAndId route = AgencyAndId.convertFromString(affectsBean.getRouteId());
+        String routeId = route.getId();
+        Route gtfsRoute = getRouteFromGtfs(routeId);
+        if(gtfsRoute != null && gtfsRoute.getId() != null) {
+            return gtfsRoute.getId().toString();
         }
-        return DEFAULT_AGENCY;
+        return null;
     }
 
-    public Map<String, String> getSiriToGtfsAgencyMap() {
-        return siriToGtfsAgencyMap;
+    private Route getRouteFromGtfs(String routeId){
+        return _dao.getAllRoutes().stream()
+                .filter(route -> route.getLongName() != null && route.getLongName().equalsIgnoreCase(routeId))
+                .findFirst()
+                .orElse(null);
     }
 
-    public void setSiriToGtfsAgencyMap(Map<String, String> siriToGtfsAgencyMap) {
-        this.siriToGtfsAgencyMap = siriToGtfsAgencyMap;
-    }
 }
