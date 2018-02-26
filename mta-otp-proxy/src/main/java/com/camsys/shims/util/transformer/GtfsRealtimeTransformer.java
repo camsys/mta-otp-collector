@@ -1,4 +1,4 @@
-package com.camsys.shims.util;
+package com.camsys.shims.util.transformer;
 
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 

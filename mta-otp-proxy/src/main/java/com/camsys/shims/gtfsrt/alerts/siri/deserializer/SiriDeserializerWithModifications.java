@@ -19,14 +19,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 // deserialize SIRI and modify LongDescription
-public class SiriDeserializerModifyLongDescription extends SiriDeserializer {
+public class SiriDeserializerWithModifications extends SiriDeserializer {
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
         xml = xml.replace("<Description", "<LegacyDescription")
             .replace("</Description>", "</LegacyDescription>")
             .replace("<LongDescription>", "<Description>")
-            .replace("</LongDescription>", "</Description>");
+            .replace("</LongDescription>", "</Description>")
+            .replace("<MessagePriority>", "<Priority>")
+            .replace("</MessagePriority>", "</Priority>");
         return deserialize(xml);
     }
 }

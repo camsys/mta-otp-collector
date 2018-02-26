@@ -14,7 +14,7 @@ package com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer;
 
 import com.camsys.mta.elevators.NYCOutagesType;
 import com.camsys.mta.elevators.OutageType;
-import com.camsys.shims.util.GtfsRealtimeTransformer;
+import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.Alert;
 import com.google.transit.realtime.GtfsRealtime.EntitySelector;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;

@@ -10,8 +10,10 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-package com.camsys.shims.util;
+package com.camsys.shims.util.source;
 
+import com.camsys.shims.util.deserializer.Deserializer;
+import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,7 +21,6 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
-import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;

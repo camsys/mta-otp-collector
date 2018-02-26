@@ -13,7 +13,7 @@
 package com.camsys.shims.gtfsrt.alerts.elevator.subway.deserializer;
 
 import com.camsys.mta.elevators.NYCOutagesType;
-import com.camsys.shims.util.Deserializer;
+import com.camsys.shims.util.deserializer.Deserializer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;

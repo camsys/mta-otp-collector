@@ -13,7 +13,7 @@
 package com.camsys.shims.gtfsrt.alerts.siri.deserializer;
 
 import com.amazonaws.util.IOUtils;
-import com.camsys.shims.util.Deserializer;
+import com.camsys.shims.util.deserializer.Deserializer;
 import org.onebusaway.nyc.siri.support.SiriXmlSerializer;
 import uk.org.siri.siri.Siri;
 
