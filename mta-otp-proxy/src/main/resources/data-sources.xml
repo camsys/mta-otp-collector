@@ -143,11 +143,18 @@
     <!-- service status -->
     <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
 
+    <!-- route adapters -->
     <bean name="defaultGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.DefaultGtfsRouteAdapter" />
-    <bean name="lirrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.lirr.LirrGtfsRouteAdapter">
+
+    <bean name="lirrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.LirrGtfsRouteAdapter">
         <property name="gtfsDao" ref="lirrGtfs" />
     </bean>
 
+    <bean name="mnrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.MnrGtfsRouteAdapter">
+        <property name="gtfsDao" ref="mnrGtfs" />
+    </bean>
+
+    <!-- tasks -->
     <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerModifyLongDescription" />
@@ -172,7 +179,7 @@
         <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusMNR.xml" />
         <property name="mode" value="rail" />
         <property name="gtfsDao" ref="mnrGtfs" />
-        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
+        <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
     </bean>
 
     <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">

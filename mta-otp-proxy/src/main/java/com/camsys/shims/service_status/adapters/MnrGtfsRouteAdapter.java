@@ -1,14 +1,11 @@
-package com.camsys.shims.service_status.adapters.lirr;
+package com.camsys.shims.service_status.adapters;
 
-import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
 
-import java.util.Collection;
-
-public class LirrGtfsRouteAdapter implements GtfsRouteAdapter {
+public class MnrGtfsRouteAdapter implements GtfsRouteAdapter {
     private GtfsRelationalDao _dao;
 
     public void setGtfsDao(GtfsRelationalDao dao) {
