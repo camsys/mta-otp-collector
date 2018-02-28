@@ -61,6 +61,13 @@
     </servlet>
 
     <servlet>
+        <servlet-name>busServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>serviceStatus</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -92,8 +99,12 @@
         <url-pattern>/realtime/gtfsrt/LIRR/alerts</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>busServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTABUS/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>MTABUS</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MTABUS/*</url-pattern>
+        <url-pattern>/realtime/gtfsrt/MTABUS/tripUpdates</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>NYCWF</servlet-name>
@@ -119,7 +130,7 @@
         <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
         <init-param>
             <param-name>targetUri</param-name>
-            <param-value>http://gtfsrt.prod.obanyc.com/</param-value>
+            <param-value>http://gtfsrt.prod.obanyc.com/tripUpdates</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>

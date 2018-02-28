@@ -13,7 +13,14 @@
 package com.camsys.shims.gtfsrt.alerts.siri.deserializer;
 
 import com.amazonaws.util.IOUtils;
+import uk.org.siri.siri.DefaultedTextStructure;
+import uk.org.siri.siri.PtSituationElementStructure;
+import uk.org.siri.siri.ServiceDelivery;
 import uk.org.siri.siri.Siri;
+import uk.org.siri.siri.SituationElementStructure;
+import uk.org.siri.siri.SituationExchangeDeliveryStructure;
+import uk.org.siri.siri.SituationExchangeDeliveryStructure.Situations;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +36,30 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
             .replace("</LongDescription>", "</Description>")
             .replace("<MessagePriority>", "<Priority>")
             .replace("</MessagePriority>", "</Priority>");
-        return deserialize(xml);
+        Siri siri = deserialize(xml);
+        removeHtml(siri);
+        return siri;
+    }
+
+    private void removeHtml(Siri siri) {
+        if (siri.getServiceDelivery() != null) {
+            ServiceDelivery sd = siri.getServiceDelivery();
+            if (sd.getSituationExchangeDelivery() != null) {
+                for (SituationExchangeDeliveryStructure seds : sd.getSituationExchangeDelivery()) {
+                    if (seds.getSituations() != null) {
+                        Situations s = seds.getSituations();
+                        if (s.getPtSituationElement() != null) {
+                            for (PtSituationElementStructure pt : s.getPtSituationElement()) {
+                                if (pt.getDescription() != null) {
+                                    DefaultedTextStructure txt = pt.getDescription();
+                                    String val = txt.getValue().replaceAll("</?[A-Z]+>", "");
+                                    txt.setValue(val);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
