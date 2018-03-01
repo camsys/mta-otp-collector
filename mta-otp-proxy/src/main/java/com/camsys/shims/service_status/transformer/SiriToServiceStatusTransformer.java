@@ -10,6 +10,7 @@ import org.onebusaway.gtfs.model.Trip;
 import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
+
 import org.onebusaway.nyc.transit_data_manager.model.ExtendedServiceAlertBean;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
@@ -104,6 +105,7 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         routeDetail.setAgency(route.getId().getAgencyId());
         routeDetail.setMode(mode);
         routeDetail.setLastUpdated(lastUpdated);
+        routeDetail.setRouteSortOrder(route.getSortOrder() >= 0 ? route.getSortOrder() : null);
         return routeDetail;
     }
 
