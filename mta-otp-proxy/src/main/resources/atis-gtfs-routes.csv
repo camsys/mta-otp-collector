@@ -1,0 +1,434 @@
+atis_id,gtfs_id,gtfs_short_name,gtfs_long_name
+1,MTASBWY:1,1,Broadway - 7 Avenue Local
+2,MTASBWY:2,2,7 Avenue Express
+3,MTASBWY:3,3,7 Avenue Express
+4,MTASBWY:4,4,Lexington Avenue Express
+5,MTASBWY:5,5,Lexington Avenue Express
+6,MTASBWY:6X,6X,Lexington Avenue Express
+6,MTASBWY:6,6,Lexington Avenue Local
+7,MTASBWY:7X,7X,Flushing Express
+7,MTASBWY:7,7,Flushing Local
+A,MTASBWY:A,A,8 Avenue Express
+B,MTASBWY:B,B,6 Avenue Express
+C,MTASBWY:C,C,8 Avenue Local
+D,MTASBWY:D,D,6 Avenue Express
+E,MTASBWY:E,E,8 Avenue Local
+F,MTASBWY:F,F,Queens Blvd Express/ 6 Av Local
+FS,MTASBWY:FS,S,Franklin Avenue Shuttle
+G,MTASBWY:G,G,Brooklyn-Queens Crosstown
+GS,MTASBWY:GS,S,42 St Shuttle
+H,MTASBWY:H,S,Rockaway Park Shuttle
+J,MTASBWY:J,J,Nassau St Local
+L,MTASBWY:L,L,14 St-Canarsie Local
+M,MTASBWY:M,M,QNS BLVD-6th AVE/ Myrtle Local
+N,MTASBWY:N,N,Broadway Local
+Q,MTASBWY:Q,Q,Broadway Express
+R,MTASBWY:R,R,Broadway Local
+SIR,MTASBWY:SI,SIR,Staten Island Railway
+W,MTASBWY:W,W,Broadway Local
+Z,MTASBWY:Z,Z,Nassau St Express
+BABYLON,LI:1,,Babylon
+BELMONT,LI:11,,Belmont
+FARROCK,LI:7,,Far Rockaway
+HEMPST,LI:2,,Hempstead
+LONGBCH,LI:6,,Long Beach
+MONTAUK,LI:5,,Montauk
+OYSTERB,LI:3,,Oyster Bay
+PTJEFF,LI:10,,Port Jefferson
+PTWASH,LI:9,,Port Washington
+RONKO,LI:4,,Ronkonkoma
+WHEMPST,LI:8,,West Hempstead
+DANBURY,MNR:5,,Danbury
+HARLEM,MNR:2,,Harlem
+HUDSON,MNR:1,,Hudson
+NCANAAN,MNR:4,,New Canaan
+NHAVEN,MNR:3,,New Haven
+WTRBURY,MNR:6,,Waterbury
+JBNTNM,NJT:2,,Montclair-Boonton Line
+JMNBN,NJT:5,,Main/Bergen County Line
+JMNBNP,NJT:6,,Port Jervis Line
+JMNEG,NJT:7,,Morris & Essex Line
+JNEC,NJT:9,,Northeast Corridor
+JNJCL,NJT:10,,North Jersey Coast Line
+JNJCL,NJT:11,,North Jersey Coast Line
+JPASC,NJT:13,,Pascack Valley Line
+JRARV,NJT:15,,Raritan Valley Line
+B100,MTA:B100,B100,Mill Basin - Midwood
+B103-LTD,MTA:B103,B103,Canarsie - Downtown Brooklyn Ltd
+BM1,MTA:BM1,BM1,Mill Basin - Downtown/Midtown
+BM2,MTA:BM2,BM2,Canarsie/Spring Creek - Downtown/Midtown
+BM3,MTA:BM3,BM3,Sheepshead Bay - Downtown/Midtown
+BM4,MTA:BM4,BM4,Gerritsen Beach - Downtown/Midtown
+BM5,MTA:BM5,BM5,Spring Creek - Midtown
+Q10,MTA:Q10,Q10,Kew Gardens - Jfk Airport
+Q10-LTD,MTA:Q10,Q10,Kew Gardens - Jfk Airport
+Q100-LTD,MTA:Q100,Q100,Rikers Island - Long Island City
+Q101,MTA:Q101,Q101,Steinway Street
+Q102,MTA:Q102,Q102,31 St - Roosevelt Island
+Q103,MTA:Q103,Q103,27 Ave - Borden Ave
+Q104,MTA:Q104,Q104,Broadway - 48 Street
+Q11,MTA:Q11,Q11,Woodhaven Blvd
+Q110,MTA:Q110,Q110,Jamaica Ave - Hempstead Ave
+Q111,MTA:Q111,Q111,Guy Brewer Blvd - 147Th Ave
+Q112,MTA:Q112,Q112,Liberty Ave
+Q113-LTD,MTA:Q113,Q113,Guy Brewer Blvd - Nassau Expwy Ltd
+Q114-LTD,MTA:Q114,Q114,Guy Brewer Blvd Ltd - Rockaway Tpk
+Q18,MTA:Q18,Q18,30 Ave - 58 St - 65 Pl
+Q19,MTA:Q19,Q19,Astoria Blvd
+Q21,MTA:Q21,Q21,Cross Bay - Woodhaven Blvds
+Q22,MTA:Q22,Q22,Rockaway Beach Blvd - Beach Channel Dr
+Q23,MTA:Q23,Q23,108 Street
+Q25,MTA:Q25,Q25,127 Street - Kissena Bl - Parsons Bl
+Q25-LTD,MTA:Q25,Q25,127 Street - Kissena Bl - Parsons Bl
+Q29,MTA:Q29,Q29,Dry Harbor Road - 80 Street
+Q33,MTA:Q33,Q33,82 St/83 St - 95 St & Ditmars Blvd
+Q34,MTA:Q34,Q34,Willets Pt Bl - Kissena Bl - Parsons Bl
+Q35,MTA:Q35,Q35,Rockaway Park - Brooklyn College
+Q37,MTA:Q37,Q37,111Th Street
+Q38,MTA:Q38,Q38,Eliot Ave - Penelope Ave
+Q39,MTA:Q39,Q39,48 Ave - 58 St - Forest Ave
+Q40,MTA:Q40,Q40,142Nd Street
+Q41,MTA:Q41,Q41,127Th Street - 109Th Avenue
+Q47,MTA:Q47,Q47,Atlas Mall - Laguardia Main Term
+Q49,MTA:Q49,Q49,35 Ave
+Q50-LTD,MTA:Q50,Q50,Co-Op City/Pelham Bay - Flushing
+Q52-LTD,MTA:Q52,Q52,Elmhurst - Arverne Limited
+Q53-LTD,MTA:Q53,Q53,Woodside - Rockaway Pk Limited
+Q6,MTA:Q06,Q6,Sutphin Boulevard
+Q6-LTD,MTA:Q06,Q6,Sutphin Boulevard
+Q60,MTA:Q60,Q60,Queens Boulevard
+Q64,MTA:Q64,Q64,Jewel Ave
+Q65,MTA:Q65,Q65,College Point Bl - 164 St
+Q65-LTD,MTA:Q65,Q65,College Point Bl - 164 St
+Q66,MTA:Q66,Q66,Northern Blvd/Queens Plaza S
+Q67,MTA:Q67,Q67,Borden Ave - 69 Street
+Q69,MTA:Q69,Q69,21 St - Ditmars Blvd
+Q7,MTA:Q07,Q7,Rockaway Boulevard
+Q72,MTA:Q72,Q72,Junction Blvd - Laguardia Main Term
+Q8,MTA:Q08,Q8,101St Avenue
+Q9,MTA:Q09,Q9,Lincoln Street
+QM1,MTA:QM1,QM1,Fresh Meadows - Midtown Via 6 Av
+QM10,MTA:QM10,QM10,Lefrak City - Midtown Via 6 Av
+QM11,MTA:QM11,QM11,Forest Hills - Downtown
+QM12,MTA:QM12,QM12,Forest Hills - Midtown Via 6 Av
+QM15,MTA:QM15,QM15,Lindenwood - Midtown Express
+QM16,MTA:QM16,QM16,Neponsit - Midtown Express
+QM17,MTA:QM17,QM17,Far Rockaway - Midtown Express
+QM18,MTA:QM18,QM18,South Ozone Park - Midtown Express
+QM2,MTA:QM2,QM2,Bay Terrace - Midtown Via 6 Av
+QM20,MTA:QM20,QM20,Bay Terrace - Midtown
+QM21,MTA:QM21,QM21,Rochdale Village - Midtown
+QM24,MTA:QM24,QM24,Glendale - Midtown Via 6 Av
+QM25,MTA:QM25,QM25,Glendale - Downtown
+QM3,MTA:QM3,QM3,Little Neck - Midtown
+QM31,MTA:QM31,QM31,Fresh Meadows - Midtown Via 3 Av
+QM32,MTA:QM32,QM32,Bay Terrace - Midtown Via 3 Av
+QM34,MTA:QM34,QM34,Glendale - Midtown Via 3 Av
+QM35,MTA:QM35,QM35,Glen Oaks - Midtown Via 3 Av
+QM36,MTA:QM36,QM36,Lake Success - Midtown Via 3 Av
+QM4,MTA:QM4,QM4,Electchester - Midtown Via 6Th Ave
+QM40,MTA:QM40,QM40,Lefrak City - Midtown Via 3 Av
+QM42,MTA:QM42,QM42,Forest Hills - Midtown Via 3 Av
+QM44,MTA:QM44,QM44,Electchester - Midtown Via 3Rd Ave
+QM5,MTA:QM5,QM5,Glen Oaks - Midtown Via 6 Av
+QM6,MTA:QM6,QM6,Lake Success - Midtown Via 6 Av
+QM7,MTA:QM7,QM7,Fresh Meadows - Downtown
+QM8,MTA:QM8,QM8,Glen Oaks - Downtown
+B1,MTA:B1,B1,Bay Ridge - Manhattan Beach
+B11,MTA:B11,B11,Sunset Park - Midwood
+B12,MTA:B12,B12,Lefferts Gardens - East New York
+B13,MTA:B13,B13,Spring Creek - Wyckoff Hospital
+B14,MTA:B14,B14,Spring Creek - Crown Heights
+B15,MTA:B15,B15,Bedford Stuyvesant - JFK Airport
+B16,MTA:B16,B16,Bay Ridge - Lefferts Gardens
+B17,MTA:B17,B17,Canarsie - Crown Heights
+B2,MTA:B2,B2,Kings Hwy Station - Kings Plaza
+B20,MTA:B20,B20,Ridgewood - Spring Creek
+B24,MTA:B24,B24,Williamsburg - Greenpoint
+B25,MTA:B25,B25,Dwntn Bklyn & DUMBO - Broadway Junction
+B26,MTA:B26,B26,Downtown Brooklyn - Ridgewood
+B3,MTA:B3,B3,Bensonhurst - Bergen Beach
+B31,MTA:B31,B31,Gerritsen Beach - Kings Hwy Station
+B32,MTA:B32,B32,Williamsburg - Long Island City
+B35,MTA:B35,B35,Brownsville - Sunset Park
+B35-LTD,MTA:B35,B35,Brownsville - Sunset Park
+B36,MTA:B36,B36,Sheepshead Bay - Coney Island
+B37,MTA:B37,B37,Downtown Brooklyn - Bay Ridge
+B38,MTA:B38,B38,Ridgewood - Downtown Brooklyn
+B38-LTD,MTA:B38,B38,Ridgewood - Downtown Brooklyn
+B39,MTA:B39,B39,Williamsburg Bridge Plaza - Lower East Side
+B4,MTA:B4,B4,Bay Ridge - Sheepshead Bay
+B41,MTA:B41,B41,Kings Plaza - Downtown Brooklyn
+B41-LTD,MTA:B41,B41,Kings Plaza - Downtown Brooklyn
+B42,MTA:B42,B42,Canarsie Pier - Rockaway Parkway Station
+B43,MTA:B43,B43,Greenpoint - Lefferts Gardens
+B44,MTA:B44,B44,Sheepshead Bay - Williamsburg
+B44+,MTA:B44+,B44-SBS,Sheepshead Bay - Williamsburg
+B45,MTA:B45,B45,Downtown Brooklyn - Crown Heights
+B46,MTA:B46,B46,Kings Plaza - Williamsburg
+B46+,MTA:B46+,B46-SBS,Kings Plaza - Williamsburg
+B47,MTA:B47,B47,Kings Plaza - Bedford-Stuyvesant
+B48,MTA:B48,B48,Lefferts Gardens - Greenpoint
+B49,MTA:B49,B49,Manhattan Beach - Bedford-Stuyvesant
+B49-LTD,MTA:B49,B49,Manhattan Beach - Bedford-Stuyvesant
+B52,MTA:B52,B52,Downtown Brooklyn - Ridgewood
+B54,MTA:B54,B54,Downtown Brooklyn - Ridgewood
+B57,MTA:B57,B57,Gowanus - Maspeth
+B6,MTA:B6,B6,Bath Beach - East New York
+B6-LTD,MTA:B6,B6,Bath Beach - East New York
+B60,MTA:B60,B60,Williamsburg - Canarsie
+B61,MTA:B61,B61,Park Slope - Downtown Brooklyn
+B62,MTA:B62,B62,Downtown Brooklyn - Long Island City
+B63,MTA:B63,B63,Bay Ridge - Cobble Hill
+B64,MTA:B64,B64,Bay Ridge - Coney Island
+B65,MTA:B65,B65,Downtown Brooklyn - Crown Heights
+B67,MTA:B67,B67,Brooklyn Navy Yard - Kensington
+B68,MTA:B68,B68,Coney Island - Windsor Terrace
+B69,MTA:B69,B69,Downtown Brooklyn - Kensington
+B7,MTA:B7,B7,Midwood - Bedford-Stuyvesant
+B70,MTA:B70,B70,Dyker Heights - Sunset Park
+B74,MTA:B74,B74,Sea Gate - Stillwell Av
+B8,MTA:B8,B8,Dyker Heights - East Flatbush
+B82,MTA:B82,B82,Coney Island - Spring Creek Towers
+B82-LTD,MTA:B82,B82,Coney Island - Spring Creek Towers
+B83,MTA:B83,B83,Spring Creek - Broadway Junction
+B84,MTA:B84,B84,Spring Creek-New Lots
+B9,MTA:B9,B9,Bay Ridge - Kings Plaza
+BX1,MTA:BX1,Bx1,Riverdale - Mott Haven
+BX1-LTD,MTA:BX1,Bx1,Riverdale - Mott Haven
+BX10,MTA:BX10,Bx10,Riverdale - Norwood
+BX11,MTA:BX11,Bx11,West Farms Rd - Southern Blvd & GW Bridge
+BX12,MTA:BX12,Bx12,Pelham Pkwy - Fordham Rd
+BX12+,MTA:BX12+,Bx12-SBS,Pelham Pkwy - Fordham Rd
+BX12-LTD,MTA:BX12,Bx12,Pelham Pkwy - Fordham Rd
+BX13,MTA:BX13,Bx13,George Washington Bridge - Yankee Stadium
+BX15,MTA:BX15,Bx15,Fordham Plaza - Manhattanville
+BX15-LTD,MTA:BX15,Bx15,Fordham Plaza - Manhattanville
+BX16,MTA:BX16,Bx16,Pelham - Norwood
+BX17,MTA:BX17,Bx17,Fordham Plaza - Port Morris
+BX18,MTA:BX18,Bx18,Tremont - Morris Heights
+BX19,MTA:BX19,Bx19,NY Botanical Garden - Riverbank Park
+BX2,MTA:BX2,Bx2,Kingsbridge Heights - Mott Haven
+BX20,MTA:BX20,Bx20,Riverdale - Inwood
+BX21,MTA:BX21,Bx21,Westchester Sq - Mott Haven
+BX22,MTA:BX22,Bx22,Bedford Park - Castle Hill
+BX24,MTA:BX24,Bx24,Country Club - Hutchinson Metro Center
+BX26,MTA:BX26,Bx26,Co-op City Section 5 - Bedford Park
+BX27,MTA:BX27,Bx27,Clasons Pt - West Farms Rd & Southern Blvd
+BX28,MTA:BX28,Bx28,Co-op City Section 5 - Fordham Center
+BX29,MTA:BX29,Bx29,City Island - Co-op City Bay Plaza
+BX3,MTA:BX3,Bx3,Riverdale - George Washington Bridge
+BX30,MTA:BX30,Bx30,Co-op City Section 5 - Norwood
+BX31,MTA:BX31,Bx31,Woodlawn - Westchester Sq
+BX32,MTA:BX32,Bx32,Kingsbridge VA Hospital - Mott Haven
+BX33,MTA:BX33,Bx33,Port Morris - Harlem
+BX34,MTA:BX34,Bx34,Woodlawn - Fordham Center
+BX35,MTA:BX35,Bx35,West Farms Rd & Southern Blvd - GW Bridge
+BX36,MTA:BX36,Bx36,Soundview - George Washington Bridge
+BX36-LTD,MTA:BX36,Bx36,Soundview - George Washington Bridge
+BX38,MTA:BX38,Bx38,Co-op City Bay Plaza - Norwood
+BX39,MTA:BX39,Bx39,Wakefield - Clasons Pt
+BX4,MTA:BX4,Bx4,Westchester Sq - The Hub
+BX40,MTA:BX40,Bx40,Throgs Neck - River Park Towers
+BX41,MTA:BX41,Bx41,Williamsbridge - The Hub
+BX41+,MTA:BX41+,Bx41-SBS,Williamsbridge - The Hub
+BX42,MTA:BX42,Bx42,Throgs Neck - River Park Towers
+BX46,MTA:BX46,Bx46,Prospect Av - Westchester Av / Hunts Point Market
+BX4A,MTA:BX4A,Bx4A,Westchester Sq - The Hub
+BX5,MTA:BX5,Bx5,Pelham Bay - West Farms Rd & Southern Blvd
+BX6,MTA:BX6,Bx6,Hunts Point - Riverside Dr
+BX6+,MTA:BX6+,Bx6-SBS,Hunts Point - Riverside Dr
+BX7,MTA:BX7,Bx7,Riverdale - Washington Heights
+BX8,MTA:BX8,Bx8,Williamsbridge - Locust Point
+BX9,MTA:BX9,Bx9,Riverdale - West Farms Sq
+M1,MTA:M1,M1,Harlem - East Village
+M1-LTD,MTA:M1,M1,Harlem - East Village
+M10,MTA:M10,M10,Harlem - Columbus Circle
+M100,MTA:M100,M100,Inwood - East Harlem
+M101,MTA:M101,M101,East Village - Harlem
+M101-LTD,MTA:M101,M101,East Village - Harlem
+M102,MTA:M102,M102,Harlem - East Village
+M103,MTA:M103,M103,East Harlem - City Hall
+M104,MTA:M104,M104,West Harlem - Times Square
+M106,MTA:M106,M106,East Harlem - West Side
+M11,MTA:M11,M11,Riverbank Park & Harlem - West Village
+M1105,MTA:M1105,M Shuttle Bus,M Shuttle Bus
+M116,MTA:M116,M116,West Side - East Harlem
+M12,MTA:M12,M12,Midtown West - West Village
+M14A,MTA:M14A,M14A,Lower East Side - Abingdon Sq
+M14D,MTA:M14D,M14D,Lower East Side - Chelsea Piers
+M15,MTA:M15,M15,East Harlem - South Ferry
+M15+,MTA:M15+,M15-SBS,East Harlem - South Ferry
+M2,MTA:M2,M2,Washington Heights - East Village
+M2-LTD,MTA:M2,M2,Washington Heights - East Village
+M20,MTA:M20,M20,Lincoln Center - South Ferry
+M21,MTA:M21,M21,Lower East Side - West Village LTD
+M22,MTA:M22,M22,Lower East Side - Battery Park City
+M23+,MTA:M23+,M23-SBS,Chelsea Piers - East Side
+M3,MTA:M3,M3,Fort George - East Village
+M31,MTA:M31,M31,Yorkville - Clinton
+M34+,MTA:M34+,M34-SBS,East Side - Javits Center
+M34A+,MTA:M34A+,M34A-SBS,Waterside - Port Authority Terminal
+M35,MTA:M35,M35,Ward's Island - East Harlem
+M4,MTA:M4,M4,The Cloisters - Penn Station
+M4-LTD,MTA:M4,M4,The Cloisters - Penn Station
+M42,MTA:M42,M42,United Nations - W 42 St Pier
+M5,MTA:M5,M5,George Washington Bridge - 31 St & 6 Av
+M5-LTD,MTA:M5,M5,George Washington Bridge - 31 St & 6 Av
+M50,MTA:M50,M50,W 42 St Pier - East Side
+M55,MTA:M55,M55,W 44 St  - South Ferry
+M57,MTA:M57,M57,East Side - West Side
+M60+,MTA:M60+,M60-SBS,LaGuardia Airport - West Side
+M66,MTA:M66,M66,East Side - Lincoln Center
+M7,MTA:M7,M7,Harlem - 14th Street
+M72,MTA:M72,M72,East Side - West Side
+M79+,MTA:M79+,M79-SBS,Yorkville - West Side
+M8,MTA:M8,M8,West Village - East Village LTD
+M86+,MTA:M86+,M86-SBS,Yorkville - West Side
+M9,MTA:M9,M9,Battery Park City - Kips Bay
+M96,MTA:M96,M96,East Side - West Side
+M98-LTD,MTA:M98,M98,Washington Heights - Upper East Side
+Q1,MTA:Q1,Q1,Queens Village / Bellerose - Jamaica
+Q12,MTA:Q12,Q12,Little Neck - Flushing
+Q13,MTA:Q13,Q13,Fort Totten - Flushing
+Q15,MTA:Q15,Q15,Flushing - Beechhurst
+Q15A,MTA:Q15A,Q15A,Flushing - Beechhurst / Whitestone
+Q16,MTA:Q16,Q16,Fort Totten - Flushing
+Q17,MTA:Q17,Q17,Flushing - Jamaica
+Q17-LTD,MTA:Q17,Q17,Flushing - Jamaica
+Q2,MTA:Q2,Q2,Queens Village - Jamaica
+Q20A,MTA:Q20A,Q20A,College Point - Jamaica
+Q20B,MTA:Q20B,Q20B,College Point - Jamaica
+Q24,MTA:Q24,Q24,Broadway Junction - Jamaica
+Q26,MTA:Q26,Q26,Fresh Meadows - Flushing (Part-time)
+Q27,MTA:Q27,Q27,Cambria Heights - Flushing
+Q27-LTD,MTA:Q27,Q27,Cambria Heights - Flushing
+Q28,MTA:Q28,Q28,Bayside - Flushing
+Q3,MTA:Q3,Q3,Jamaica - JFK Airport
+Q30,MTA:Q30,Q30,Little Neck or Queensborough Community College - Jamaica
+Q31,MTA:Q31,Q31,Bayside - Jamaica
+Q32,MTA:Q32,Q32,Jackson Heights - Penn Station
+Q36,MTA:Q36,Q36,Floral Park or Little Neck - Jamaica
+Q36-LTD,MTA:Q36,Q36,Floral Park or Little Neck - Jamaica
+Q4,MTA:Q4,Q4,Cambria Heights - Jamaica
+Q4-LTD,MTA:Q4,Q4,Cambria Heights - Jamaica
+Q42,MTA:Q42,Q42,Addeslieigh Park - Jamaica
+Q43,MTA:Q43,Q43,Floral Park - Jamaica
+Q43-LTD,MTA:Q43,Q43,Floral Park - Jamaica
+Q44+,MTA:Q44+,Q44-SBS,Bronx Zoo - Jamaica
+Q46,MTA:Q46,Q46,Glen Oaks - Kew Gardens
+Q46-LTD,MTA:Q46,Q46,Glen Oaks - Kew Gardens
+Q48,MTA:Q48,Q48,Flushing - LaGuardia Airport
+Q5,MTA:Q5,Q5,Rosedale - Jamaica
+Q5-LTD,MTA:Q5,Q5,Rosedale - Jamaica
+Q54,MTA:Q54,Q54,Williamsburg - Jamaica
+Q55,MTA:Q55,Q55,Ridgewood - Richmond Hill
+Q56,MTA:Q56,Q56,Broadway Junction - Jamaica
+Q58,MTA:Q58,Q58,Ridgewood - Flushing
+Q58-LTD,MTA:Q58,Q58,Ridgewood - Flushing
+Q59,MTA:Q59,Q59,Williamsburg - Rego Park
+Q76,MTA:Q76,Q76,College Point - Jamaica
+Q77,MTA:Q77,Q77,Laurelton - Jamaica
+Q83,MTA:Q83,Q83,Cambria Heights - Jamaica
+Q83-LTD,MTA:Q83,Q83,Cambria Heights - Jamaica
+Q84,MTA:Q84,Q84,Laurelton - Jamaica
+Q85,MTA:Q85,Q85,Rosedale - Jamaica
+Q85-LTD,MTA:Q85,Q85,Rosedale - Jamaica
+Q88,MTA:Q88,Q88,Elmhurst - Queens Village
+S40,MTA:S40,S40,St. George - Goethals Rd North
+S42,MTA:S42,S42,St. George - Clyde Place
+S44,MTA:S44,S44,St. George - Staten Island Mall
+S46,MTA:S46,S46,St. George - West Shore Plaza
+S48,MTA:S48,S48,St. George - Mariners Harbor
+S51,MTA:S51,S51,St. George - West Shore Plaza
+S52,MTA:S52,S52,St. George - Staten Island Univ. Hospital
+S53,MTA:S53,S53,Port Richmond - Bay Ridge
+S54,MTA:S54,S54,West New Brighton - Eltingville
+S55,MTA:S55,S55,Rossville - Staten Island Mall
+S56,MTA:S56,S56,Huguenot - Staten Island Mall
+S57,MTA:S57,S57,Port Richmond - New Dorp
+S59,MTA:S59,S59,Port Richmond - Tottenville
+S61,MTA:S61,S61,St. George - Staten Island Mall
+S62,MTA:S62,S62,St. George - Travis
+S66,MTA:S66,S66,St. George - Port Richmond
+S74,MTA:S74,S74,St. George - Bricktown Mall
+S76,MTA:S76,S76,St. George - Oakwood
+S78,MTA:S78,S78,St. George - Bricktown Mall
+S79+,MTA:S79+,S79-SBS,Staten Island Mall - Bay Ridge
+S81-LTD,MTA:S81,S81,St. George - Grant City LTD
+S84-LTD,MTA:S84,S84,St. George - Bricktown Mall LTD
+S86-LTD,MTA:S86,S86,St. George - Oakwood LTD
+S89-LTD,MTA:S89,S89,Eltingville - Bayonne LTD
+S90-LTD,MTA:S90,S90,St. George - Goethals Rd North LTD
+S91-LTD,MTA:S91,S91,St. George - Staten Island Mall LTD
+S92-LTD,MTA:S92,S92,St. George - Travis LTD
+S93-LTD,MTA:S93,S93,College of Staten Island - Bay Ridge LTD
+S94-LTD,MTA:S94,S94,St. George - Staten Island Mall LTD
+S96-LTD,MTA:S96,S96,St. George - West Shore Plaza LTD
+S98-LTD,MTA:S98,S98,St. George - Mariners Harbor LTD
+X1,MTA:X1,X1,Staten Island - Manhattan Express
+X10,MTA:X10,X10,Staten Island - Manhattan Express
+X10B,MTA:X10B,X10B,Staten Island - Manhattan Express
+X11,MTA:X11,X11,Staten Island - Lower Manhattan Express
+X12,MTA:X12,X12,Staten Island - Manhattan Express
+X14,MTA:X14,X14,Staten Island - Manhattan Express
+X15,MTA:X15,X15,Staten Island - Lower Manhattan Express
+X17A,MTA:X17A,X17A,Staten Island - Lower Manhattan Express
+X17J,MTA:X17J,X17J,Staten Island - Midtown Manhattan Express
+X19,MTA:X19,X19,Staten Island - Manhattan Express
+X2,MTA:X2,X2,Staten Island - Midtown Manhattan Express
+X21,MTA:X21,X21,Staten Island - Midtown Manhattan Express
+X22,MTA:X22,X22,Staten Island - Manhattan Express
+X22A,MTA:X22A,X22A,Staten Island - Manhattan Express
+X27,MTA:X27,X27,Bay Ridge - Manhattan Express
+X28,MTA:X28,X28,Sea Gate / Bensonhurst - Manhattan Express
+X3,MTA:X3,X3,Staten Island - Lower Manhattan Express
+X30,MTA:X30,X30,Staten Island - Manhattan Express
+X31,MTA:X31,X31,Staten Island - Manhattan Express
+X37,MTA:X37,X37,Bay Ridge - Midtown Manhattan Express
+X38,MTA:X38,X38,Sea Gate / Bensonhurst - Midtown Manhattan Express
+X4,MTA:X4,X4,Staten Island - Lower Manhattan Express
+X42,MTA:X42,X42,Staten Island - Midtown Manhattan Express
+X5,MTA:X5,X5,Staten Island - Midtown Manhattan Express
+X63,MTA:X63,X63,Rosedale - Midtown Manhattan Express
+X64,MTA:X64,X64,Cambria Heights - Midtown Manhattan Express
+X68,MTA:X68,X68,Floral Park - Midtown Manhattan Express
+X7,MTA:X7,X7,Staten Island - Manhattan Express
+X8,MTA:X8,X8,Staten Island - Lower Manhattan Express
+X9,MTA:X9,X9,Staten Island - Manhattan Express
+JPAH3,path-nj-us:859,PATH,Hoboken - 33rd Street
+JPAHW,path-nj-us:860,PATH,Hoboken - World Trade Center
+JPAJ3,path-nj-us:1024,PATH,Journal Square - 33rd Street (via Hoboken)
+JPAJ3,path-nj-us:861,PATH,Journal Square - 33rd Street
+JPANW,path-nj-us:862,PATH,Newark - World Trade Center
+SIF,SIF:SIF,,Staten Island Ferry
+ELFX,LIBUS:ElFx,ElFx,Elmont Flexi
+MMCS,LIBUS:MMCS,MMCS,Mercy Medical Shuttle
+N1,LIBUS:n1,n1,Jamaica-Elmont -Hewlett
+N15,LIBUS:n15,n15,Long Beach- Roosevelt Field
+N16,LIBUS:n16,n16,Hempstead-Rockville Centre
+N19,LIBUS:n19,n19,Freeport-Sunrise Mall
+N20,LIBUS:n20,n20,Hicks-Roslyn-Flush
+N21,LIBUS:n21,n21,Great Neck-Glen Cove
+N22,LIBUS:n22,n22,Jamaica-Mineola- Roos Fld-Hksvl
+N23,LIBUS:n23,n23,Mineola-Manorhaven
+N24,LIBUS:n24,n24,Jamaica-Mineola- Roos. Field-EM
+N25,LIBUS:n25,n25,Great Neck-Lynbrook
+N26,LIBUS:n26,n26,Jamaica - Great Neck
+N27,LIBUS:n27,n27,Hempstead- Glen Cove
+N31,LIBUS:n31,n31,Far Rockaway- Lynbrook-Hemp
+N32,LIBUS:n32,n32,Far Rockaway- Lynbrook-Hemp
+N33,LIBUS:n33,n33,Long Beach-Far Rockaway
+N35,LIBUS:n35,n35,Baldwin-Hempstead-Westbury
+N4,LIBUS:n4,n4,Freeport- Jamaica
+N40,LIBUS:n40,n40,Freeport- Mineola
+N43,LIBUS:n43,n43,Roosevelt Field- Freeport
+N48,LIBUS:n48,n48,Hempstead- Jericho Quad
+N49,LIBUS:n49,n49,Hempstead- Hicksville
+N54,LIBUS:n54,n54,Hempstead-Amityville/Sun Mall
+N57,LIBUS:n57,n57,Great Neck Loop
+N58,LIBUS:n58,n58,Great Neck LIRR-Kings Pt.
+N6,LIBUS:n6,n6,Hempstead - Jamaica
+N72,LIBUS:n72,n72,Hempstead- Babylon LIRR
+N79,LIBUS:n79,n79,Hicksville- Walt Whitman
+N80,LIBUS:n80,n80,Hicksville-Sun Mall
