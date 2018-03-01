@@ -125,7 +125,6 @@ public class RouteDetail {
         if (routeSortOrder != null ? !routeSortOrder.equals(that.routeSortOrder) : that.routeSortOrder != null)
             return false;
         if (inService != null ? !inService.equals(that.inService) : that.inService != null) return false;
-        if (lastUpdated != null ? !lastUpdated.equals(that.lastUpdated) : that.lastUpdated != null) return false;
         return statusDetailsList != null ? statusDetailsList.equals(that.statusDetailsList) : that.statusDetailsList == null;
     }
 
@@ -138,7 +137,6 @@ public class RouteDetail {
         result = 31 * result + (routeId != null ? routeId.hashCode() : 0);
         result = 31 * result + (routeSortOrder != null ? routeSortOrder.hashCode() : 0);
         result = 31 * result + (inService != null ? inService.hashCode() : 0);
-        result = 31 * result + (lastUpdated != null ? lastUpdated.hashCode() : 0);
         result = 31 * result + (statusDetailsList != null ? statusDetailsList.hashCode() : 0);
         return result;
     }
