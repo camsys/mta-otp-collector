@@ -15,8 +15,12 @@ package com.camsys.shims.service_status.adapters;
 import com.camsys.shims.atis.AtisGtfsMap;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AtisIdRouteAdapter implements GtfsRouteAdapter {
+
+    private static final Logger _log = LoggerFactory.getLogger(AtisIdRouteAdapter.class);
 
     private AtisGtfsMap _atisGtfsMap;
 
@@ -26,13 +30,16 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
     public String getGtfsRouteId(SituationAffectsBean affectsBean) {
         String routeId = affectsBean.getRouteId();
         AgencyAndId id = _atisGtfsMap.getId(routeId);
-        if (id == null)
-            throw new IllegalArgumentException("no");
+        if (id == null) {
+            _log.error("missing ID {}" + routeId);
+            return null;
+        }
         if (id.getAgencyId().equals(_agencyId)) {
             return _agencyId + AgencyAndId.ID_SEPARATOR + id.getId();
         }
         else {
-            throw new IllegalArgumentException("No GTFS ID");
+            _log.error("unexpected agency ID: {}", id.getAgencyId());
+            return null;
         }
     }
 

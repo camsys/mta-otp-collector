@@ -61,6 +61,8 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         for(ExtendedServiceAlertBean alert : serviceAlerts){
             for(SituationAffectsBean affectsBean : alert.getAllAffects()){
                 String routeId = gtfsAdapter.getGtfsRouteId(affectsBean);
+                if (routeId == null)
+                    continue;
                 Route route = getRoute(routeId, dao);
                 if(route != null) {
                     StatusDetail statusDetail = generateStatusDetail(alert, affectsBean);

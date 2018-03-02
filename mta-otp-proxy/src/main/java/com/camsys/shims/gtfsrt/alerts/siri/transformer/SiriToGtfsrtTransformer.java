@@ -62,7 +62,8 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         for (SituationAffectsBean affects : alert.getAllAffects()) {
             if (affects.getRouteId() != null) {
                 String routeId = _gtfsRouteAdapter.getGtfsRouteId(affects);
-                affects.setRouteId(routeId);
+                if (routeId != null)
+                    affects.setRouteId(routeId);
             }
         }
     }
