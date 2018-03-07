@@ -67,13 +67,13 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
                 if(route != null) {
                     StatusDetail statusDetail = generateStatusDetail(alert, affectsBean);
                     if (!tempRouteDetailsMap.containsKey(routeId)) {
-                        List<StatusDetail> statusDetails = new ArrayList<>();
+                        Set<StatusDetail> statusDetails = new LinkedHashSet<>();
                         statusDetails.add(statusDetail);
                         RouteDetail routeDetail = generateRouteDetail(route, mode, dao, csd, lastUpdated);
-                        routeDetail.setStatusDetailsList(statusDetails);
+                        routeDetail.setStatusDetails(statusDetails);
                         tempRouteDetailsMap.put(routeId, routeDetail);
                     } else {
-                        tempRouteDetailsMap.get(routeId).getStatusDetailsList().add(statusDetail);
+                        tempRouteDetailsMap.get(routeId).getStatusDetails().add(statusDetail);
                     }
                 }
             }

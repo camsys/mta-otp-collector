@@ -74,6 +74,14 @@
         </servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>routeBranchStop</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+
     <servlet-mapping>
         <servlet-name>subwayTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>
@@ -121,6 +129,10 @@
     <servlet-mapping>
         <servlet-name>serviceStatus</servlet-name>
         <url-pattern>/realtime/serviceStatus</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>routeBranchStop</servlet-name>
+        <url-pattern>/schedule/stopsForRoute</url-pattern>
     </servlet-mapping>
 
     <!-- proxy config -->
@@ -176,4 +188,19 @@
             <param-value>true</param-value>
         </init-param>
     </servlet>
+
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+
+        <init-param>
+            <param-name>cors.allowOrigin</param-name>
+            <param-value>*</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 </web-app>

@@ -24,7 +24,7 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
 
     private AtisGtfsMap _atisGtfsMap;
 
-    private String _agencyId;
+    private String _gtfsAgencyId;
 
     @Override
     public String getGtfsRouteId(SituationAffectsBean affectsBean) {
@@ -34,8 +34,8 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
             _log.error("missing ID {}" + routeId);
             return null;
         }
-        if (id.getAgencyId().equals(_agencyId)) {
-            return _agencyId + AgencyAndId.ID_SEPARATOR + id.getId();
+        if (id.getAgencyId().equals(_gtfsAgencyId)) {
+            return _gtfsAgencyId + AgencyAndId.ID_SEPARATOR + id.getId();
         }
         else {
             _log.error("unexpected agency ID: {}", id.getAgencyId());
@@ -47,7 +47,7 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
         _atisGtfsMap = atisGtfsMap;
     }
 
-    public void setAgencyId(String agencyId) {
-        _agencyId = agencyId;
+    public void setGtfsAgencyId(String gtfsAgencyId) {
+        _gtfsAgencyId = gtfsAgencyId;
     }
 }

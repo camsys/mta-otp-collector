@@ -13,13 +13,13 @@ public class ServiceStatus {
 
     private Date _lastUpdated;
 
-    private List<RouteDetail> _routeDetailList;
+    private List<RouteDetail> _routeDetails;
 
     public ServiceStatus(){}
 
-    public ServiceStatus(Date lastUpdated, List<RouteDetail> routeDetailList ){
+    public ServiceStatus(Date lastUpdated, List<RouteDetail> routeDetails ){
         _lastUpdated = lastUpdated;
-        _routeDetailList = routeDetailList;
+        _routeDetails = routeDetails;
     }
 
     @JsonProperty("lastUpdated")
@@ -33,12 +33,12 @@ public class ServiceStatus {
     }
 
     @JsonProperty("routeDetails")
-    public List<RouteDetail> getRouteDetailList() {
-        return _routeDetailList;
+    public List<RouteDetail> getRouteDetails() {
+        return _routeDetails;
     }
 
-    public void setRouteDetailList(List<RouteDetail> routeDetailList) {
-        _routeDetailList = routeDetailList;
+    public void setRouteDetails(List<RouteDetail> routeDetails) {
+        _routeDetails = routeDetails;
     }
 
 }

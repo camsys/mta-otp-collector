@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.camsys.shims.util.TimeUtils.getCurrentDateTime;
@@ -33,7 +30,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
         List<RouteDetail> allRouteDetails = new ArrayList<>();
         for (ServiceStatusSource source : _sources) {
             source.update();
-            allRouteDetails.addAll(source.getStatus(null).getRouteDetailList());
+            allRouteDetails.addAll(source.getStatus(null).getRouteDetails());
         }
         _serviceStatus = new ServiceStatus(new Date(), allRouteDetails);
 
@@ -49,7 +46,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
     private ServiceStatus getFilteredServiceStatus(String updatesSince){
         try {
             final Date updatesSinceDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(updatesSince);
-            List<RouteDetail> routeDetails = _serviceStatus.getRouteDetailList().stream()
+            List<RouteDetail> routeDetails = _serviceStatus.getRouteDetails().stream()
                     .filter(routeDetail -> updatesSinceDate.compareTo(routeDetail.getLastUpdated()) <= 0)
                     .collect(Collectors.toList());
 

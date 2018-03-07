@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RouteDetail {
@@ -28,7 +29,7 @@ public class RouteDetail {
     @JsonIgnore
     private Date lastUpdated;
 
-    private List<StatusDetail> statusDetailsList;
+    private Set<StatusDetail> statusDetails;
 
     @JsonProperty("route")
     public String getRouteName() {
@@ -85,12 +86,12 @@ public class RouteDetail {
     }
 
     @JsonProperty("statusDetails")
-    public List<StatusDetail> getStatusDetailsList() {
-        return statusDetailsList;
+    public Set<StatusDetail> getStatusDetails() {
+        return statusDetails;
     }
 
-    public void setStatusDetailsList(List<StatusDetail> statusDetailsList) {
-        this.statusDetailsList = statusDetailsList;
+    public void setStatusDetails(Set<StatusDetail> statusDetails) {
+        this.statusDetails = statusDetails;
     }
 
     @JsonProperty("routeSortOrder")
@@ -125,7 +126,7 @@ public class RouteDetail {
         if (routeSortOrder != null ? !routeSortOrder.equals(that.routeSortOrder) : that.routeSortOrder != null)
             return false;
         if (inService != null ? !inService.equals(that.inService) : that.inService != null) return false;
-        return statusDetailsList != null ? statusDetailsList.equals(that.statusDetailsList) : that.statusDetailsList == null;
+        return statusDetails != null ? statusDetails.equals(that.statusDetails) : that.statusDetails == null;
     }
 
     @Override
@@ -137,7 +138,7 @@ public class RouteDetail {
         result = 31 * result + (routeId != null ? routeId.hashCode() : 0);
         result = 31 * result + (routeSortOrder != null ? routeSortOrder.hashCode() : 0);
         result = 31 * result + (inService != null ? inService.hashCode() : 0);
-        result = 31 * result + (statusDetailsList != null ? statusDetailsList.hashCode() : 0);
+        result = 31 * result + (statusDetails != null ? statusDetails.hashCode() : 0);
         return result;
     }
 }
