@@ -26,9 +26,13 @@ import org.onebusaway.nyc.gtfsrt.util.GtfsRealtimeLibrary;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
+import uk.org.siri.siri.PtSituationElementStructure;
 import uk.org.siri.siri.Siri;
+import uk.org.siri.siri.SituationExchangeDeliveryStructure;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
@@ -36,6 +40,14 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     @Override
     public FeedMessage transform(Siri siri) {
+
+        if(!siri.getServiceDelivery().getSituationExchangeDelivery().iterator().next().getSituations().getPtSituationElement().iterator().next().isPlanned())
+        {
+            System.out.println("IS NOT PLANNED");
+        }
+
+        siri = removeAllPlannedSiriNotifications(siri);
+
         List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri);
 
         FeedMessage.Builder message = FeedMessage.newBuilder();
@@ -48,6 +60,8 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         for (ServiceAlertBean serviceAlert : serviceAlerts) {
             if (_gtfsRouteAdapter != null)
                 replaceRouteIds(serviceAlert);
+
+
             FeedEntity.Builder fe = FeedEntity.newBuilder();
             Alert.Builder alert = GtfsRealtimeLibrary.makeAlert(serviceAlert);
             fe.setAlert(alert);
@@ -56,6 +70,48 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         }
 
         return message.build();
+    }
+
+    private Siri removeAllPlannedSiriNotifications(Siri siri)
+    {
+        Iterator<SituationExchangeDeliveryStructure> situationExchangeDeliveryIterator =
+                siri.getServiceDelivery().getSituationExchangeDelivery().iterator();
+
+        List<SituationExchangeDeliveryStructure> situationExchangeDeliveryStructureList = new ArrayList<SituationExchangeDeliveryStructure>();
+        while (situationExchangeDeliveryIterator.hasNext())
+        {
+            SituationExchangeDeliveryStructure sed = situationExchangeDeliveryIterator.next();
+
+            Iterator<PtSituationElementStructure> ptSituationElementStructureIterator = sed.getSituations().getPtSituationElement().iterator();
+
+//            SituationExchangeDeliveryStructure.Situations situations = sed.getSituations();
+
+            List<PtSituationElementStructure> finalPtElementList = new ArrayList<PtSituationElementStructure>();
+
+            while (ptSituationElementStructureIterator.hasNext())
+            {
+                PtSituationElementStructure ptSituationElement = ptSituationElementStructureIterator.next();
+
+                if(!ptSituationElement.isPlanned())
+                {
+                    finalPtElementList.add(ptSituationElement);
+                }
+            }
+
+            SituationExchangeDeliveryStructure.Situations situations = new SituationExchangeDeliveryStructure.Situations();
+
+
+            sed.setSituations();
+            situationExchangeDeliveryStructureList.add(sed);
+        }
+
+        if(!siri.getServiceDelivery().getSituationExchangeDelivery().iterator().next().getSituations().getPtSituationElement().iterator().next().isPlanned())
+        {
+            System.out.println("IS NOT PLANNED");
+        }
+
+
+        return siri;
     }
 
     private void replaceRouteIds(ServiceAlertBean alert) {
