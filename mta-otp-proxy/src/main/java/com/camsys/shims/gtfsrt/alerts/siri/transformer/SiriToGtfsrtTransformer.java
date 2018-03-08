@@ -101,7 +101,7 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
             SituationExchangeDeliveryStructure.Situations situations = new SituationExchangeDeliveryStructure.Situations();
 
 
-            sed.setSituations();
+
             situationExchangeDeliveryStructureList.add(sed);
         }
 
