@@ -41,14 +41,7 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
     @Override
     public FeedMessage transform(Siri siri) {
 
-        if(!siri.getServiceDelivery().getSituationExchangeDelivery().iterator().next().getSituations().getPtSituationElement().iterator().next().isPlanned())
-        {
-            System.out.println("IS NOT PLANNED");
-        }
-
-        siri = removeAllPlannedSiriNotifications(siri);
-
-        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri);
+        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri, true);
 
         FeedMessage.Builder message = FeedMessage.newBuilder();
         FeedHeader.Builder header = FeedHeader.newBuilder();
@@ -70,48 +63,6 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         }
 
         return message.build();
-    }
-
-    private Siri removeAllPlannedSiriNotifications(Siri siri)
-    {
-        Iterator<SituationExchangeDeliveryStructure> situationExchangeDeliveryIterator =
-                siri.getServiceDelivery().getSituationExchangeDelivery().iterator();
-
-        List<SituationExchangeDeliveryStructure> situationExchangeDeliveryStructureList = new ArrayList<SituationExchangeDeliveryStructure>();
-        while (situationExchangeDeliveryIterator.hasNext())
-        {
-            SituationExchangeDeliveryStructure sed = situationExchangeDeliveryIterator.next();
-
-            Iterator<PtSituationElementStructure> ptSituationElementStructureIterator = sed.getSituations().getPtSituationElement().iterator();
-
-//            SituationExchangeDeliveryStructure.Situations situations = sed.getSituations();
-
-            List<PtSituationElementStructure> finalPtElementList = new ArrayList<PtSituationElementStructure>();
-
-            while (ptSituationElementStructureIterator.hasNext())
-            {
-                PtSituationElementStructure ptSituationElement = ptSituationElementStructureIterator.next();
-
-                if(!ptSituationElement.isPlanned())
-                {
-                    finalPtElementList.add(ptSituationElement);
-                }
-            }
-
-            SituationExchangeDeliveryStructure.Situations situations = new SituationExchangeDeliveryStructure.Situations();
-
-
-
-            situationExchangeDeliveryStructureList.add(sed);
-        }
-
-        if(!siri.getServiceDelivery().getSituationExchangeDelivery().iterator().next().getSituations().getPtSituationElement().iterator().next().isPlanned())
-        {
-            System.out.println("IS NOT PLANNED");
-        }
-
-
-        return siri;
     }
 
     private void replaceRouteIds(ServiceAlertBean alert) {
