@@ -38,12 +38,12 @@ PTJEFF,LI:10,,Port Jefferson
 PTWASH,LI:9,,Port Washington
 RONKO,LI:4,,Ronkonkoma
 WHEMPST,LI:8,,West Hempstead
-DANBURY,MNR:5,,Danbury
-HARLEM,MNR:2,,Harlem
-HUDSON,MNR:1,,Hudson
-NCANAAN,MNR:4,,New Canaan
-NHAVEN,MNR:3,,New Haven
-WTRBURY,MNR:6,,Waterbury
+DANBURY,1:5,,Danbury
+HARLEM,1:2,,Harlem
+HUDSON,1:1,,Hudson
+NCANAAN,1:4,,New Canaan
+NHAVEN,1:3,,New Haven
+WTRBURY,1:6,,Waterbury
 JBNTNM,NJT:2,,Montclair-Boonton Line
 JMNBN,NJT:5,,Main/Bergen County Line
 JMNBNP,NJT:6,,Port Jervis Line
