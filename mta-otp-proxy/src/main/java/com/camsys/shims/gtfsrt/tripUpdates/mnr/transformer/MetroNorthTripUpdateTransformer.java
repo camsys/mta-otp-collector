@@ -44,11 +44,17 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private CalendarServiceData _csd;
 
+    private String _agencyId = "MNR";
+
     private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
     public void setDao(GtfsRelationalDao dao) {
         _dao = dao;
         _csd = new CalendarServiceDataFactoryImpl(_dao).createData();
+    }
+
+    public void setAgencyId(String agencyId) {
+        _agencyId = agencyId;
     }
 
     @Override
@@ -102,7 +108,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     private Trip findCorrectTrip(String route, String tripShortName, ServiceDate sd) {
         if (sd == null)
             return null;
-        Route r = _dao.getRouteForId(new AgencyAndId("1", route));
+        Route r = _dao.getRouteForId(new AgencyAndId(_agencyId, route));
         Set<AgencyAndId> serviceIds = _csd.getServiceIdsForDate(sd);
         List<Trip> candidates = new ArrayList<>();
         for (Trip t : _dao.getTripsForRoute(r)) {
