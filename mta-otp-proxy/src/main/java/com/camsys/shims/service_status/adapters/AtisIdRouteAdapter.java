@@ -18,13 +18,15 @@ import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class AtisIdRouteAdapter implements GtfsRouteAdapter {
 
     private static final Logger _log = LoggerFactory.getLogger(AtisIdRouteAdapter.class);
 
     private AtisGtfsMap _atisGtfsMap;
 
-    private String _gtfsAgencyId;
+    private List<String> _gtfsAgencyId;
 
     @Override
     public String getGtfsRouteId(SituationAffectsBean affectsBean) {
@@ -34,8 +36,8 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
             _log.error("missing ID {}" + routeId);
             return null;
         }
-        if (id.getAgencyId().equals(_gtfsAgencyId)) {
-            return _gtfsAgencyId + AgencyAndId.ID_SEPARATOR + id.getId();
+        if (_gtfsAgencyId.contains(id.getAgencyId())) {
+            return id.getAgencyId() + AgencyAndId.ID_SEPARATOR + id.getId();
         }
         else {
             _log.error("unexpected agency ID: {}", id.getAgencyId());
@@ -43,11 +45,12 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
         }
     }
 
+
     public void setAtisGtfsMap(AtisGtfsMap atisGtfsMap) {
         _atisGtfsMap = atisGtfsMap;
     }
 
-    public void setGtfsAgencyId(String gtfsAgencyId) {
+    public void setGtfsAgencyId(List<String> gtfsAgencyId) {
         _gtfsAgencyId = gtfsAgencyId;
     }
 }
