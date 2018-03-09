@@ -1,12 +1,7 @@
 package com.camsys.shims.schedule.transformer;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.S3Object;
-import com.camsys.shims.schedule.transformer.model.RouteBranchStop;
+import com.camsys.shims.util.S3Utils;
 import com.csvreader.CsvReader;
 
 import java.io.IOException;
@@ -25,10 +20,7 @@ public class CsvToJsonTransformer {
     private AmazonS3 s3 = null;
     public CsvToJsonTransformer(CsvRecordReader csvRecordReader, String user, String pass) {
         this.csvRecordReader = csvRecordReader;
-        BasicAWSCredentials credentials = new BasicAWSCredentials(user, pass);
-        s3 = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .build();
+        s3 = S3Utils.getS3Client(user, pass);
     }
 
     /**
@@ -38,7 +30,7 @@ public class CsvToJsonTransformer {
     public void loadUrl(String url) {
         InputStream input = null;
         if (url.startsWith("s3://")) {
-            input = getViaS3(url);
+            input = S3Utils.getViaS3(s3, url);
         } else {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
         }
@@ -56,21 +48,6 @@ public class CsvToJsonTransformer {
                 }
             }
         }
-    }
-
-    /**
-     * retrieve an input stream representing the contents of the url at the s3 location.
-     * @param url
-     * @return
-     */
-    public InputStream getViaS3(String url) {
-        AmazonS3URI uri = new AmazonS3URI(url);
-        S3Object o = s3.getObject(uri.getBucket(), uri.getKey());
-
-        if (o != null) {
-            return o.getObjectContent();
-        }
-        return null;
     }
 
     /**

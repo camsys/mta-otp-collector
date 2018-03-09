@@ -40,13 +40,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>elevatorAlerts</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>mnrServiceAlerts</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -93,10 +86,6 @@
     <servlet-mapping>
         <servlet-name>mnrTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MNR/tripUpdates</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>elevatorAlerts</servlet-name>
-        <url-pattern>/realtime/gtfsrt/elevators</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>mnrServiceAlerts</servlet-name>

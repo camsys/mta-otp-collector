@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.camsys</groupId>
     <artifactId>mta-otp-collector</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>mta-otp-collector</name>
     <description>realtime collector/aggregator for NYC MTA</description>
@@ -29,13 +28,18 @@
             <id>public.onebusaway.org</id>
             <url>http://nexus.onebusaway.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>releases.staging.obanyc.com</id>
+            <url>http://build.staging.obanyc.com/archiva/repository/releases/</url>
+        </repository>
     </repositories>
 
     <scm>
         <connection>scm:git:http://github.com/camsys/mta-otp-collector.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/camsys/mta-otp-collector.git</developerConnection>
         <url>http://github.com/camsys/mta-otp-collector</url>
-    </scm>
+    <tag>HEAD</tag>
+  </scm>
 
     <distributionManagement>
       <repository>

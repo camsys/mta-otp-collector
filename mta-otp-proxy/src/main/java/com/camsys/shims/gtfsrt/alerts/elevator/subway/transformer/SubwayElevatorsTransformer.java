@@ -14,6 +14,7 @@ package com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer;
 
 import com.camsys.mta.elevators.NYCOutagesType;
 import com.camsys.mta.elevators.OutageType;
+import com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider.ElevatorToStopsProvider;
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.Alert;
 import com.google.transit.realtime.GtfsRealtime.EntitySelector;
@@ -23,11 +24,14 @@ import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.TranslatedString;
 import com.google.transit.realtime.GtfsRealtime.TimeRange;
 import com.google.transit.realtime.GtfsRealtimeConstants;
+import com.google.transit.realtime.GtfsRealtimeOneBusAway;
+import com.google.transit.realtime.GtfsRealtimeOneBusAway.OneBusAwayEntitySelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.List;
 
 public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOutagesType> {
@@ -35,6 +39,8 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
     private static Logger _log = LoggerFactory.getLogger(SubwayElevatorsTransformer.class);
 
     private static final SimpleDateFormat _dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+
+    private ElevatorToStopsProvider _stopsProvider;
 
     @Override
     public FeedMessage transform(NYCOutagesType obj) {
@@ -49,8 +55,15 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
         List<OutageType> outages = obj.getOutage();
 
         for (OutageType outage : outages) {
-            FeedEntity fe = outageToEntity(outage);
-            message.addEntity(fe);
+            Collection<String> stopIds = _stopsProvider.getStopsForElevator(outage.getEquipment());
+            if (stopIds.isEmpty()) {
+                _log.info("No stop for elevator={}", outage.getEquipment());
+                continue;
+            }
+            for (String stopId : stopIds) {
+                FeedEntity fe = outageToEntity(outage, stopId);
+                message.addEntity(fe);
+            }
         }
 
         _log.info("Adding {} elevators", outages.size());
@@ -58,9 +71,14 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
         return message.build();
     }
 
-    private FeedEntity outageToEntity(OutageType outage) {
+    private FeedEntity outageToEntity(OutageType outage, String stopId) {
         Alert.Builder alert = Alert.newBuilder();
-        alert.addInformedEntity(EntitySelector.newBuilder().setStopId(outage.getEquipment()));
+        OneBusAwayEntitySelector elevatorExtension = OneBusAwayEntitySelector.newBuilder()
+                .setElevatorId(outage.getEquipment()).build();
+        EntitySelector.Builder informedEntity = EntitySelector.newBuilder()
+                .setStopId(stopId)
+                .setExtension(GtfsRealtimeOneBusAway.obaEntitySelector, elevatorExtension);
+        alert.addInformedEntity(informedEntity);
         String desc = outageDescription(outage);
         alert.setHeaderText(translatedString(desc));
         alert.setDescriptionText(translatedString(desc));
@@ -69,7 +87,7 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
                 .setEnd(stringToDate(outage.getEstimatedreturntoservice())));
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
-                .setId(outage.getEquipment());
+                .setId(stopId + "#" + outage.getEquipment());
         return builder.build();
     }
 
@@ -91,5 +109,9 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
                 .addTranslation(TranslatedString.Translation.newBuilder()
                         .setText(str)
                         .setLanguage("en"));
+    }
+
+    public void setStopsProvider(ElevatorToStopsProvider stopsProvider) {
+        _stopsProvider = stopsProvider;
     }
 }
