@@ -49,6 +49,10 @@
             <id>public.onebusaway.org</id>
             <url>http://nexus.onebusaway.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>releases.staging.obanyc.com</id>
+            <url>http://build.staging.obanyc.com/archiva/repository/releases/</url>
+        </repository>
     </repositories>
 
     <scm>
