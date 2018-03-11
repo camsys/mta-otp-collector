@@ -89,6 +89,8 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         Set<String> stopIds = _dao.getStopTimesForTrip(trip).stream()
                 .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
 
+        int delay = 0;
+
         for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
             if (!stopIds.contains(stu.getStopId())) {
                 continue;
@@ -101,7 +103,11 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
             }
             tub.addStopTimeUpdate(stub);
+            if (stub.hasDeparture() && stub.getDeparture().hasDelay())
+                delay = stub.getDeparture().getDelay();
         }
+
+        tub.setDelay(delay);
 
         return tub;
     }
