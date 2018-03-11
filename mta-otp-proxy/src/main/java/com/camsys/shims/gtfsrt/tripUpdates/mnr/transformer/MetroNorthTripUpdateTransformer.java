@@ -102,6 +102,9 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 nyctExt.setActualTrack(ext.getTrack());
                 stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
             }
+            if (stub.hasDeparture() && !stub.hasArrival()) {
+                stub.setArrival(stub.getDeparture());
+            }
             tub.addStopTimeUpdate(stub);
             if (stub.hasDeparture() && stub.getDeparture().hasDelay())
                 delay = stub.getDeparture().getDelay();
