@@ -30,15 +30,16 @@ import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
+
+    private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
 
     private GtfsRelationalDao _dao;
 
@@ -126,17 +127,20 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     }
 
     private ServiceDate parseDate(String date) {
-        try {
-            Date d = new SimpleDateFormat("MMddyyyy").parse(date);
-            return new ServiceDate(d);
-        } catch(ParseException e) {
-            _log.error("Error parsing date " + date);
+        Matcher matcher = _sdPattern.matcher(date);
+        if(!matcher.matches()) {
+            _log.info("error parsing date: " + date);
+            return null;
+        } else {
+            int year = Integer.parseInt(matcher.group(3));
+            int month = Integer.parseInt(matcher.group(1));
+            int day = Integer.parseInt(matcher.group(2));
+            return new ServiceDate(year, month, day);
         }
-        return null;
     }
 
     private String formatDate(ServiceDate sd) {
-        return new SimpleDateFormat("yyyyMMdd").format(sd.getAsDate());
+        return String.format("%04d%02d%02d", sd.getYear(), sd.getMonth(), sd.getDay());
     }
 
 }
