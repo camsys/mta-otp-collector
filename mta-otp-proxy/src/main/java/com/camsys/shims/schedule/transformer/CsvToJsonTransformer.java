@@ -1,7 +1,7 @@
 package com.camsys.shims.schedule.transformer;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.camsys.shims.util.S3Utils;
+import com.camsys.shims.s3.S3Utils;
 import com.csvreader.CsvReader;
 
 import java.io.IOException;

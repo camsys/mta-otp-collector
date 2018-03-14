@@ -12,18 +12,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.camsys.shims.util.S3Utils;
+import com.camsys.shims.s3.AbstractS3CsvProvider;
 import com.csvreader.CsvReader;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collection;
 
-public class S3CsvElevatorToStopsProvider implements ElevatorToStopsProvider {
+public class S3CsvElevatorToStopsProvider extends AbstractS3CsvProvider implements ElevatorToStopsProvider {
 
     private static final String ELEVATOR_ID_HEADER = "Equip ID";
 
@@ -33,47 +30,17 @@ public class S3CsvElevatorToStopsProvider implements ElevatorToStopsProvider {
 
     private Multimap<String, String> _elevatorToStops = ArrayListMultimap.create();
 
-    private String user;
-
-    private String pass;
-
-    private String url;
-
-    public void init() {
-        if (!url.startsWith("s3://")) {
-            throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
-        }
-        AmazonS3 s3 = S3Utils.getS3Client(user, pass);
-        InputStream stream = S3Utils.getViaS3(s3, url);
-        CsvReader reader = new CsvReader(new InputStreamReader(stream));
-        try {
-            reader.readHeaders();
-            while (reader.readRecord()) {
-                String elevatorId = reader.get(ELEVATOR_ID_HEADER);
-                String stopId = reader.get(STOP_ID_HEADER);
-                String dir = reader.get(DIRECTION_HEADER);
-                _elevatorToStops.put(elevatorId, stopId + dir);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        reader.close();
-    }
-
     @Override
     public Collection<String> getStopsForElevator(String elevatorId) {
         return _elevatorToStops.get(elevatorId);
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    @Override
+    public void processRecord(CsvReader reader) throws IOException {
+        String elevatorId = reader.get(ELEVATOR_ID_HEADER);
+        String stopId = reader.get(STOP_ID_HEADER);
+        String dir = reader.get(DIRECTION_HEADER);
+        _elevatorToStops.put(elevatorId, stopId + dir);
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 }
