@@ -23,5 +23,263 @@
         http://www.springframework.org/schema/task
         http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" />
+
+
+    <!-- subway - this is essentially equivalent to Kurt's ProxyModule class  -->
+    <bean class="org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeExporterImpl" id="subwayTuExporter" />
+    <bean class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" init-method="init" />
+    <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType">
+        <property name="gtfsRelationalDao" ref="subwayGtfs"/>
+    </bean>
+    <bean class="com.kurtraschke.nyctrtproxy.services.TripUpdateProcessor" autowire="byType"/>
+    <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">
+        <property name="key" value="d724906dd7257300457c026b3536dbdb" />
+        <property name="tripUpdatesSink" ref="subwayTuExporter" />
+        <property name="feedIds" value="[1, 2, 11, 16, 21, 26, 31, 36, 51]" />
+    </bean>
+    <bean id="subwayTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="subwayTuExporter" />
+    </bean>
+
+    <bean name="subwaySaTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="siriTransformer" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/ServiceStatusSubway.xml" />
+    </bean>
+    <bean id="subwayServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="subwaySaTask" />
+    </bean>
+
+    <!-- Subway Elevators -->
+    <bean name="elevatorsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.deserializer.SubwayElevatorsDeserializer" />
+    <bean name="elevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer.SubwayElevatorsTransformer" />
+    <bean id="eleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="transformer" ref="elevatorsTransformer" />
+        <property name="deserializer" ref="elevatorsDeserializer" />
+        <property name="sourceUrl" value="http://web.mta.info/developers/data/nyct/nyct_ene.xml" />
+    </bean>
+    <bean id="elevatorAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="eleTask" />
+    </bean>
+
+    <!-- Metro North -->
+    <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
+        <property name="dao" ref="mnrGtfs" />
+    </bean>
+    <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="sourceUrl" value="http://datamine.mta.info/mta_esi.php?key=ff41ea115cf8ef415b8345a4e0cfb568&amp;feed_id=41" />
+        <property name="transformer" ref="mnrTransformer" />
+        <property name="deserializer" ref="gtfsrt" />
+    </bean>
+    <bean id="mnrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="mnrTask" />
+    </bean>
+
+    <!-- Metro North Elevators -->
+    <bean name="mnrStationResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StationResultsDeserializer" />
+    <bean name="mnrStatusResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StatusResultsDeserializer" />
+    <bean name="mnrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer.MetroNorthElevatorAlertsTransformer" />
+
+    <bean id="mnrEleTask" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.source.MetroNorthStationsToGtfsRealtimeSources" autowire="byType">
+        <property name="transformer" ref="mnrElevatorsTransformer" />
+        <property name="deserializer" ref="mnrStationResultsDeserializer" />
+        <property name="sourceUrl" value="https://mnorth.prod.acquia-sites.com/wse/Stations/v3/610034dd391346cdd69a5f884f30f663/Stations.json" />
+        <property name="statusSourceUrl" value="https://mnorth.prod.acquia-sites.com/wse/Stations/v3/ELEVATOR/%s/610034dd391346cdd69a5f884f30f663/status.json" />
+        <property name="statusDeserializer" ref="mnrStatusResultsDeserializer" />
+    </bean>
+
+    <!-- Metro North alerts -->
+    <bean name="mnrSiriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
+        <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
+    </bean>
+
+    <bean name="mnrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="mnrSiriTransformer" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusMNR.xml" />
+    </bean>
+
+    <bean name="mnrAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="mnrSiriAlerts" />
+                <ref bean="mnrEleTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mnrServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="mnrAlertTask" />
+    </bean>
+
+    <!-- LIRR Elevators -->
+    <bean name="lirrStationsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.deserializer.StationsDeserializer" />
+    <bean name="lirrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.transformer.LirrElevatorAlertsTransformer" />
+
+    <bean id="lirrEleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="transformer" ref="lirrElevatorsTransformer" />
+        <property name="deserializer" ref="lirrStationsDeserializer" />
+        <property name="sourceUrl" value="https://traintime.lirr.org/api/ElevEsc" />
+    </bean>
+
+    <!-- LIRR service alerts -->
+    <bean name="lirrSiriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
+        <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
+    </bean>
+
+    <bean name="lirrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="lirrSiriTransformer" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusLIRR.xml" />
+    </bean>
+
+    <bean name="lirrAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="lirrSiriAlerts" />
+                <ref bean="lirrEleTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="lirrServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="lirrAlertTask" />
+    </bean>
+
+    <!-- Bus service alerts -->
+    <bean name="busAlertTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="siriTransformer" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusBus.xml" />
+    </bean>
+
+    <bean id="busServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="busAlertTask" />
+    </bean>
+
+    <!-- Planned Service alerts -->
+    <bean name="plannedServiceAlertTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="plannedServiceAlertDeserializer" />
+        <!--<property name="transformer" ref="plannedServiceAlertToServiceStatusTransformer" />-->
+        <property name="sourceUrl" value="http://web.mta.info/developers/data/nyct/plannedwork.xml" />
+    </bean>
+
+
+    <!-- service status -->
+    <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
+
+    <!-- route adapters -->
+    <bean name="defaultGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.DefaultGtfsRouteAdapter" />
+
+    <bean name="lirrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.AtisIdRouteAdapter">
+        <property name="gtfsAgencyId" value="LI" />
+        <property name="atisGtfsMap" ref="atisGtfsMap" />
+    </bean>
+
+    <bean name="mnrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.AtisIdRouteAdapter">
+        <property name="gtfsAgencyId" value="MNR" />
+        <property name="atisGtfsMap" ref="atisGtfsMap" />
+    </bean>
+
+    <bean name="subwayGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.AgencyReplacementRouteAdapter">
+        <property name="agencyId" value="MTASBWY" />
+    </bean>
+
+    <!-- tasks -->
+    <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusBus.xml" />
+        <property name="mode" value="bus" />
+        <property name="gtfsDao" ref="busGtfs" />
+        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="subwayServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusSubway.xml" />
+        <property name="mode" value="subway" />
+        <property name="gtfsDao" ref="subwayGtfs" />
+        <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="mnrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusMNR.xml" />
+        <property name="mode" value="rail" />
+        <property name="gtfsDao" ref="mnrGtfs" />
+        <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="http://gms.mtanyct.info/GMS/GMSFeedsService/Feeds/servicestatusLIRR.xml" />
+        <property name="mode" value="rail" />
+        <property name="gtfsDao" ref="lirrGtfs" />
+        <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
+    </bean>
+
+    <bean name="serviceStatusTask" class="com.camsys.shims.service_status.source.MergingServiceStatusSource">
+        <constructor-arg>
+            <list>
+                <ref bean="busServiceStatusTask" />
+                <ref bean="subwayServiceStatusTask" />
+                <ref bean="mnrServiceStatusTask" />
+                <ref bean="lirrServiceStatusTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="serviceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">
+        <property name="source" ref="serviceStatusTask" />
+    </bean>
+
+    <!-- gtfs files -->
+    <bean id="mnrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/mnr/google_transit.zip" />
+    </bean>
+
+    <bean id="lirrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/lirr/google_transit.zip" />
+    </bean>
+
+    <bean id="busGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/nyct_bus/nyct_bus_merged_gtfs.zip" />
+    </bean>
+
+    <bean id="subwayGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
+        <property name="gtfsPath" value="/opt/nyct/google_transit.zip" />
+    </bean>
+
+    <!-- shared resources -->
+    <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
+
+    <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
+    <bean name="siriDeserializerWithModifications" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications" />
+    <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer" />
+
+    <bean name="plannedServiceAlertDeserializer" class="com.camsys.shims.util.deserializer.PlannedServiceAlertDeserializer"/>
+    <!--<bean name="plannedServiceAlertToServiceStatusTransformer" class="com.camsys.shims.util.transformer.PlannedServiceAlertToServiceStatusTransformer"/>-->
+    <bean name="atisGtfsMap" class="com.camsys.shims.atis.AtisGtfsMap" init-method="init" />
+
+    <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
+
+    <task:scheduled-tasks scheduler="myScheduler">
+        <task:scheduled ref="subwayTuTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="subwaySaTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="mnrTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="eleTask" method="update" fixed-delay="180000" />
+        <task:scheduled ref="mnrAlertTask" method="update" fixed-delay="180000" />
+        <task:scheduled ref="lirrAlertTask" method="update" fixed-delay="180000" />
+        <task:scheduled ref="busAlertTask" method="update" fixed-delay="180000" />
+        <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="30000" />
+        <!--<task:scheduled ref="plannedServiceAlertTask" method="update" fixed-delay="30000" />-->
+    </task:scheduled-tasks>
+
+    <task:scheduler id="myScheduler" pool-size="10"/>
 
 </beans>
