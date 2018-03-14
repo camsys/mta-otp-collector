@@ -2,3 +2,4 @@ mta-otp-elevators/target
 mta-otp-proxy/target
 .idea
 *.iml
+/mta-otp-proxy/src/main/resources/data-sources.xml
