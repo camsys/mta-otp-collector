@@ -1,4 +1,5 @@
 mta-otp-elevators/target
 mta-otp-proxy/target
+mta-otp-plannedwork/target
 .idea
 *.iml
