@@ -1,38 +1,47 @@
 package com.camsys.shims.util.deserializer;
 
 import com.amazonaws.util.IOUtils;
-import com.camsys.shims.util.deserializer.Deserializer;
-import com.camsys.shims.util.plannedAlerts.PlannedServiceAlert;
-import com.camsys.shims.util.plannedAlerts.PlannedAlertsXmlSerializer;
-import org.onebusaway.nyc.siri.support.SiriXmlSerializer;
-import uk.org.siri.siri.Siri;
+import com.camsys.mta.plannedwork.Getstatus4ResponseType;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PlannedServiceAlertDeserializer implements Deserializer<PlannedServiceAlert> {
+public class PlannedServiceAlertDeserializer implements Deserializer<Getstatus4ResponseType> {
 
-    private PlannedAlertsXmlSerializer _plannedAlertsXmlSerializer = new PlannedAlertsXmlSerializer();
+    private Unmarshaller _um;
 
-    @Override
-    public PlannedServiceAlert deserialize(InputStream inputStream) throws IOException {
-        String xml = IOUtils.toString(inputStream);
-
-        PlannedServiceAlert test = deserialize(xml);
-
-        System.out.println(test.getGetstatus4ResponseDeliveryStructure().getRoutesStructure().size());
-        System.out.println(test.getGetstatus4ResponseDeliveryStructure().getStatusesStructure().size());
-        System.out.println(test.getGetstatus4ResponseDeliveryStructure().getStopsStructure().size());
-
-        return deserialize(xml);
+    public PlannedServiceAlertDeserializer() throws Exception {
+        JAXBContext jc = JAXBContext.newInstance(Getstatus4ResponseType.class);
+        _um = jc.createUnmarshaller();
     }
 
-    protected PlannedServiceAlert deserialize(String xml) throws IOException {
+    @Override
+    public Getstatus4ResponseType deserialize(InputStream inputStream) throws IOException {
         try {
-            return _plannedAlertsXmlSerializer.fromXml(xml);
-        } catch(JAXBException e) {
-            e.printStackTrace();
+            JAXBElement<Getstatus4ResponseType> nycResponse;
+
+            SOAPMessage message = MessageFactory.newInstance().createMessage(null, inputStream);
+            nycResponse = _um.unmarshal(message.getSOAPBody().extractContentAsDocument(), Getstatus4ResponseType.class);
+
+
+
+            Getstatus4ResponseType o = nycResponse.getValue();
+            if (o.getResponsecode().equals("0")) {
+                return o;
+            } else {
+                return null;
+            }
+        } catch(JAXBException je) {
+            throw new IOException(je);
+        }catch (Exception e)
+        {
             throw new IOException(e);
         }
     }
