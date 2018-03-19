@@ -33,6 +33,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
     private GtfsRouteAdapter _gtfsRouteAdapter;
     private static Logger _log = LoggerFactory.getLogger(Getstatus4ResponseType.class);
 
+    private boolean _addPlannedServiceAlerts = true;
     private boolean _includeDirecton = false;
 
     private String _agencyId = "";
@@ -54,6 +55,11 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         _atisGtfsMap = atisGtfsMap;
     }
 
+    public boolean getAddPlannedServiceAlerts() { return _addPlannedServiceAlerts; }
+    public void setAddPlannedServiceAlerts(boolean _addPlannedServiceAlerts) {
+        this._addPlannedServiceAlerts = _addPlannedServiceAlerts;
+    }
+
 
     /**
      *  Two builders are here. The first is a standard intantiator. The second is part of an experiment to see
@@ -72,27 +78,32 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         header.setGtfsRealtimeVersion(GtfsRealtimeConstants.VERSION);
         message.setHeader(header);
 
-        for (StatusType statusType : statusResponseType.getStatuses().getStatus()) {
-            List<RouteinfoType> routes = findRouteinfoTypeFromStatus(statusType.getId(), statusResponseType.getRoutes().getRouteinfo());
-            if(routes.size() > 0)
-            {
-                try{
-                    AgencyAndId agencyFromRouteId = _atisGtfsMap.getAgencyAndIdFromAtisIdWithoutAgency(routes.get(0).getRoute());
-                    if(agencyFromRouteId != null )
-                    {
-                        if(agencyFromRouteId.getAgencyId().equals(_agencyId))
+        if(_addPlannedServiceAlerts)
+        {
+            for (StatusType statusType : statusResponseType.getStatuses().getStatus()) {
+                List<RouteinfoType> routes = findRouteinfoTypeFromStatus(statusType.getId(), statusResponseType.getRoutes().getRouteinfo());
+                if(routes.size() > 0)
+                {
+                    try{
+                        AgencyAndId agencyFromRouteId = _atisGtfsMap.getAgencyAndIdFromAtisIdWithoutAgency(routes.get(0).getRoute());
+                        if(agencyFromRouteId != null )
                         {
-                            FeedEntity fe =  statusTypeToEntity(statusType, routes);
-                            message.addEntity(fe);
+                            if(agencyFromRouteId.getAgencyId().equals(_agencyId))
+                            {
+                                FeedEntity fe =  statusTypeToEntity(statusType, routes);
+                                message.addEntity(fe);
+                            }
+                        }else{
+                            _log.error("Failed to find agency from route " + routes.get(0).getRoute());
                         }
-                    }else{
-                        _log.error("Failed to find agency from route " + routes.get(0).getRoute());
+                    }catch (Exception e){
+                        _log.error("Failed to convert the alert to GTFS for  " + e);
                     }
-                }catch (Exception e){
-                    _log.error("Failed to convert the alert to GTFS for  " + e);
-                }
 
+                }
             }
+        }else{
+
         }
 
         return message.build();
