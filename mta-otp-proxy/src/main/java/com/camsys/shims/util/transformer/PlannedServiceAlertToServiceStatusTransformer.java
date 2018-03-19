@@ -3,6 +3,7 @@ package com.camsys.shims.util.transformer;
 import com.camsys.mta.plannedwork.Getstatus4ResponseType;
 import com.camsys.mta.plannedwork.RouteinfoType;
 import com.camsys.mta.plannedwork.StatusType;
+import com.camsys.shims.atis.AtisGtfsMap;
 import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 
 import com.google.transit.realtime.GtfsRealtime;
@@ -19,6 +20,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import org.jsoup.Jsoup;
+import org.onebusaway.gtfs.model.AgencyAndId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +34,26 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
     private static Logger _log = LoggerFactory.getLogger(Getstatus4ResponseType.class);
 
     private boolean _includeDirecton = false;
+
+    private String _agencyId = "";
+
+    private AtisGtfsMap _atisGtfsMap;
+
     public boolean getIncludeDirecton() {
         return _includeDirecton;
     }
-
     public void setIncludeDirecton(boolean includeDirecton) {
         this._includeDirecton = _includeDirecton;
     }
+
+    public String getAgencyId(){ return _agencyId; }
+    public void setAgencyId(String agencyId){ _agencyId = agencyId; }
+
+    public AtisGtfsMap getAtisGtfsMap() { return _atisGtfsMap; }
+    public void setAtisGtfsMap(AtisGtfsMap atisGtfsMap) {
+        _atisGtfsMap = atisGtfsMap;
+    }
+
 
     /**
      *  Two builders are here. The first is a standard intantiator. The second is part of an experiment to see
@@ -50,8 +65,6 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
 
     @Override
     public FeedMessage transform(Getstatus4ResponseType statusResponseType) {
-//        List<ServiceAlertBean> serviceAlerts = getGetstatus4ResponseTypeAsServiceAlertBeans(statusResponseType);
-
         FeedMessage.Builder message = FeedMessage.newBuilder();
         FeedHeader.Builder header = FeedHeader.newBuilder();
         header.setIncrementality(FeedHeader.Incrementality.FULL_DATASET);
@@ -60,8 +73,26 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         message.setHeader(header);
 
         for (StatusType statusType : statusResponseType.getStatuses().getStatus()) {
-            FeedEntity fe =  statusTypeToEntity(statusType, findRouteinfoTypeFromStatus(statusType.getId(), statusResponseType.getRoutes().getRouteinfo()));
-            message.addEntity(fe);
+            List<RouteinfoType> routes = findRouteinfoTypeFromStatus(statusType.getId(), statusResponseType.getRoutes().getRouteinfo());
+            if(routes.size() > 0)
+            {
+                try{
+                    AgencyAndId agencyFromRouteId = _atisGtfsMap.getAgencyAndIdFromAtisIdWithoutAgency(routes.get(0).getRoute());
+                    if(agencyFromRouteId != null )
+                    {
+                        if(agencyFromRouteId.getAgencyId().equals(_agencyId))
+                        {
+                            FeedEntity fe =  statusTypeToEntity(statusType, routes);
+                            message.addEntity(fe);
+                        }
+                    }else{
+                        _log.error("Failed to find agency from route " + routes.get(0).getRoute());
+                    }
+                }catch (Exception e){
+                    _log.error("Failed to convert the alert to GTFS for  " + e);
+                }
+
+            }
         }
 
         return message.build();
@@ -135,7 +166,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
             return DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy")).getMillis();
         }catch (Exception e)
         {
-            _log.error("Failed to convert begin date"+e);
+            _log.error("Failed to convert begin date "+e);
         }
 
         return DateTime.now().getMillis();
@@ -146,7 +177,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
             return DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy hh:mm a")).getMillis();
         }catch (Exception e)
         {
-            _log.error("Failed to convert expires date"+e);
+            _log.error("Failed to convert expires date "+e);
         }
 
         return DateTime.now().getMillis();
