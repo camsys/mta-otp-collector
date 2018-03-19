@@ -175,7 +175,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
 
     private long StatusTypeBeginStringToDateTime(String dateString) {
         try{
-            return DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy")).getMillis();
+            return ( (DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy")).getMillis()) / 1000);
         }catch (Exception e)
         {
             _log.error("Failed to convert begin date "+e);
@@ -186,7 +186,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
 
     private long StatusTypeExpiresStringToDateTime(String dateString) {
         try{
-            return DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy hh:mm a")).getMillis();
+            return ( (DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy hh:mm a")).getMillis()) / 1000);
         }catch (Exception e)
         {
             _log.error("Failed to convert expires date "+e);
