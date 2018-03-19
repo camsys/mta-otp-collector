@@ -5,6 +5,7 @@ import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
+import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -12,7 +13,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
 import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,23 +46,11 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected String _mode;
 
-    protected GtfsRelationalDao _dao;
+    protected GtfsAndCalendar _gtfsAndCalendar;
 
     protected CalendarServiceData _csd;
 
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
-
-    public void setConnectionManager(HttpClientConnectionManager connectionManager) {
-        _connectionManager = connectionManager;
-    }
-
-    public void setNTries(int nTries) {
-        _nTries = nTries;
-    }
-
-    public void setRetryDelay(int retryDelay) {
-        _retryDelay = retryDelay;
-    }
 
     public void setSourceUrl(String sourceUrl) {
         _sourceUrl = sourceUrl;
@@ -84,9 +72,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         _deserializer = deserializer;
     }
 
-    public void setGtfsDao(GtfsRelationalDao dao) {
-        _dao = dao;
-        _csd = new CalendarServiceDataFactoryImpl(_dao).createData();
+    public void setGtfsAndCalendar(GtfsAndCalendar gtfsAndCalendar) {
+        _gtfsAndCalendar = gtfsAndCalendar;
     }
 
     @Override
@@ -94,7 +81,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         T siri = getSiri(_sourceUrl, _deserializer);
         if (siri != null) {
             List<RouteDetail>  routeDetails = _transformer
-                    .transform(siri, _mode, _dao, _csd, _gtfsAdapter, _routeDetailsMap);
+                    .transform(siri, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }

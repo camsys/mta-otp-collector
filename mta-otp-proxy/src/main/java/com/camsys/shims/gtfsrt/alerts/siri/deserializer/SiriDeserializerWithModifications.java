@@ -13,7 +13,10 @@
 package com.camsys.shims.gtfsrt.alerts.siri.deserializer;
 
 import com.amazonaws.util.IOUtils;
+import jdk.nashorn.internal.ir.WhileNode;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
 import uk.org.siri.siri.DefaultedTextStructure;
 import uk.org.siri.siri.PtSituationElementStructure;
 import uk.org.siri.siri.ServiceDelivery;
@@ -55,8 +58,9 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                                     DefaultedTextStructure txt = pt.getDescription();
                                     String html = txt.getValue();
                                     String text = Jsoup.parse(html).text();
-                                    text = text.replace("\u2022", ""); // bullet point
-                                    txt.setValue(text);
+                                    String cleanedText = Jsoup.clean(text, new Whitelist().none());
+                                    cleanedText = cleanedText.replace("\u2022", ""); // bullet point
+                                    txt.setValue(cleanedText);
                                 }
                             }
                         }
