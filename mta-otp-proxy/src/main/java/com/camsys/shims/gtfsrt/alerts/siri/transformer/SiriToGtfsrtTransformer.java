@@ -26,22 +26,29 @@ import org.onebusaway.nyc.gtfsrt.util.GtfsRealtimeLibrary;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
-import uk.org.siri.siri.PtSituationElementStructure;
 import uk.org.siri.siri.Siri;
-import uk.org.siri.siri.SituationExchangeDeliveryStructure;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
 
 public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     private GtfsRouteAdapter _gtfsRouteAdapter;
 
+   private boolean _ignorePlannedPtSituations;
+
+    public boolean getIgnorePlannedPtSituations() {
+        return _ignorePlannedPtSituations;
+    }
+
+    public void setIgnorePlannedPtSituations(boolean _ignorePlannedPtSituations) {
+        this._ignorePlannedPtSituations = _ignorePlannedPtSituations;
+    }
+
+
     @Override
     public FeedMessage transform(Siri siri) {
 
-        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri, true);
+        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri, _ignorePlannedPtSituations);
 
         FeedMessage.Builder message = FeedMessage.newBuilder();
         FeedHeader.Builder header = FeedHeader.newBuilder();
