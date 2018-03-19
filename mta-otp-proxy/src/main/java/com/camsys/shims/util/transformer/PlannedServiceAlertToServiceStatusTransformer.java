@@ -111,10 +111,10 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         }
 
         //TODO this could be safer as regexp parsing
-        if(statusType.getBegins().equals("None") || statusType.getExpires().equals("None"))
-        alert.addActivePeriod(GtfsRealtime.TimeRange.newBuilder()
-                .setStart(StatusTypeBeginStringToDateTime(statusType.getBegins()))
-                .setEnd(StatusTypeExpiresStringToDateTime(statusType.getExpires()))
+        if(!statusType.getBegins().equals("None") || !statusType.getExpires().equals("None"))
+            alert.addActivePeriod(GtfsRealtime.TimeRange.newBuilder()
+                    .setStart(StatusTypeBeginStringToDateTime(statusType.getBegins()))
+                    .setEnd(StatusTypeExpiresStringToDateTime(statusType.getExpires()))
         );
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
