@@ -52,4 +52,8 @@ public class AtisGtfsMap {
         return _atisGtfsMap.get(atisId.getId());
     }
 
+    public AgencyAndId getAgencyAndIdFromAtisIdWithoutAgency(String id) {
+        return _atisGtfsMap.get(id);
+    }
+
 }

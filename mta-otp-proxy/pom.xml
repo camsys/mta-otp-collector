@@ -43,7 +43,7 @@
         <dependency>
            <groupId>com.kurtraschke</groupId>
             <artifactId>nyct-rt-proxy</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.onebusaway</groupId>
@@ -54,11 +54,16 @@
         <dependency>
             <groupId>org.onebusaway</groupId>
             <artifactId>onebusaway-gtfs-realtime-api</artifactId>
-            <version>1.2.6-SNAPSHOT</version>
+            <version>1.2.6</version>
         </dependency>
         <dependency>
             <groupId>com.camsys</groupId>
             <artifactId>mta-otp-elevators</artifactId>
+            <version>0.0.6-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.camsys</groupId>
+            <artifactId>mta-otp-plannedwork</artifactId>
             <version>0.0.6-SNAPSHOT</version>
         </dependency>
         <dependency>
