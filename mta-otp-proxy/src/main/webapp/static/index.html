@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<head>
+    <title>OTP/Subway RT comparison</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="main.js"></script>
+    <style>
+        #results {
+            display: flex;
+        }
+        .ageBox {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>
+        OTP URL: <input type="text" id="otpUrl" value="http://otp-mta-dev.camsys-apps.com" />
+    </p>
+    <p>
+        API key: <input type="text" id="otpApi" value="hAR0VMP2Ufxk542WrtTW8ToBmi4N3UUp" />
+    </p>
+
+    Route: <input type="text" id="route" />
+    Stop: <input type="text" id="stop" />
+    <button type="submit" id="submit">Submit</button>
+
+    <div id="results">
+        <div id="otpResults"></div>
+        <div id="rtResults"></div>
+    </div>
+</body>

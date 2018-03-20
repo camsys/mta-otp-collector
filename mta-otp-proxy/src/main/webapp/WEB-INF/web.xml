@@ -81,6 +81,18 @@
         </servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>subwayStopTimes</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>subwayTripUpdates</servlet-name>
@@ -130,6 +142,11 @@
         <servlet-name>routeBranchStop</servlet-name>
         <url-pattern>/schedule/stopsForRoute</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>subwayStopTimes</servlet-name>
+        <url-pattern>/realtime/MTASBWY/stopTimes</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <!--I'm not sure this is the right URL pattern-->

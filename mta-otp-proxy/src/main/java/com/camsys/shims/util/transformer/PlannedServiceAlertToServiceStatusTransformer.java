@@ -33,6 +33,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
     private GtfsRouteAdapter _gtfsRouteAdapter;
     private static Logger _log = LoggerFactory.getLogger(Getstatus4ResponseType.class);
 
+    private boolean _addPlannedServiceAlerts = true;
     private boolean _includeDirecton = false;
 
     private String _agencyId = "";
@@ -54,6 +55,11 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         _atisGtfsMap = atisGtfsMap;
     }
 
+    public boolean getAddPlannedServiceAlerts() { return _addPlannedServiceAlerts; }
+    public void setAddPlannedServiceAlerts(boolean _addPlannedServiceAlerts) {
+        this._addPlannedServiceAlerts = _addPlannedServiceAlerts;
+    }
+
 
     /**
      *  Two builders are here. The first is a standard intantiator. The second is part of an experiment to see
@@ -72,27 +78,32 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         header.setGtfsRealtimeVersion(GtfsRealtimeConstants.VERSION);
         message.setHeader(header);
 
-        for (StatusType statusType : statusResponseType.getStatuses().getStatus()) {
-            List<RouteinfoType> routes = findRouteinfoTypeFromStatus(statusType.getId(), statusResponseType.getRoutes().getRouteinfo());
-            if(routes.size() > 0)
-            {
-                try{
-                    AgencyAndId agencyFromRouteId = _atisGtfsMap.getAgencyAndIdFromAtisIdWithoutAgency(routes.get(0).getRoute());
-                    if(agencyFromRouteId != null )
-                    {
-                        if(agencyFromRouteId.getAgencyId().equals(_agencyId))
+        if(_addPlannedServiceAlerts)
+        {
+            for (StatusType statusType : statusResponseType.getStatuses().getStatus()) {
+                List<RouteinfoType> routes = findRouteinfoTypeFromStatus(statusType.getId(), statusResponseType.getRoutes().getRouteinfo());
+                if(routes.size() > 0)
+                {
+                    try{
+                        AgencyAndId agencyFromRouteId = _atisGtfsMap.getAgencyAndIdFromAtisIdWithoutAgency(routes.get(0).getRoute());
+                        if(agencyFromRouteId != null )
                         {
-                            FeedEntity fe =  statusTypeToEntity(statusType, routes);
-                            message.addEntity(fe);
+                            if(agencyFromRouteId.getAgencyId().equals(_agencyId))
+                            {
+                                FeedEntity fe =  statusTypeToEntity(statusType, routes);
+                                message.addEntity(fe);
+                            }
+                        }else{
+                            _log.error("Failed to find agency from route " + routes.get(0).getRoute());
                         }
-                    }else{
-                        _log.error("Failed to find agency from route " + routes.get(0).getRoute());
+                    }catch (Exception e){
+                        _log.error("Failed to convert the alert to GTFS for  " + e);
                     }
-                }catch (Exception e){
-                    _log.error("Failed to convert the alert to GTFS for  " + e);
-                }
 
+                }
             }
+        }else{
+
         }
 
         return message.build();
@@ -111,11 +122,23 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
         }
 
         //TODO this could be safer as regexp parsing
-        if(statusType.getBegins().equals("None") || statusType.getExpires().equals("None"))
-        alert.addActivePeriod(GtfsRealtime.TimeRange.newBuilder()
-                .setStart(StatusTypeBeginStringToDateTime(statusType.getBegins()))
-                .setEnd(StatusTypeExpiresStringToDateTime(statusType.getExpires()))
-        );
+        if (!statusType.getBegins().toUpperCase().trim().equals("NONE") && !statusType.getExpires().toUpperCase().trim().equals("NONE")) {
+            alert.addActivePeriod(GtfsRealtime.TimeRange.newBuilder()
+                    .setStart(StatusTypeBeginStringToDateTime(statusType.getBegins()))
+                    .setEnd(StatusTypeExpiresStringToDateTime(statusType.getExpires()))
+            );
+        }else if(!statusType.getBegins().toUpperCase().trim().equals("NONE") && statusType.getExpires().toUpperCase().trim().equals("NONE"))
+        {
+            alert.addActivePeriod(GtfsRealtime.TimeRange.newBuilder()
+                    .setStart(StatusTypeBeginStringToDateTime(statusType.getBegins()))
+            );
+        }else if (statusType.getBegins().toUpperCase().trim().equals("NONE") && !statusType.getExpires().toUpperCase().trim().equals("NONE"))
+        {
+            alert.addActivePeriod(GtfsRealtime.TimeRange.newBuilder()
+                    .setEnd(StatusTypeExpiresStringToDateTime(statusType.getExpires()))
+            );
+        }
+
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
                 .setId(statusType.getId());
@@ -163,7 +186,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
 
     private long StatusTypeBeginStringToDateTime(String dateString) {
         try{
-            return DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy")).getMillis();
+            return ( (DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy")).getMillis()) / 1000);
         }catch (Exception e)
         {
             _log.error("Failed to convert begin date "+e);
@@ -174,7 +197,7 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
 
     private long StatusTypeExpiresStringToDateTime(String dateString) {
         try{
-            return DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy hh:mm a")).getMillis();
+            return ( (DateTime.parse(dateString, DateTimeFormat.forPattern("MM/dd/yyyy hh:mm a")).getMillis()) / 1000);
         }catch (Exception e)
         {
             _log.error("Failed to convert expires date "+e);
