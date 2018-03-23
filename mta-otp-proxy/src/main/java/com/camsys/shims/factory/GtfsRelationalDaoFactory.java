@@ -32,6 +32,9 @@ public class GtfsRelationalDaoFactory implements FactoryBean<GtfsRelationalDao> 
     public void setGtfsPath(String gtfsPath) {
         _gtfsPath = gtfsPath;
     }
+    public String getGtfsPath() {
+        return _gtfsPath;
+    }
 
     public GtfsRelationalDao getObject() {
         _log.info("Loading GTFS from {}", _gtfsPath.toString());
