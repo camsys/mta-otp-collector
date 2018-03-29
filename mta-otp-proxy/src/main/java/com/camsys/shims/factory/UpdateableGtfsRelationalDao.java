@@ -1,5 +1,6 @@
 package com.camsys.shims.factory;
 
+import org.joda.time.DateTime;
 import org.onebusaway.gtfs.impl.GtfsRelationalDaoImpl;
 import org.onebusaway.gtfs.model.*;
 import org.onebusaway.gtfs.serialization.GtfsReader;
@@ -11,6 +12,22 @@ import java.io.IOException;
 import java.util.*;
 
 public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
+
+    private Map<AgencyAndId, List<String>> _tripAgencyIdsByServiceId = null;
+    private Map<Agency, List<Route>> _routesByAgency = null;
+    private Map<Stop, List<Stop>> _stopsByStation = null;
+    private Map<Trip, List<StopTime>> _stopTimesByTrip = null;
+    private Map<Stop, List<StopTime>> _stopTimesByStop = null;
+    private Map<Route, List<Trip>> _tripsByRoute = null;
+    private Map<AgencyAndId, List<Trip>> _tripsByShapeId = null;
+    private Map<AgencyAndId, List<Trip>> _tripsByServiceId = null;
+    private Map<AgencyAndId, List<Trip>> _tripsByBlockId = null;
+    private Map<AgencyAndId, List<ShapePoint>> _shapePointsByShapeId = null;
+    private Map<Trip, List<Frequency>> _frequenciesByTrip = null;
+    private Map<AgencyAndId, List<ServiceCalendarDate>> _calendarDatesByServiceId = null;
+    private Map<AgencyAndId, List<ServiceCalendar>> _calendarsByServiceId = null;
+    private Map<FareAttribute, List<FareRule>> _fareRulesByFareAttribute = null;
+
 
     private static Logger _log = LoggerFactory.getLogger(UpdateableGtfsRelationalDao.class);
 
@@ -26,19 +43,23 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
     public void load(){
         _isLoading = true;
 
-        _log.debug("Is loading");
+        File file = new File(_gtfsPath);
+
+        _log.info("Is reloading a DAO for path {} with file size {} at time {}", _gtfsPath, file.length(), DateTime.now().toLocalTime().toString("HH:mm:ss"));
+
+        hardResetAllCaches();
 
         GtfsReader reader = new GtfsReader();
         reader.setEntityStore(this);
         try {
-            reader.setInputLocation(new File(_gtfsPath));
+            reader.setInputLocation(file);
             reader.run();
             reader.close();
         } catch (IOException e) {
             throw new RuntimeException("Failure while reading GTFS", e);
         }
 
-        _log.debug("Is done loading");
+        _log.info("Is done loading a DAO for path {} at time {}", _gtfsPath, DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
         _isLoading = false;
     }
@@ -55,7 +76,7 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
 
                 // only print this every 25 times so we don't fill up the logs!
                 if(_blockedRequestCounter > 25) {
-                    _log.warn("Bundle is not ready or none is loaded--we've blocked 25 TDS requests since last log event.");
+                    _log.warn("Dao is not ready we've blocked 25 requests for this dao since last log event.");
                     _blockedRequestCounter = 0;
                 }
 
@@ -147,5 +168,28 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
     public List<FareRule> getFareRulesForFareAttribute(FareAttribute fareAttribute) {
         blockUntilBundleIsReady();
         return super.getFareRulesForFareAttribute(fareAttribute);
+    }
+
+    public void hardResetAllCaches(){
+        _tripAgencyIdsByServiceId = null;
+        _routesByAgency = null;
+        _stopsByStation = null;
+        _stopTimesByTrip = null;
+        _stopTimesByStop = null;
+        _tripsByRoute = null;
+        _tripsByShapeId = null;
+        _tripsByServiceId = null;
+        _tripsByBlockId = null;
+        _shapePointsByShapeId = null;
+        _frequenciesByTrip = null;
+        _calendarDatesByServiceId = null;
+        _calendarsByServiceId = null;
+        _fareRulesByFareAttribute = null;
+
+        clearAllEntitiesForType(Stop.class);
+        clearAllEntitiesForType(Agency.class);
+        clearAllEntitiesForType(Trip.class);
+        clearAllEntitiesForType(AgencyAndId.class);
+        clearAllEntitiesForType(Route.class);
     }
 }
