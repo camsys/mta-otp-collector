@@ -12,15 +12,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.factory;
 
-import org.joda.time.DateTime;
-import org.onebusaway.gtfs.impl.GtfsRelationalDaoImpl;
-import org.onebusaway.gtfs.serialization.GtfsReader;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
-// spring-ified from com.kurtrachke.nyctrtproxy.services.GtfsRelationalDaoProvider
 public class GtfsRelationalDaoFactory implements FactoryBean<GtfsRelationalDao> {
 
     private static final Logger _log = LoggerFactory.getLogger(GtfsRelationalDaoFactory.class);
@@ -36,7 +32,7 @@ public class GtfsRelationalDaoFactory implements FactoryBean<GtfsRelationalDao> 
     }
 
     public GtfsRelationalDao getObject() {
-        _log.info("Loading GTFS from {}", _gtfsPath.toString());
+        _log.debug("Loading GTFS from {}", _gtfsPath.toString());
         UpdateableGtfsRelationalDao dao = new UpdateableGtfsRelationalDao();
         dao.setGtfsPath(_gtfsPath);
         dao.load();

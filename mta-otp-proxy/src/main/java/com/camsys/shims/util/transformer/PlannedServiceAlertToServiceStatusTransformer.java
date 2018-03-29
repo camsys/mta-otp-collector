@@ -31,7 +31,7 @@ import java.util.List;
 public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealtimeTransformer<Getstatus4ResponseType> {
 
     private GtfsRouteAdapter _gtfsRouteAdapter;
-    private static Logger _log = LoggerFactory.getLogger(Getstatus4ResponseType.class);
+    private static Logger _log = LoggerFactory.getLogger(PlannedServiceAlertToServiceStatusTransformer.class);
 
     private boolean _addPlannedServiceAlerts = true;
     private boolean _includeDirecton = false;
