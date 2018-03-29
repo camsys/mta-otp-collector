@@ -34,9 +34,21 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     private GtfsRouteAdapter _gtfsRouteAdapter;
 
+   private boolean _ignorePlannedPtSituations;
+
+    public boolean getIgnorePlannedPtSituations() {
+        return _ignorePlannedPtSituations;
+    }
+
+    public void setIgnorePlannedPtSituations(boolean _ignorePlannedPtSituations) {
+        this._ignorePlannedPtSituations = _ignorePlannedPtSituations;
+    }
+
+
     @Override
     public FeedMessage transform(Siri siri) {
-        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri);
+
+        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri, _ignorePlannedPtSituations);
 
         FeedMessage.Builder message = FeedMessage.newBuilder();
         FeedHeader.Builder header = FeedHeader.newBuilder();
@@ -48,6 +60,8 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         for (ServiceAlertBean serviceAlert : serviceAlerts) {
             if (_gtfsRouteAdapter != null)
                 replaceRouteIds(serviceAlert);
+
+
             FeedEntity.Builder fe = FeedEntity.newBuilder();
             Alert.Builder alert = GtfsRealtimeLibrary.makeAlert(serviceAlert);
             fe.setAlert(alert);
