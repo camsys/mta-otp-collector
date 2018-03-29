@@ -12,23 +12,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
-
-    private Map<AgencyAndId, List<String>> _tripAgencyIdsByServiceId = null;
-    private Map<Agency, List<Route>> _routesByAgency = null;
-    private Map<Stop, List<Stop>> _stopsByStation = null;
-    private Map<Trip, List<StopTime>> _stopTimesByTrip = null;
-    private Map<Stop, List<StopTime>> _stopTimesByStop = null;
-    private Map<Route, List<Trip>> _tripsByRoute = null;
-    private Map<AgencyAndId, List<Trip>> _tripsByShapeId = null;
-    private Map<AgencyAndId, List<Trip>> _tripsByServiceId = null;
-    private Map<AgencyAndId, List<Trip>> _tripsByBlockId = null;
-    private Map<AgencyAndId, List<ShapePoint>> _shapePointsByShapeId = null;
-    private Map<Trip, List<Frequency>> _frequenciesByTrip = null;
-    private Map<AgencyAndId, List<ServiceCalendarDate>> _calendarDatesByServiceId = null;
-    private Map<AgencyAndId, List<ServiceCalendar>> _calendarsByServiceId = null;
-    private Map<FareAttribute, List<FareRule>> _fareRulesByFareAttribute = null;
-
-
     private static Logger _log = LoggerFactory.getLogger(UpdateableGtfsRelationalDao.class);
 
     private String _gtfsPath;
@@ -45,9 +28,7 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
 
         File file = new File(_gtfsPath);
 
-        _log.info("Is reloading a DAO for path {} with file size {} at time {}", _gtfsPath, file.length(), DateTime.now().toLocalTime().toString("HH:mm:ss"));
-
-        hardResetAllCaches();
+        _log.info("Is loading a DAO for path {} with file size {} at time {}", _gtfsPath, file.length(), DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
         GtfsReader reader = new GtfsReader();
         reader.setEntityStore(this);
@@ -168,28 +149,5 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
     public List<FareRule> getFareRulesForFareAttribute(FareAttribute fareAttribute) {
         blockUntilBundleIsReady();
         return super.getFareRulesForFareAttribute(fareAttribute);
-    }
-
-    public void hardResetAllCaches(){
-        _tripAgencyIdsByServiceId = null;
-        _routesByAgency = null;
-        _stopsByStation = null;
-        _stopTimesByTrip = null;
-        _stopTimesByStop = null;
-        _tripsByRoute = null;
-        _tripsByShapeId = null;
-        _tripsByServiceId = null;
-        _tripsByBlockId = null;
-        _shapePointsByShapeId = null;
-        _frequenciesByTrip = null;
-        _calendarDatesByServiceId = null;
-        _calendarsByServiceId = null;
-        _fareRulesByFareAttribute = null;
-
-        clearAllEntitiesForType(Stop.class);
-        clearAllEntitiesForType(Agency.class);
-        clearAllEntitiesForType(Trip.class);
-        clearAllEntitiesForType(AgencyAndId.class);
-        clearAllEntitiesForType(Route.class);
     }
 }

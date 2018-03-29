@@ -34,13 +34,14 @@ public class GtfsReloader {
 
     public void downloadAndUpdateGtfs(){
 
-        if(org.joda.time.DateTime.now().getMinuteOfHour() == 0 && !_isRunning)
+        org.joda.time.DateTime start = org.joda.time.DateTime.now();
+        if(start.getMinuteOfHour() == 0 && !_isRunning)
         {
             _isRunning = true;
 
-            _log.debug("Is Running");
+            _log.info("Started all DAOs reloading at time {} ", start.toString("HH:mm:ss"));
 
-            for (GtfsDaoToSource dao: _daos) {
+            for (GtfsDaoToSource dao : _daos) {
 
                 InputStream sourceResult;
 
@@ -59,9 +60,11 @@ public class GtfsReloader {
                 dao.getGtfsRelationalDao().load();
             }
 
+            _log.info("Finished Relaoding all DAOs reloading at time {} and started at {} ", org.joda.time.DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
+
             _isRunning = false;
         }else{
-            _log.debug("Is Running not running because {} and isRunning is {}" org.joda.time.DateTime.now().getMinuteOfHour(), _isRunning);
+            _log.info("Running_____________________________Running_____________________________Running_____________________________Running_____________________________Is not running because {} and isRunning is {}", org.joda.time.DateTime.now().getMinuteOfHour(), _isRunning);
         }
     }
 
