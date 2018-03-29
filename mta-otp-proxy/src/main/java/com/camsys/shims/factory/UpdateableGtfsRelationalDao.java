@@ -26,6 +26,8 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
     public void load(){
         _isLoading = true;
 
+        _log.debug("Is loading");
+
         GtfsReader reader = new GtfsReader();
         reader.setEntityStore(this);
         try {
@@ -35,6 +37,8 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
         } catch (IOException e) {
             throw new RuntimeException("Failure while reading GTFS", e);
         }
+
+        _log.debug("Is done loading");
 
         _isLoading = false;
     }
