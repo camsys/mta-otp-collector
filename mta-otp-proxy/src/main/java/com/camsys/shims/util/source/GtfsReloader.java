@@ -63,8 +63,6 @@ public class GtfsReloader {
             _log.info("Finished Relaoding all DAOs reloading at time {} and started at {} ", org.joda.time.DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
 
             _isRunning = false;
-        }else{
-            _log.info("Running_____________________________Running_____________________________Running_____________________________Running_____________________________Is not running because {} and isRunning is {}", org.joda.time.DateTime.now().getMinuteOfHour(), _isRunning);
         }
     }
 
