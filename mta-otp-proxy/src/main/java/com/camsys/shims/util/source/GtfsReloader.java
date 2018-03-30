@@ -3,6 +3,7 @@ package com.camsys.shims.util.source;
 import com.amazonaws.services.s3.AmazonS3;
 import com.camsys.shims.util.S3Utils;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class GtfsReloader {
 
     private static Logger _log = LoggerFactory.getLogger(GtfsReloader.class);
+    private boolean _isRunning = false;
 
     private List<GtfsDaoToSource> _daos;
     private String _user;
@@ -31,23 +33,36 @@ public class GtfsReloader {
     public void setPass (String pass) { _pass = pass; }
 
     public void downloadAndUpdateGtfs(){
-        for (GtfsDaoToSource dao: _daos) {
 
-            InputStream sourceResult;
+        DateTime start = DateTime.now();
+        if(start.getMinuteOfHour() == 0 && !_isRunning)
+        {
+            _isRunning = true;
 
-            if(dao.getUsesS3())
-            {
-                AmazonS3 s3 = S3Utils.getS3Client(_user, _pass);
-                sourceResult = S3Utils.getViaS3(s3, dao.getGtfsDaoSourceUrl());
-            }else{
-                sourceResult = getGtfsSourceDataWithoutS3(dao.getGtfsDaoSourceUrl());
+            _log.info("Started all DAOs reloading at time {} ", start.toString("HH:mm:ss"));
+
+            for (GtfsDaoToSource dao : _daos) {
+
+                InputStream sourceResult;
+
+                if(dao.getUsesS3())
+                {
+                    AmazonS3 s3 = S3Utils.getS3Client(_user, _pass);
+                    sourceResult = S3Utils.getViaS3(s3, dao.getGtfsDaoSourceUrl());
+                }else{
+                    sourceResult = getGtfsSourceDataWithoutS3(dao.getGtfsDaoSourceUrl());
+                }
+
+                if(sourceResult != null){
+                    saveGtfsToDaoSource(sourceResult, dao.getSaveLocation());
+                }
+
+                dao.getGtfsRelationalDao().load();
             }
 
-            if(sourceResult != null){
-                saveGtfsToDaoSource(sourceResult, dao.getSaveLocation());
-            }
+            _log.info("Finished Relaoding all DAOs reloading at time {} and started at {} ", DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
 
-            dao.getGtfsRelationalDao().load();
+            _isRunning = false;
         }
     }
 

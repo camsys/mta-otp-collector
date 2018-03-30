@@ -1,5 +1,6 @@
 package com.camsys.shims.factory;
 
+import org.joda.time.DateTime;
 import org.onebusaway.gtfs.impl.GtfsRelationalDaoImpl;
 import org.onebusaway.gtfs.model.*;
 import org.onebusaway.gtfs.serialization.GtfsReader;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
-
     private static Logger _log = LoggerFactory.getLogger(UpdateableGtfsRelationalDao.class);
 
     private String _gtfsPath;
@@ -26,19 +26,21 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
     public void load(){
         _isLoading = true;
 
-        _log.debug("Is loading");
+        File file = new File(_gtfsPath);
+
+        _log.info("Is loading a DAO for path {} with file size {} at time {}", _gtfsPath, file.length(), DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
         GtfsReader reader = new GtfsReader();
         reader.setEntityStore(this);
         try {
-            reader.setInputLocation(new File(_gtfsPath));
+            reader.setInputLocation(file);
             reader.run();
             reader.close();
         } catch (IOException e) {
             throw new RuntimeException("Failure while reading GTFS", e);
         }
 
-        _log.debug("Is done loading");
+        _log.info("Is done loading a DAO for path {} at time {}", _gtfsPath, DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
         _isLoading = false;
     }
@@ -55,7 +57,7 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
 
                 // only print this every 25 times so we don't fill up the logs!
                 if(_blockedRequestCounter > 25) {
-                    _log.warn("Bundle is not ready or none is loaded--we've blocked 25 TDS requests since last log event.");
+                    _log.warn("Dao is not ready we've blocked 25 requests for this dao since last log event.");
                     _blockedRequestCounter = 0;
                 }
 
