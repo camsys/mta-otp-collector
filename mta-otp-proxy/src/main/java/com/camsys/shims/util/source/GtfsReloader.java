@@ -3,7 +3,7 @@ package com.camsys.shims.util.source;
 import com.amazonaws.services.s3.AmazonS3;
 import com.camsys.shims.util.S3Utils;
 
-import eu.datex2.schema._1_0._1_0.DateTime;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class GtfsReloader {
 
     public void downloadAndUpdateGtfs(){
 
-        org.joda.time.DateTime start = org.joda.time.DateTime.now();
+        DateTime start = DateTime.now();
         if(start.getMinuteOfHour() == 0 && !_isRunning)
         {
             _isRunning = true;
@@ -60,7 +60,7 @@ public class GtfsReloader {
                 dao.getGtfsRelationalDao().load();
             }
 
-            _log.info("Finished Relaoding all DAOs reloading at time {} and started at {} ", org.joda.time.DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
+            _log.info("Finished Relaoding all DAOs reloading at time {} and started at {} ", DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
 
             _isRunning = false;
         }
