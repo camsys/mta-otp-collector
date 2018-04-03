@@ -32,6 +32,10 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
                     nyctExt.setActualTrack(track);
                     stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
                 }
+                // need to remove extension so downstream systems (OTP) don't try to read it as MnrStopTimeUpdate
+                stub.clearExtension(GtfsRealtimeLIRR.MtaStopTimeUpdate.track);
+                // off-by-1 error in stop sequence
+                stub.setStopSequence(stub.getStopSequence() - 1);
             }
             return tripUpdate;
         }
