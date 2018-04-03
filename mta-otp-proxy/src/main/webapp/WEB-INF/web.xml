@@ -47,6 +47,13 @@
     </servlet>
 
     <servlet>
+        <servlet-name>lirrTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>lirrServiceAlerts</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -111,6 +118,10 @@
         <url-pattern>/realtime/gtfsrt/MNR/alerts</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>lirrTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>lirrServiceAlerts</servlet-name>
         <url-pattern>/realtime/gtfsrt/LIRR/alerts</url-pattern>
     </servlet-mapping>
@@ -129,10 +140,6 @@
     <servlet-mapping>
         <servlet-name>NJB</servlet-name>
         <url-pattern>/realtime/gtfsrt/NJB/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LIRR</servlet-name>
-        <url-pattern>/realtime/gtfsrt/LIRR/tripUpdates</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>serviceStatus</servlet-name>
@@ -190,19 +197,6 @@
         <init-param>
             <param-name>targetUri</param-name>
             <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController</param-value>
-        </init-param>
-        <init-param>
-            <param-name>log</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </servlet>
-
-    <servlet>
-        <servlet-name>LIRR</servlet-name>
-        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
-        <init-param>
-            <param-name>targetUri</param-name>
-            <param-value>http://mnorth.prod.acquia-sites.com/wse/LIRR/gtfsrt/realtime/610034dd391346cdd69a5f884f30f663/proto</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>
