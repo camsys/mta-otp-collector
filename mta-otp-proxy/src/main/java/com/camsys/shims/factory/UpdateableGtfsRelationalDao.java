@@ -33,7 +33,7 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
 
         _log.info("Is loading a DAO for path {} with file size {} at time {}", _gtfsPath, file.length(), DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
-        loadDao(this, file);
+        loadDao(_prime, file);
 
         _log.info("Is done loading a DAO for path {} at time {}", _gtfsPath, DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
