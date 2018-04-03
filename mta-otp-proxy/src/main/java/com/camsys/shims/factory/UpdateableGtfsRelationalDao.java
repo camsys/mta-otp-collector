@@ -23,8 +23,8 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
     public void setGtfsPath(String path) { _gtfsPath = path; }
     public String getGtfsPath() { return _gtfsPath; }
 
-    GtfsRelationalDaoImpl _prime;
-    GtfsRelationalDaoImpl _secondary;
+    GtfsRelationalDaoImpl _prime = new GtfsRelationalDaoImpl();
+    GtfsRelationalDaoImpl _secondary = new GtfsRelationalDaoImpl();;
 
     public void load(){
         _isLoading = true;
@@ -33,7 +33,7 @@ public class UpdateableGtfsRelationalDao extends GtfsRelationalDaoImpl {
 
         _log.info("Is loading a DAO for path {} with file size {} at time {}", _gtfsPath, file.length(), DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
-        loadDao(_prime, file);
+        loadDao(this, file);
 
         _log.info("Is done loading a DAO for path {} at time {}", _gtfsPath, DateTime.now().toLocalTime().toString("HH:mm:ss"));
 
