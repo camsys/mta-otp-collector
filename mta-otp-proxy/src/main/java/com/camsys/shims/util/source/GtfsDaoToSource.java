@@ -2,7 +2,11 @@ package com.camsys.shims.util.source;
 
 import com.camsys.shims.factory.GtfsRelationalDaoFactory;
 import com.camsys.shims.factory.UpdateableGtfsRelationalDao;
+import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GtfsDaoToSource {
 
@@ -10,6 +14,7 @@ public class GtfsDaoToSource {
     private String _gtfsDaoSourceUrl;
     private boolean _usesS3 = false;
     private String _saveLocation = "~/GTFS/saves";
+    private List<GtfsAndCalendar> _gtfsAndCalendarList = new ArrayList<GtfsAndCalendar>();
 
     public UpdateableGtfsRelationalDao getGtfsRelationalDao() {
         return _gtfsDao;
@@ -40,5 +45,12 @@ public class GtfsDaoToSource {
 
     public void setUsesS3(boolean _usesS3) {
         this._usesS3 = _usesS3;
+    }
+
+    public List<GtfsAndCalendar> getGtfsAndCalendarList(){
+      return _gtfsAndCalendarList;
+    }
+    public void setGtfsAndCalendarList(List<GtfsAndCalendar> list){
+        _gtfsAndCalendarList = list;
     }
 }
