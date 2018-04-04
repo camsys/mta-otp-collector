@@ -1,7 +1,7 @@
 package com.camsys.shims.util.source;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.camsys.shims.util.S3Utils;
+import com.camsys.shims.s3.S3Utils;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
