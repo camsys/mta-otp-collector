@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GtfsAndCalendar {
+public class GtfsAndCalendar implements GtfsDaoDependency {
 
     private GtfsRelationalDao _gtfsDao;
     private CalendarServiceData _calendarData;
     private List<String> _routeIdWhiteList = new ArrayList<>();
-
 
     public void setGtfsDao(GtfsRelationalDao gtfsDao) {
         _gtfsDao = gtfsDao;
