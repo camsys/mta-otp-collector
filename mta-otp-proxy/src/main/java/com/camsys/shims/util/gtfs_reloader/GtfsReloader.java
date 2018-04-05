@@ -1,8 +1,9 @@
-package com.camsys.shims.util.source;
+package com.camsys.shims.util.gtfs_reloader;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.camsys.shims.s3.S3Utils;
 
+import com.camsys.shims.util.gtfs.GtfsDaoDependency;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +59,14 @@ public class GtfsReloader {
                 }
 
                 dao.getGtfsRelationalDao().load();
+
+                for (GtfsDaoDependency dependency : dao.getDownstreamDependencies())
+                {
+                    dependency.setGtfsDao(dao.getGtfsRelationalDao());
+                }
             }
 
-            _log.info("Finished Relaoding all DAOs reloading at time {} and started at {} ", DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
+            _log.info("Finished reloading all DAOs reloading at time {} and started at {} ", DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
 
             _isRunning = false;
         }

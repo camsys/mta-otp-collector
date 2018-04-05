@@ -1,8 +1,10 @@
-package com.camsys.shims.util.source;
+package com.camsys.shims.util.gtfs_reloader;
 
-import com.camsys.shims.factory.GtfsRelationalDaoFactory;
 import com.camsys.shims.factory.UpdateableGtfsRelationalDao;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
+import com.camsys.shims.util.gtfs.GtfsDaoDependency;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GtfsDaoToSource {
 
@@ -10,6 +12,7 @@ public class GtfsDaoToSource {
     private String _gtfsDaoSourceUrl;
     private boolean _usesS3 = false;
     private String _saveLocation = "~/GTFS/saves";
+    private List<GtfsDaoDependency> _gtfsDependencyList = new ArrayList<>();
 
     public UpdateableGtfsRelationalDao getGtfsRelationalDao() {
         return _gtfsDao;
@@ -40,5 +43,17 @@ public class GtfsDaoToSource {
 
     public void setUsesS3(boolean _usesS3) {
         this._usesS3 = _usesS3;
+    }
+
+    public List<GtfsDaoDependency> getDownstreamDependencies(){
+      return _gtfsDependencyList;
+    }
+
+    public void setGtfsDependencyList(List<GtfsDaoDependency> gtfsDependencyList) {
+        _gtfsDependencyList = gtfsDependencyList;
+    }
+
+    public void addGtfsDependency(GtfsDaoDependency dependency) {
+        _gtfsDependencyList.add(dependency);
     }
 }
