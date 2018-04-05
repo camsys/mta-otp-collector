@@ -75,6 +75,13 @@
     </servlet>
 
     <servlet>
+        <servlet-name>gmsServiceStatus</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>routeBranchStop</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -144,6 +151,10 @@
     <servlet-mapping>
         <servlet-name>serviceStatus</servlet-name>
         <url-pattern>/realtime/serviceStatus</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>gmsServiceStatus</servlet-name>
+        <url-pattern>/realtime/gmsServiceStatusTest</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>routeBranchStop</servlet-name>
