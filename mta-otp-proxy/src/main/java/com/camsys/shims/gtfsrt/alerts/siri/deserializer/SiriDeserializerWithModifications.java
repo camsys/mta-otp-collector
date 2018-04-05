@@ -14,6 +14,7 @@ package com.camsys.shims.gtfsrt.alerts.siri.deserializer;
 
 import com.amazonaws.util.IOUtils;
 import jdk.nashorn.internal.ir.WhileNode;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
@@ -28,9 +29,18 @@ import uk.org.siri.siri.SituationExchangeDeliveryStructure.Situations;
 import javax.swing.text.html.parser.ParserDelegator;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 // deserialize SIRI and modify LongDescription
 public class SiriDeserializerWithModifications extends SiriDeserializer {
+
+    private String[] _htmlWhiteList;
+
+    public void setHtmlWhiteList(String[] htmlWhiteList){
+        _htmlWhiteList = htmlWhiteList;
+    }
+
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
@@ -57,6 +67,34 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                                 if (pt.getDescription() != null) {
                                     DefaultedTextStructure txt = pt.getDescription();
                                     String html = txt.getValue();
+                                    html = StringEscapeUtils.unescapeHtml4(html);
+                                    Whitelist wl = Whitelist.none();
+                                    wl.addTags(_htmlWhiteList);
+                                    String cleanedHtml = Jsoup.clean(html, wl);
+                                    cleanedHtml = cleanedHtml.replace("\n", ""); // bullet point
+                                    cleanedHtml = cleanedHtml.replace("\u2022", "&bull;");
+                                    txt.setValue(cleanedHtml);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /*private void removeHtml(Siri siri) {
+        if (siri.getServiceDelivery() != null) {
+            ServiceDelivery sd = siri.getServiceDelivery();
+            if (sd.getSituationExchangeDelivery() != null) {
+                for (SituationExchangeDeliveryStructure seds : sd.getSituationExchangeDelivery()) {
+                    if (seds.getSituations() != null) {
+                        Situations s = seds.getSituations();
+                        if (s.getPtSituationElement() != null) {
+                            for (PtSituationElementStructure pt : s.getPtSituationElement()) {
+                                if (pt.getDescription() != null) {
+                                    DefaultedTextStructure txt = pt.getDescription();
+                                    String html = txt.getValue();
                                     String text = Jsoup.parse(html).text();
                                     String cleanedText = Jsoup.clean(text, new Whitelist().none());
                                     cleanedText = cleanedText.replace("\u2022", ""); // bullet point
@@ -68,5 +106,5 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                 }
             }
         }
-    }
+    }*/
 }
