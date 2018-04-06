@@ -5,6 +5,7 @@ import com.camsys.mta.gms_service_status.Service;
 import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.StatusDetail;
+import com.camsys.shims.util.HtmlCleanupUtil;
 import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -30,12 +31,12 @@ public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Ser
     private static final String LIRR_AGENCY = "LI";
     private static final String MNR_AGENCY = "MNR";
 
-
     private String[] subwayRoutes = new String[] {"SIR"};
-    private String[] _htmlWhiteList;
 
-    public void setHtmlWhiteList(String[] htmlWhiteList){
-        _htmlWhiteList = htmlWhiteList;
+    private HtmlCleanupUtil _htmlCleanupUtil;
+
+    public void setHtmlCleanupUtil(HtmlCleanupUtil htmlCleanupUtil) {
+        _htmlCleanupUtil = htmlCleanupUtil;
     }
 
     @Override
@@ -127,23 +128,12 @@ public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Ser
         StatusDetail statusDetail = new StatusDetail();
         statusDetail.setStatusSummary(WordUtils.capitalize(line.getStatus()));
         statusDetail.setDirection(DEFAULT_DIRECTION);
-        statusDetail.setStatusDescription(getSanitizedStatusText(line.getText()));
+        statusDetail.setStatusDescription(_htmlCleanupUtil.filterHtml(line.getText()));
         statusDetails.add(statusDetail);
         return statusDetails;
     }
 
     private String getRouteId(String agency, String route){
         return agency + "_" + route;
-    }
-
-    private String getSanitizedStatusText(String statusDetail) {
-        String html = statusDetail;
-        html = StringEscapeUtils.unescapeHtml4(html);
-        Whitelist wl = Whitelist.none();
-        wl.addTags(_htmlWhiteList);
-        String cleanedHtml = Jsoup.clean(html, wl);
-        cleanedHtml = cleanedHtml.replace("\n", ""); // bullet point
-        cleanedHtml = cleanedHtml.replace("\u2022", "&bull;");
-        return cleanedHtml;
     }
 }
