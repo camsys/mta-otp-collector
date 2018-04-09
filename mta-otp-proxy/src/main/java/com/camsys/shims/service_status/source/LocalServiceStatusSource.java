@@ -1,17 +1,22 @@
 package com.camsys.shims.service_status.source;
 
 import com.camsys.mta.gms_service_status.Service;
+import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.GmsServiceStatusTransformer;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
+import com.camsys.shims.util.gtfs.GtfsAndCalendar;
+import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lcaraballo on 4/5/18.
@@ -22,14 +27,37 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
 
     protected Deserializer<T> _deserializer;
 
+    protected ServiceStatusTransformer _transformer;
+
     protected String _sourceUrl;
 
-    protected ServiceStatusTransformer _transformer;
+    protected String _mode;
+
+    protected GtfsAndCalendar _gtfsAndCalendar;
+
+    private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
+
+    protected GtfsRouteAdapter _gtfsAdapter;
 
     protected ServiceStatus _serviceStatus;
 
     public void setDeserializer(Deserializer<T> deserializer) {
         _deserializer = deserializer;
+    }
+
+    public void setGtfsRouteAdapter(GtfsRouteAdapter _gtfsAdapter) {
+        _gtfsAdapter = _gtfsAdapter;
+    }
+    public void setMode(String _mode) {
+        _mode = _mode;
+    }
+
+    public void setGtfsAndCalendar(GtfsAndCalendar _gtfsAndCalendar) {
+        _gtfsAndCalendar = _gtfsAndCalendar;
+    }
+
+    public void setRouteDetailsMap(Map<String, RouteDetail> _routeDetailsMap) {
+        _routeDetailsMap = _routeDetailsMap;
     }
 
     public void setSourceUrl(String sourceUrl) {
@@ -42,15 +70,15 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
 
     @Override
     public void update() {
-        T service = getService(_sourceUrl, _deserializer);
-        if (service != null) {
+        T sourceData = getSourceData(_sourceUrl, _deserializer);
+        if (sourceData != null) {
             List<RouteDetail> routeDetails = _transformer
-                    .transform(service, null, null, null, null);
+                    .transform(sourceData, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }
 
-    private T getService(String filePath, Deserializer<T> deserializer){
+    private T getSourceData(String filePath, Deserializer<T> deserializer){
         try {
             InputStream is = this.getClass().getClassLoader()
                     .getResourceAsStream(filePath);

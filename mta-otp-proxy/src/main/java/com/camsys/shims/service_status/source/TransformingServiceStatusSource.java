@@ -48,8 +48,6 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected GtfsAndCalendar _gtfsAndCalendar;
 
-    protected CalendarServiceData _csd;
-
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
     public void setSourceUrl(String sourceUrl) {
@@ -78,15 +76,15 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     @Override
     public void update() {
-        T siri = getSiri(_sourceUrl, _deserializer);
-        if (siri != null) {
+        T sourceData = getSourceData(_sourceUrl, _deserializer);
+        if (sourceData != null) {
             List<RouteDetail>  routeDetails = _transformer
-                    .transform(siri, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
+                    .transform(sourceData, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }
 
-    protected T getSiri(String sourceUrl, Deserializer<T> deserializer){
+    protected T getSourceData(String sourceUrl, Deserializer<T> deserializer){
         if (_httpClient == null)
             _httpClient = HttpClientBuilder.create().setConnectionManager(_connectionManager).build();
 
