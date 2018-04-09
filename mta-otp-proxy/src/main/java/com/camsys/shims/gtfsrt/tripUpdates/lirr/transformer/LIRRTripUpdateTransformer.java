@@ -18,11 +18,12 @@ import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtimeLIRR;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
+import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 
 public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
 
     @Override
-    public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
+    public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         if (fe.hasTripUpdate()) {
             TripUpdate.Builder tripUpdate = fe.getTripUpdate().toBuilder();
             for (StopTimeUpdate.Builder stub : tripUpdate.getStopTimeUpdateBuilderList()) {

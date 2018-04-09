@@ -20,6 +20,8 @@ import com.google.transit.realtime.GtfsRealtimeMNR;
 import com.google.transit.realtime.GtfsRealtimeMNR.MnrStopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
 import com.google.transit.realtime.GtfsRealtimeNYCT.NyctStopTimeUpdate;
+import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
+import com.kurtraschke.nyctrtproxy.model.Status;
 import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
@@ -59,7 +61,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     }
 
     @Override
-    public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
+    public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         TripUpdate tu = fe.getTripUpdate();
         TripUpdate.Builder tub = TripUpdate.newBuilder();
         String routeId = null, tripShortName = null, startDate = null;

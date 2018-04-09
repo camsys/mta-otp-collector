@@ -15,6 +15,9 @@ package com.camsys.shims.util.transformer;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
+import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
+import com.kurtraschke.nyctrtproxy.model.Status;
+import com.kurtraschke.nyctrtproxy.services.ProxyDataListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,28 +25,53 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
 
     private static final Logger _log = LoggerFactory.getLogger(TripUpdateTransformer.class);
 
+    private ProxyDataListener _cloudwatchService;
+
+    private String _namespace;
+
+    private String _feedId;
+
+    public void setCloudwatchService(ProxyDataListener cloudwatchService) {
+        _cloudwatchService = cloudwatchService;
+    }
+
+    public void setFeedId(String feedId) {
+        _feedId = feedId;
+    }
+
+    public void setNamespace(String namespace) {
+        _namespace = namespace;
+    }
+
     @Override
     public FeedMessage transform(FeedMessage message) {
         FeedMessage.Builder builder = FeedMessage.newBuilder();
         builder.setHeader(message.getHeader());
         int nTotal = 0, nMatched = 0;
+        MatchMetrics matchMetrics = new MatchMetrics();
         for (int i = 0; i < message.getEntityCount(); i++) {
             FeedEntity entity = message.getEntity(i);
             if (entity.hasTripUpdate()) {
                 nTotal++;
-                TripUpdate.Builder tu = transformTripUpdate(entity);
+                TripUpdate.Builder tu = transformTripUpdate(entity, matchMetrics);
                 if (tu != null) {
                     FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
                     builder.addEntity(feb);
                     nMatched++;
+                    matchMetrics.addStatus(Status.STRICT_MATCH);
+                }
+                else{
+                    matchMetrics.addStatus(Status.NO_MATCH);
                 }
             } else {
                 builder.addEntity(entity);
             }
         }
         _log.debug("Matched {} / {} TripUpdates", nMatched, nTotal);
+            matchMetrics.reportRecordsIn(nTotal);
+            _cloudwatchService.reportMatchesForTripUpdateFeed("MNR",matchMetrics, _namespace);
         return builder.build();
     }
 
-    public abstract TripUpdate.Builder transformTripUpdate(FeedEntity fe);
+    public abstract TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics);
 }
