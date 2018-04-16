@@ -89,13 +89,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>plannedServiceAlerts</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>subwayStopTimes</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -164,14 +157,6 @@
         <servlet-name>subwayStopTimes</servlet-name>
         <url-pattern>/realtime/MTASBWY/stopTimes</url-pattern>
     </servlet-mapping>
-
-
-    <servlet-mapping>
-        <!--I'm not sure this is the right URL pattern-->
-        <servlet-name>plannedServiceAlerts</servlet-name>
-        <url-pattern>/realtime/gtfsrt/plannedServiceAlerts</url-pattern>
-    </servlet-mapping>
-
 
 
     <!-- proxy config -->
