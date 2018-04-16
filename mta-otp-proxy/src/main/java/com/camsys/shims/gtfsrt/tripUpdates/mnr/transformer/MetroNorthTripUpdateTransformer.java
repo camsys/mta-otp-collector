@@ -16,6 +16,7 @@ import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
+import com.google.transit.realtime.GtfsRealtime.TripDescriptor.ScheduleRelationship;
 import com.google.transit.realtime.GtfsRealtimeMNR;
 import com.google.transit.realtime.GtfsRealtimeMNR.MnrStopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
@@ -76,14 +77,23 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
         if (routeId == null || tripShortName == null || startDate == null) {
             _log.info("not enough info for tripUpdate routeId={} tripShortName={} startDate={}", routeId, tripShortName, startDate);
+            matchMetrics.addStatus(Status.BAD_TRIP_ID);
             return null;
         }
         ServiceDate sd = parseDate(startDate);
         Trip trip = findCorrectTrip(routeId, tripShortName, sd);
         if (trip == null) {
-            // error message in findCorrectTrip
-            return null;
+            matchMetrics.addStatus(Status.NO_MATCH);
+
+            TripUpdate.Builder addedTub = tu.toBuilder();
+            addedTub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
+            addedTub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
+
+            return addedTub;
         }
+
+
+
         tub.getTripBuilder().setTripId(trip.getId().getId());
         tub.getTripBuilder().setStartDate(formatDate(sd));
         tub.getTripBuilder().setRouteId(routeId);
@@ -113,6 +123,8 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
 
         tub.setDelay(delay);
+
+
 
         return tub;
     }

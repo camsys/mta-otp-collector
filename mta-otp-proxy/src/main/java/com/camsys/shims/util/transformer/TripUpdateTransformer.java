@@ -60,9 +60,6 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                     nMatched++;
                     matchMetrics.addStatus(Status.STRICT_MATCH);
                 }
-                else{
-                    matchMetrics.addStatus(Status.NO_MATCH);
-                }
             } else {
                 builder.addEntity(entity);
             }
