@@ -12,9 +12,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.util.transformer;
 
+
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
+import com.google.transit.realtime.GtfsRealtime.TripDescriptor.ScheduleRelationship;
 import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 import com.kurtraschke.nyctrtproxy.model.Status;
 import com.kurtraschke.nyctrtproxy.services.ProxyDataListener;
@@ -57,17 +59,19 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                 if (tu != null) {
                     FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
                     builder.addEntity(feb);
-                    nMatched++;
-                    matchMetrics.addStatus(Status.STRICT_MATCH);
+                    if(!tu.getTrip().getScheduleRelationship().equals(ScheduleRelationship.ADDED)) {
+                        nMatched++;
+                        matchMetrics.addStatus(Status.STRICT_MATCH);
+                    }
                 }
             } else {
                 builder.addEntity(entity);
             }
         }
         _log.debug("Matched {} / {} TripUpdates", nMatched, nTotal);
-            matchMetrics.reportRecordsIn(nTotal);
-            if (_cloudwatchService != null && _feedId != null && _namespace != null)
-                _cloudwatchService.reportMatchesForTripUpdateFeed(_feedId, matchMetrics, _namespace);
+        matchMetrics.reportRecordsIn(nTotal);
+        if (_cloudwatchService != null && _feedId != null && _namespace != null)
+            _cloudwatchService.reportMatchesForTripUpdateFeed(_feedId, matchMetrics, _namespace);
         return builder.build();
     }
 
