@@ -41,7 +41,7 @@ public class HtmlCleanupUtil {
     private String replaceCharacters(final String html){
         return html.replace("\n", "")
                     .replace("\u2022", "&bull;")
-                    .replace("\u00B7", "&middotl;");
+                    .replace("\u00B7", "&middot;");
     }
 
     private void addAttributesToAllTags(Whitelist wl){
