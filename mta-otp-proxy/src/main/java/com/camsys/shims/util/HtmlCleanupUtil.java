@@ -1,15 +1,11 @@
 package com.camsys.shims.util;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 
-import java.util.Arrays;
-import java.util.Map;
+import javax.annotation.PostConstruct;
 
 /**
  * Created by lcaraballo on 4/6/18.
@@ -34,7 +30,8 @@ public class HtmlCleanupUtil {
 
         Document doc = Jsoup.parse(html);
         doc = new Cleaner(wl).clean(doc);
-        doc.outputSettings().charset("ISO-8859-1");
+        doc.outputSettings().charset("ASCII");
+        doc.outputSettings().prettyPrint(false);
         return doc.body().html();
     }
 
