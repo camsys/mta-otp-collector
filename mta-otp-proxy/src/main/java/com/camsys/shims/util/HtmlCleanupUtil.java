@@ -1,9 +1,14 @@
 package com.camsys.shims.util;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
+import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -11,7 +16,6 @@ import java.util.Map;
  */
 public class HtmlCleanupUtil {
 
-    private Map<String, String> _htmlCharReplacements;
     private String[] _htmlTagWhiteList;
     private String[] _htmlAttributesWhiteList;
 
@@ -23,25 +27,15 @@ public class HtmlCleanupUtil {
         _htmlAttributesWhiteList = htmlAttributesWhiteList;
     }
 
-    public void setHtmlCharReplacements(Map<String, String> replacementsMap){
-        _htmlCharReplacements = replacementsMap;
-    }
-
     public String filterHtml(final String html){
         Whitelist wl = Whitelist.none();
         wl.addTags(_htmlTagWhiteList);
         addAttributesToAllTags(wl);
 
-        final String unescapedHtml = StringEscapeUtils.unescapeHtml4(html);
-        final String cleanedHtml = Jsoup.clean(unescapedHtml, wl);
-        final String cleanedHtmlWithReplacements =  replaceCharacters(cleanedHtml);
-        return cleanedHtmlWithReplacements;
-    }
-
-    private String replaceCharacters(final String html){
-        return html.replace("\n", "")
-                    .replace("\u2022", "&bull;")
-                    .replace("\u00B7", "&middot;");
+        Document doc = Jsoup.parse(html);
+        doc = new Cleaner(wl).clean(doc);
+        doc.outputSettings().charset("ISO-8859-1");
+        return doc.body().html();
     }
 
     private void addAttributesToAllTags(Whitelist wl){
