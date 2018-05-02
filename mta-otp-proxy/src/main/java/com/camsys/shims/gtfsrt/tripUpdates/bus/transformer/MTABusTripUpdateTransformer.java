@@ -23,7 +23,7 @@ public class MTABusTripUpdateTransformer extends TripUpdateTransformer {
         if (fe.hasTripUpdate()) {
             TripUpdate.Builder tub = fe.getTripUpdate().toBuilder();
             String tripId = tub.getTrip().getTripId();
-            tripId = tripId.replace("SDon-", "");
+            tripId = tripId.replace("-SDon", "");
             tub.getTripBuilder().setTripId(tripId);
             return tub;
         }
