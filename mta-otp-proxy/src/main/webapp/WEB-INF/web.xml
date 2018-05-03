@@ -164,6 +164,10 @@
         <servlet-name>subwayStopTimes</servlet-name>
         <url-pattern>/realtime/MTASBWY/stopTimes</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>busSiri</servlet-name>
+        <url-pattern>/realtime/MTABUS/siri/*</url-pattern>
+    </servlet-mapping>
 
 
     <!-- proxy config -->
@@ -187,6 +191,19 @@
         <init-param>
             <param-name>targetUri</param-name>
             <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>busSiri</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://bustime.mta.info/api/siri/</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>

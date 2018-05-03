@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 
 <head>
-    <title>OTP/Subway RT comparison</title>
+    <title>OTP/BusTime RT comparison</title>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="common.js"></script>
-    <script src="subway.js"></script>
+    <script src="bus.js"></script>
     <style>
         #results {
             display: flex;
@@ -23,12 +23,15 @@
         API key: <input type="text" id="otpApi" value="hAR0VMP2Ufxk542WrtTW8ToBmi4N3UUp" />
     </p>
 
-    Route: <input type="text" id="route" />
+    <p>
+        BusTime key: <input type="text" id="obaKey" value="a4da5f79-c325-4f68-a735-607ce40cbc1d" />
+    </p>
+
     Stop: <input type="text" id="stop" />
     <button type="submit" id="submit">Submit</button>
 
     <div id="results">
         <div id="otpResults"></div>
-        <div id="rtResults"></div>
+        <div id="obaResults"></div>
     </div>
 </body>
