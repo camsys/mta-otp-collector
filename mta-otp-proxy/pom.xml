@@ -12,6 +12,7 @@
     <properties>
         <webcontent2.version>2.0</webcontent2.version>
         <jackson-2-version>2.9.4</jackson-2-version>
+        <aws.version>1.11.289</aws.version>
     </properties>
     <dependencies>
         <dependency>
@@ -41,7 +42,7 @@
             <version>1.7.22</version>
         </dependency>
         <dependency>
-           <groupId>com.kurtraschke</groupId>
+            <groupId>com.kurtraschke</groupId>
             <artifactId>nyct-rt-proxy</artifactId>
             <version>1.0.7-SNAPSHOT</version>
             <exclusions>
@@ -98,7 +99,22 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.11.289</version>
+            <version>${aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-cloudwatch</artifactId>
+            <version>${aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-autoscaling</artifactId>
+            <version>${aws.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-ec2</artifactId>
+            <version>${aws.version}</version>
         </dependency>
         <!-- CSV parser -->
         <dependency>
