@@ -36,7 +36,7 @@ public class GtfsReloader {
     public void downloadAndUpdateGtfs(){
 
         DateTime start = DateTime.now();
-        if(start.getMinuteOfHour() == 0 && !_isRunning)
+        if( !_isRunning)
         {
             _isRunning = true;
 
