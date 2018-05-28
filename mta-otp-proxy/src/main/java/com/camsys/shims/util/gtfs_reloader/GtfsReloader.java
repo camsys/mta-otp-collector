@@ -46,6 +46,8 @@ public class GtfsReloader {
 
                 InputStream sourceResult;
 
+                _log.info("Reloading DAO from {} to {}", dao.getGtfsDaoSourceUrl(), dao.getSaveLocation());
+
                 if(dao.getUsesS3())
                 {
                     AmazonS3 s3 = S3Utils.getS3Client(_user, _pass);
@@ -69,6 +71,8 @@ public class GtfsReloader {
             _log.info("Finished reloading all DAOs reloading at time {} and started at {} ", DateTime.now().toString("HH:mm:ss"), start.toString("HH:mm:ss"));
 
             _isRunning = false;
+        } else {
+            _log.info("Did not run GtfsReloader: isRunning={}, minuteOfHour={}", _isRunning, start.getMinuteOfHour());
         }
     }
 
