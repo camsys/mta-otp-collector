@@ -17,8 +17,11 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
+import java.io.File;
 import java.io.InputStream;
 
 public class S3Utils {
@@ -47,4 +50,21 @@ public class S3Utils {
         }
         return null;
     }
+
+    /**
+     * This is a safer method of copying a file from S3 locally.
+     * According to the AWS docs, S3.GetObject(bucket, key) returns a direct stream from S3 and may
+     * result in the client running out of resources if used improperly.
+     * See https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3.html#getObject-com.amazonaws.services.s3.model.GetObjectRequest-java.io.File-
+     *
+     * @returns true if successful
+     */
+    public static boolean copyFromS3ToFile(AmazonS3 s3, String url, String dest) {
+        AmazonS3URI uri = new AmazonS3URI(url);
+        GetObjectRequest request = new GetObjectRequest(uri.getBucket(), uri.getKey());
+        File file = new File(dest);
+        ObjectMetadata metadata = s3.getObject(request, file);
+        return metadata != null;
+    }
+
 }

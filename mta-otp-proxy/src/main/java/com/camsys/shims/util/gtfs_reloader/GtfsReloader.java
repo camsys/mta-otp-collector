@@ -44,20 +44,19 @@ public class GtfsReloader {
 
             for (GtfsDaoToSource dao : _daos) {
 
-                InputStream sourceResult;
 
                 _log.info("Reloading DAO from {} to {}", dao.getGtfsDaoSourceUrl(), dao.getSaveLocation());
 
-                if(dao.getUsesS3())
-                {
+                if (dao.getUsesS3()) {
                     AmazonS3 s3 = S3Utils.getS3Client(_user, _pass);
-                    sourceResult = S3Utils.getViaS3(s3, dao.getGtfsDaoSourceUrl());
-                }else{
-                    sourceResult = getGtfsSourceDataWithoutS3(dao.getGtfsDaoSourceUrl());
-                }
-
-                if(sourceResult != null){
-                    saveGtfsToDaoSource(sourceResult, dao.getSaveLocation());
+                    if (!S3Utils.copyFromS3ToFile(s3, dao.getGtfsDaoSourceUrl(), dao.getSaveLocation())) {
+                        _log.error("Error reloading dao!");
+                    }
+                } else {
+                    InputStream sourceResult = getGtfsSourceDataWithoutS3(dao.getGtfsDaoSourceUrl());
+                    if(sourceResult != null){
+                        saveGtfsToDaoSource(sourceResult, dao.getSaveLocation());
+                    }
                 }
 
                 dao.getGtfsRelationalDao().load();
