@@ -22,10 +22,15 @@ import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 
 public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
 
+    private static final String JAMAICA = "15";
+
     @Override
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         if (fe.hasTripUpdate()) {
             TripUpdate.Builder tripUpdate = fe.getTripUpdate().toBuilder();
+            if (ignoreTripUpdate(tripUpdate)) {
+                return null;
+            }
             for (StopTimeUpdate.Builder stub : tripUpdate.getStopTimeUpdateBuilderList()) {
                 String track = stub.getExtension(GtfsRealtimeLIRR.MtaStopTimeUpdate.track);
                 if (track != null) {
@@ -41,5 +46,10 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
             return tripUpdate;
         }
         return null;
+    }
+
+    // Per-MOTP-796: temporarily ignore TripUpdates created by the track assignment system at Jamaica
+    private boolean ignoreTripUpdate(TripUpdate.Builder tu) {
+        return tu.getStopTimeUpdateCount() > 0 && JAMAICA.equals(tu.getStopTimeUpdate(0).getStopId());
     }
 }
