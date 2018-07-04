@@ -17,10 +17,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 {
@@ -47,6 +49,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     protected String _mode;
 
     protected GtfsAndCalendar _gtfsAndCalendar;
+
+    protected List<String> _excludeRoutes;
 
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
@@ -80,6 +84,11 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         if (sourceData != null) {
             List<RouteDetail>  routeDetails = _transformer
                     .transform(sourceData, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
+            if (_excludeRoutes != null && !_excludeRoutes.isEmpty()) {
+                routeDetails = routeDetails.stream()
+                        .filter(r -> !_excludeRoutes.contains(r.getRouteId()))
+                        .collect(Collectors.toList());
+            }
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }
@@ -111,5 +120,9 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     @Override
     public ServiceStatus getStatus(String updatesSince) {
         return _serviceStatus;
+    }
+
+    public void setExcludeRoutes(String excludeRoutes) {
+        _excludeRoutes = Arrays.asList(excludeRoutes.split(","));
     }
 }
