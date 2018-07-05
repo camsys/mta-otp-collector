@@ -52,6 +52,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected List<String> _excludeRoutes;
 
+    protected List<String> _inServiceFalseRoutes;
+
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
     public void setSourceUrl(String sourceUrl) {
@@ -89,6 +91,13 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
                         .filter(r -> !_excludeRoutes.contains(r.getRouteId()))
                         .collect(Collectors.toList());
             }
+            if (_inServiceFalseRoutes != null && !_inServiceFalseRoutes.isEmpty()) {
+                for (RouteDetail routeDetail : routeDetails) {
+                    if (_inServiceFalseRoutes.contains(routeDetail.getRouteId())) {
+                        routeDetail.setInService(false);
+                    }
+                }
+            }
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }
@@ -124,5 +133,9 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     public void setExcludeRoutes(String excludeRoutes) {
         _excludeRoutes = Arrays.asList(excludeRoutes.split(","));
+    }
+
+    public void setInServiceFalseRoutes(String inServiceFalseRoutes) {
+        _inServiceFalseRoutes = Arrays.asList(inServiceFalseRoutes.split(","));
     }
 }
