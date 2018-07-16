@@ -48,6 +48,8 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     protected String _sourceUrl;
 
+    private String _overrideMimeType;
+
     public void setConnectionManager(HttpClientConnectionManager connectionManager) {
         _connectionManager = connectionManager;
     }
@@ -72,6 +74,10 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
         this._deserializer = deserializer;
     }
 
+    public void setOverrideMimeType(String overrideMimeType) {
+        _overrideMimeType = overrideMimeType;
+    }
+
     @Override
     public void update() {
         T message = getMessage(_sourceUrl, _deserializer);
@@ -86,7 +92,7 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
             _httpClient = HttpClientBuilder.create().setConnectionManager(_connectionManager).build();
 
         HttpGet get = new HttpGet(sourceUrl);
-        get.setHeader("accept", deserializer.getMimeType());
+        get.setHeader("accept", _overrideMimeType == null ? deserializer.getMimeType() : _overrideMimeType);
 
         T message = null;
         for (int tries = 0; tries < _nTries; tries++) {
@@ -100,6 +106,7 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
                 }
             } catch (Exception e) {
                 _log.error("Error parsing protocol feed: {}", sourceUrl);
+                e.printStackTrace();
             }
         }
         return null;
@@ -116,4 +123,5 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
     public void removeIncrementalListener(GtfsRealtimeIncrementalListener listener) {
         throw new NotImplementedException();
     }
+
 }

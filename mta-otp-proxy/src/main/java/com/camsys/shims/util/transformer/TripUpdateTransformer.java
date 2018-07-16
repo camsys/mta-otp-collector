@@ -13,10 +13,13 @@
 package com.camsys.shims.util.transformer;
 
 
+import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
+import com.google.transit.realtime.GtfsRealtime.TripDescriptor;
 import com.google.transit.realtime.GtfsRealtime.TripDescriptor.ScheduleRelationship;
+import com.google.transit.realtime.GtfsRealtime.VehiclePosition;
 import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 import com.kurtraschke.nyctrtproxy.model.Status;
 import com.kurtraschke.nyctrtproxy.services.ProxyDataListener;
@@ -58,6 +61,13 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                 TripUpdate.Builder tu = transformTripUpdate(entity, matchMetrics);
                 if (tu != null) {
                     FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
+
+                    // If there's a vehicle in this entity, set the Trip
+                    if (feb.hasVehicle()) {
+                        VehiclePosition.Builder vehicle = feb.getVehicleBuilder();
+                        vehicle.setTrip(tu.getTrip());
+                    }
+
                     builder.addEntity(feb);
                     if(!tu.getTrip().getScheduleRelationship().equals(ScheduleRelationship.ADDED)) {
                         nMatched++;
