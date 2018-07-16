@@ -106,6 +106,7 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         routeDetail.setMode(mode);
         routeDetail.setLastUpdated(lastUpdated);
         routeDetail.setRouteSortOrder(route.getSortOrder() >= 0 ? route.getSortOrder() : null);
+        routeDetail.setRouteType(route.getType());
         return routeDetail;
     }
 

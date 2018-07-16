@@ -26,6 +26,8 @@ public class RouteDetail {
 
     private Boolean inService;
 
+    private Integer routeType;
+
     @JsonIgnore
     private Date lastUpdated;
 
@@ -111,6 +113,15 @@ public class RouteDetail {
         this.lastUpdated = lastUpdated;
     }
 
+    @JsonProperty("routeType")
+    public Integer getRouteType() {
+        return routeType;
+    }
+
+    public void setRouteType(Integer routeType) {
+        this.routeType = routeType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,6 +136,8 @@ public class RouteDetail {
         if (routeId != null ? !routeId.equals(that.routeId) : that.routeId != null) return false;
         if (routeSortOrder != null ? !routeSortOrder.equals(that.routeSortOrder) : that.routeSortOrder != null)
             return false;
+        if (routeType != null ? !routeType.equals(that.routeType) : that.routeType != null)
+        return false;
         if (inService != null ? !inService.equals(that.inService) : that.inService != null) return false;
         return statusDetails != null ? statusDetails.equals(that.statusDetails) : that.statusDetails == null;
     }
@@ -137,6 +150,7 @@ public class RouteDetail {
         result = 31 * result + (agency != null ? agency.hashCode() : 0);
         result = 31 * result + (routeId != null ? routeId.hashCode() : 0);
         result = 31 * result + (routeSortOrder != null ? routeSortOrder.hashCode() : 0);
+        result = 31 * result + (routeType != null ? routeType.hashCode() : 0);
         result = 31 * result + (inService != null ? inService.hashCode() : 0);
         result = 31 * result + (statusDetails != null ? statusDetails.hashCode() : 0);
         return result;
