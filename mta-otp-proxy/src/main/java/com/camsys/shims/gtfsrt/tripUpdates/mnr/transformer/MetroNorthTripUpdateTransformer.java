@@ -82,29 +82,24 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
         ServiceDate sd = parseDate(startDate);
         Trip trip = findCorrectTrip(routeId, tripShortName, sd);
+        Set<String> stopIds = null;
         if (trip == null) {
             matchMetrics.addStatus(Status.NO_MATCH);
-
-            TripUpdate.Builder addedTub = tu.toBuilder();
-            addedTub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
-            addedTub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
-
-            return addedTub;
+            tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
+            tub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
+        } else {
+            tub.getTripBuilder().setTripId(trip.getId().getId());
+            stopIds = _dao.getStopTimesForTrip(trip).stream()
+                    .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
         }
 
-
-
-        tub.getTripBuilder().setTripId(trip.getId().getId());
         tub.getTripBuilder().setStartDate(formatDate(sd));
         tub.getTripBuilder().setRouteId(routeId);
-
-        Set<String> stopIds = _dao.getStopTimesForTrip(trip).stream()
-                .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
 
         int delay = 0;
 
         for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
-            if (!stopIds.contains(stu.getStopId())) {
+            if (stopIds != null && !stopIds.contains(stu.getStopId())) {
                 continue;
             }
             StopTimeUpdate.Builder stub = stu.toBuilder();
@@ -123,8 +118,6 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
 
         tub.setDelay(delay);
-
-
 
         return tub;
     }
