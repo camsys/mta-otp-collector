@@ -146,7 +146,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>NJT</servlet-name>
-        <url-pattern>/realtime/gtfsrt/NJT/tripUpdates</url-pattern>
+        <url-pattern>/realtime/gtfsrt/NJT/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>serviceStatus</servlet-name>
@@ -190,7 +190,7 @@
         <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
         <init-param>
             <param-name>targetUri</param-name>
-            <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto</param-value>
+            <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>
