@@ -87,6 +87,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             matchMetrics.addStatus(Status.NO_MATCH);
             tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
             tub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
+            stopIds = _dao.getAllStops().stream().map(s -> s.getId().getId()).collect(Collectors.toSet());
         } else {
             tub.getTripBuilder().setTripId(trip.getId().getId());
             stopIds = _dao.getStopTimesForTrip(trip).stream()
@@ -99,7 +100,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         int delay = 0;
 
         for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
-            if (stopIds != null && !stopIds.contains(stu.getStopId())) {
+            if (!stopIds.contains(stu.getStopId())) {
                 continue;
             }
             StopTimeUpdate.Builder stub = stu.toBuilder();
