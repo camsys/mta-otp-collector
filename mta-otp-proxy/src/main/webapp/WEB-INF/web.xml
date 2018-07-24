@@ -145,8 +145,8 @@
         <url-pattern>/realtime/gtfsrt/NYCWF/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>NJB</servlet-name>
-        <url-pattern>/realtime/gtfsrt/NJB/*</url-pattern>
+        <servlet-name>NJT</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NJT/tripUpdates</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>serviceStatus</servlet-name>
@@ -186,11 +186,11 @@
     </servlet>
 
     <servlet>
-        <servlet-name>NJB</servlet-name>
+        <servlet-name>NJT</servlet-name>
         <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
         <init-param>
             <param-name>targetUri</param-name>
-            <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController</param-value>
+            <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>
