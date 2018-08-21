@@ -61,13 +61,6 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                 TripUpdate.Builder tu = transformTripUpdate(entity, matchMetrics);
                 if (tu != null) {
                     FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
-
-                    // If there's a vehicle in this entity, set the Trip
-                    if (feb.hasVehicle()) {
-                        VehiclePosition.Builder vehicle = feb.getVehicleBuilder();
-                        vehicle.setTrip(tu.getTrip());
-                    }
-
                     builder.addEntity(feb);
                     if(!tu.getTrip().getScheduleRelationship().equals(ScheduleRelationship.ADDED)) {
                         nMatched++;

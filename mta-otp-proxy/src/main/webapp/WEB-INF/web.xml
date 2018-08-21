@@ -47,6 +47,14 @@
     </servlet>
 
     <servlet>
+        <servlet-name>mnrVehiclePositions</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+
+    <servlet>
         <servlet-name>mnrServiceAlerts</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -55,6 +63,13 @@
 
     <servlet>
         <servlet-name>lirrTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>lirrVehiclePositions</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
         </servlet-class>
@@ -119,6 +134,10 @@
     <servlet-mapping>
         <servlet-name>mnrTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MNR/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mnrVehiclePositions</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MNR/vehiclePositions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>mnrServiceAlerts</servlet-name>
@@ -208,19 +227,6 @@
         <init-param>
             <param-name>targetUri</param-name>
             <param-value>http://bustime.mta.info/api/siri/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>log</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </servlet>
-
-    <servlet>
-        <servlet-name>lirrVehiclePositions</servlet-name>
-        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
-        <init-param>
-            <param-name>targetUri</param-name>
-            <param-value>http://ec2-52-72-113-192.compute-1.amazonaws.com/vehiclePositions</param-value>
         </init-param>
         <init-param>
             <param-name>log</param-name>
