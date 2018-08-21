@@ -111,6 +111,13 @@
     </servlet>
 
     <servlet>
+        <servlet-name>routeInfo</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>subwayStopTimes</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -182,6 +189,10 @@
     <servlet-mapping>
         <servlet-name>routeBranchStop</servlet-name>
         <url-pattern>/schedule/stopsForRoute</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>routeInfo</servlet-name>
+        <url-pattern>/schedule/routeInfo</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>subwayStopTimes</servlet-name>
