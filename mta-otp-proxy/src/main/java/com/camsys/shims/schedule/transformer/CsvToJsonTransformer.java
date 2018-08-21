@@ -13,12 +13,12 @@ import java.util.List;
 /**
  * Translate arbitrary CSV to JSON located at a URL.
  */
-public class CsvToJsonTransformer {
+public class CsvToJsonTransformer<T> {
 
-    private List<Object> records = new ArrayList<>();
-    private CsvRecordReader csvRecordReader;
+    private List<T> records = new ArrayList<>();
+    private CsvRecordReader<T> csvRecordReader;
     private AmazonS3 s3 = null;
-    public CsvToJsonTransformer(CsvRecordReader csvRecordReader, String user, String pass) {
+    public CsvToJsonTransformer(CsvRecordReader<T> csvRecordReader, String user, String pass) {
         this.csvRecordReader = csvRecordReader;
         s3 = S3Utils.getS3Client(user, pass);
     }
@@ -56,9 +56,9 @@ public class CsvToJsonTransformer {
      * @return
      * @throws IOException
      */
-    private List<Object> getCSV(InputStream input) throws IOException {
+    private List<T> getCSV(InputStream input) throws IOException {
         CsvReader reader = new CsvReader(input, ',', Charset.forName("UTF8"));
-        List<Object> records = new ArrayList<>();
+        List<T> records = new ArrayList<>();
         reader.readRecord();  // discard header
         while (reader.readRecord()) {
             records.add(csvRecordReader.readRecord(reader));
@@ -72,9 +72,9 @@ public class CsvToJsonTransformer {
      * @param filterParamter
      * @return
      */
-    public List<Object> transform(String filterParamter) {
-        List<Object> filtered = new ArrayList<>(records.size());
-        for (Object obj : records) {
+    public List<T> transform(String filterParamter) {
+        List<T> filtered = new ArrayList<>(records.size());
+        for (T obj : records) {
             if (!csvRecordReader.filter(obj, filterParamter)) {
                 filtered.add(obj);
             }

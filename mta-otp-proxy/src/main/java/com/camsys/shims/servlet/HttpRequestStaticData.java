@@ -1,87 +1,56 @@
+/* This program is free software: you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public License
+ as published by the Free Software Foundation, either version 3 of
+ the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.servlet;
 
 import com.camsys.shims.schedule.transformer.CsvRecordReader;
 import com.camsys.shims.schedule.transformer.CsvToJsonTransformer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import org.springframework.web.HttpRequestHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * serve static JSON data backed by arbitrary CSV at a url.
  */
-public class HttpRequestStaticData implements HttpRequestHandler {
-
-    private String s3key = null;
-    public void setS3key(String key) {
-        this.s3key = key;
-    }
-    private String s3pass = null;
-    public void setS3pass(String pass) {
-        this.s3pass = pass;
-    }
+public class HttpRequestStaticData extends AbstractHttpRequestStaticData<List<Object>> {
 
     private String _sourceUrl = null;
+
     public void setSourceUrl(String url) {
         _sourceUrl = url;
     }
-    private CsvRecordReader reader = null;
-    public void setCsvRecord(CsvRecordReader reader) {
-        this.reader = reader;
-    }
-    private boolean _cacheResults = true;
-    public void setCacheResults(boolean cacheResults) {
-        this._cacheResults = cacheResults;
+
+    private CsvRecordReader<Object> _reader = null;
+
+    public void setCsvReader(CsvRecordReader reader) {
+        _reader = reader;
     }
 
     private CsvToJsonTransformer _transformer = null;
-    private static ObjectMapper mapper = new ObjectMapper();
-    private Map<String, List<Object>> _cache = new HashMap<>();
 
-
-    public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        if (_transformer == null) {
-            _transformer = getTransformer();
-        }
-
-        String routeId = req.getParameter("routeId");
-
-        if (_cacheResults) {
-            if (_cache.containsKey(routeId)) {
-                ObjectWriter writer = mapper.writer();
-                writer.writeValue(resp.getWriter(), _cache.get(routeId));
-                return;
-            }
-        }
-
+    @Override
+    protected List<Object> getData(String routeId) {
         // lookup injected source file
         // download and load
         getTransformer().loadUrl(_sourceUrl);
         // filter
         // transform
-        List<Object> obj = getTransformer().transform(routeId);
-        // serve -- if not caching, pretty print it for easy reading
-        ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-        writer.writeValue(resp.getWriter(), obj);
-
-        if (_cacheResults) {
-            _cache.put(routeId, obj);
-        }
-
+        return getTransformer().transform(routeId);
     }
 
-    private CsvToJsonTransformer getTransformer() {
+    protected CsvToJsonTransformer<Object> getTransformer() {
         if (_transformer == null) {
-            _transformer = new CsvToJsonTransformer(reader, s3key, s3pass);
+            _transformer = new CsvToJsonTransformer(_reader, s3key, s3pass);
         }
         return _transformer;
     }
+
 }

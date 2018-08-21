@@ -7,9 +7,9 @@ import java.io.IOException;
 /**
  * Contract for reading a CSV row into a model and subsequently filtering it.
  */
-public interface CsvRecordReader {
+public interface CsvRecordReader<T> {
 
-    Object readRecord(CsvReader reader) throws IOException;
+    T readRecord(CsvReader reader) throws IOException;
 
-    boolean filter(Object record, String filter);
+    boolean filter(T record, String filter);
 }
