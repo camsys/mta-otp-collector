@@ -2,11 +2,18 @@ package com.camsys.shims.servlet;
 
 import com.camsys.shims.schedule.transformer.CsvRecordReader;
 import com.camsys.shims.schedule.transformer.CsvToJsonTransformer;
+import com.camsys.shims.schedule.transformer.model.ExtendedRouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteInfo;
 import com.camsys.shims.schedule.transformer.model.RouteShapePoint;
+import com.camsys.shims.util.gtfs_provider.GtfsDaoProvider;
+import org.onebusaway.gtfs.model.AgencyAndId;
+import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.ShapePoint;
+import org.onebusaway.gtfs.model.Stop;
+import org.onebusaway.gtfs.services.GtfsRelationalDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,15 +49,36 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
 
     private CsvToJsonTransformer<RouteShapePoint> _shapeTransformer = null;
 
+    private GtfsDaoProvider _provider;
+
+    public void setGtfsProvider(GtfsDaoProvider provider) {
+        _provider = provider;
+    }
+
     @Override
     protected RouteInfo getData(String routeId) {
         // lookup injected source file
         // download and load
         getShapeTransformer().loadUrl(_shapeUrl);
         getStopTransformer().loadUrl(_stopsUrl);
-        List<RouteBranchStop> stops = getStopTransformer().transform(routeId);
         List<RouteShapePoint> points = getShapeTransformer().transform(routeId);
-        return new RouteInfo(stops, points);
+        List<RouteBranchStop> stopsNoLocation = getStopTransformer().transform(routeId);
+        List<ExtendedRouteBranchStop> stops = new ArrayList<>();
+        String agency = routeId.split(":")[0];
+        GtfsRelationalDao dao = _provider.getDaoForAgency(agency);
+        for (RouteBranchStop s : stopsNoLocation) {
+            ExtendedRouteBranchStop stop = new ExtendedRouteBranchStop(s);
+            if (dao != null) {
+                Stop gtfsStop = dao.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
+                if (gtfsStop != null) {
+                    stop.setLat(gtfsStop.getLat());
+                    stop.setLon(gtfsStop.getLon());
+                }
+            }
+            stops.add(stop);
+        }
+        Route route = dao != null ? dao.getRouteForId(AgencyAndId.convertFromString(routeId, ':')) : null;
+        return new RouteInfo(stops, points, route);
     }
 
     protected CsvToJsonTransformer<RouteBranchStop> getStopTransformer() {

@@ -22,6 +22,14 @@ public class RouteBranchStop {
         this.routeId = routeId;
     }
 
+    public RouteBranchStop(RouteBranchStop rbs) {
+        this.id = rbs.getId();
+        this.locationName = rbs.locationName;
+        this.lineName = rbs.lineName;
+        this.routeId = rbs.routeId;
+        this.locationIndex = rbs.locationIndex;
+    }
+
     public String getId() {
         return id;
     }
