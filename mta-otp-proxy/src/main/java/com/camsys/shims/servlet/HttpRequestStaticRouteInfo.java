@@ -2,14 +2,16 @@ package com.camsys.shims.servlet;
 
 import com.camsys.shims.schedule.transformer.CsvRecordReader;
 import com.camsys.shims.schedule.transformer.CsvToJsonTransformer;
+import com.camsys.shims.schedule.transformer.GeojsonProvider;
 import com.camsys.shims.schedule.transformer.model.ExtendedRouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteInfo;
 import com.camsys.shims.schedule.transformer.model.RouteShapePoint;
 import com.camsys.shims.util.gtfs_provider.GtfsDaoProvider;
+import org.geojson.Feature;
+import org.geojson.FeatureCollection;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
-import org.onebusaway.gtfs.model.ShapePoint;
 import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
 
@@ -45,15 +47,23 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         _shapeReader = reader;
     }
 
-    private CsvToJsonTransformer<RouteBranchStop> _stopTransformer = null;
-
-    private CsvToJsonTransformer<RouteShapePoint> _shapeTransformer = null;
-
     private GtfsDaoProvider _provider;
 
     public void setGtfsProvider(GtfsDaoProvider provider) {
         _provider = provider;
     }
+
+    private String _lirrSystemMapUrl;
+
+    public void setLirrSystemMapUrl(String url) {
+        _lirrSystemMapUrl = url;
+    }
+
+    private CsvToJsonTransformer<RouteBranchStop> _stopTransformer = null;
+
+    private CsvToJsonTransformer<RouteShapePoint> _shapeTransformer = null;
+
+    private GeojsonProvider _geojsonProvider = null;
 
     @Override
     protected RouteInfo getData(String routeId) {
@@ -77,9 +87,15 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             }
             stops.add(stop);
         }
-        Route route = dao != null ? dao.getRouteForId(AgencyAndId.convertFromString(routeId, ':')) : null;
+        AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
+        Route route = dao != null ? dao.getRouteForId(aid) : null;
         RouteInfo info = new RouteInfo(stops, route);
-        info.addGeometry(points);
+        if (!points.isEmpty()) {
+            info.addGeometry(points);
+        }
+        if (aid.getAgencyId().equals("LI")) {
+            addLirrSystemMap(info);
+        }
         return info;
     }
 
@@ -97,4 +113,17 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         return _shapeTransformer;
     }
 
+    private GeojsonProvider getGeojsonProvider() {
+        if (_geojsonProvider == null) {
+            _geojsonProvider = new GeojsonProvider(_lirrSystemMapUrl, s3key, s3pass);
+        }
+        return _geojsonProvider;
+    }
+
+    private void addLirrSystemMap(RouteInfo info) {
+        FeatureCollection collection = getGeojsonProvider().getGeojson();
+        for (Feature feature : collection.getFeatures()) {
+            info.addGeometry(feature);
+        }
+    }
 }
