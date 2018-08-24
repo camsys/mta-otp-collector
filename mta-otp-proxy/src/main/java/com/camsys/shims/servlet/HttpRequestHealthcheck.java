@@ -45,8 +45,8 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
         }
 
         // check stops for route
-        URL stopsForRouteUtl = new URL("http://" + _hostname + ":" + _port + "/schedule/stopsForRoute");
-        List<?> stopsForRoute = _mapper.readValue(stopsForRouteUtl, List.class);
+        URL stopsForRouteUrl = new URL("http://" + _hostname + ":" + _port + "/schedule/stopsForRoute");
+        List<?> stopsForRoute = _mapper.readValue(stopsForRouteUrl, List.class);
 
         if (stopsForRoute.size() < 10) {
             throw new RuntimeException("no stops for route in data!");
