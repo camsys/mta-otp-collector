@@ -113,16 +113,6 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             if (stub.hasDeparture() && !stub.hasArrival()) {
                 stub.setArrival(stub.getDeparture());
             }
-            if (stub.hasArrival()) {
-                if (stub.getArrival().hasDelay()) {
-                    stub.setArrival(stub.getArrival().toBuilder().clearTime());
-                }
-            }
-            if (stub.hasDeparture()) {
-                if (stub.getDeparture().hasDelay()) {
-                    stub.setDeparture(stub.getDeparture().toBuilder().clearTime());
-                }
-            }
             tub.addStopTimeUpdate(stub);
             if (stub.hasDeparture() && stub.getDeparture().hasDelay())
                 delay = stub.getDeparture().getDelay();
