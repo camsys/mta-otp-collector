@@ -78,7 +78,9 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             stops.add(stop);
         }
         Route route = dao != null ? dao.getRouteForId(AgencyAndId.convertFromString(routeId, ':')) : null;
-        return new RouteInfo(stops, points, route);
+        RouteInfo info = new RouteInfo(stops, route);
+        info.addGeometry(points);
+        return info;
     }
 
     protected CsvToJsonTransformer<RouteBranchStop> getStopTransformer() {
