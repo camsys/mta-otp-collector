@@ -81,7 +81,11 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             return null;
         }
         ServiceDate sd = parseDate(startDate);
-        Trip trip = findCorrectTrip(routeId, tripShortName, sd);
+        Route route = _dao.getRouteForId(new AgencyAndId(_agencyId, routeId));
+        if (route == null) {
+            return null;
+        }
+        Trip trip = findCorrectTrip(route, tripShortName, sd);
         Set<String> stopIds = null;
         if (trip == null) {
             matchMetrics.addStatus(Status.NO_MATCH);
@@ -123,13 +127,12 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         return tub;
     }
 
-    private Trip findCorrectTrip(String route, String tripShortName, ServiceDate sd) {
+    private Trip findCorrectTrip(Route route, String tripShortName, ServiceDate sd) {
         if (sd == null)
             return null;
-        Route r = _dao.getRouteForId(new AgencyAndId(_agencyId, route));
         Set<AgencyAndId> serviceIds = _csd.getServiceIdsForDate(sd);
         List<Trip> candidates = new ArrayList<>();
-        for (Trip t : _dao.getTripsForRoute(r)) {
+        for (Trip t : _dao.getTripsForRoute(route)) {
             if (serviceIds.contains(t.getServiceId()) && t.getTripShortName().equals(tripShortName)) {
                 candidates.add(t);
             }
