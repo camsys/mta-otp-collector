@@ -65,6 +65,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         TripUpdate tu = fe.getTripUpdate();
         TripUpdate.Builder tub = TripUpdate.newBuilder();
+        tub.getTripBuilder().setScheduleRelationship(tu.getTrip().getScheduleRelationship());
         String routeId = null, tripShortName = null, startDate = null;
         if (tu.hasTrip() && tu.getTrip().hasRouteId()) {
             routeId = tu.getTrip().getRouteId();
