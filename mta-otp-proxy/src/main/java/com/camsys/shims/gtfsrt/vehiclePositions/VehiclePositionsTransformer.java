@@ -28,6 +28,7 @@ import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -58,7 +59,9 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
     @Override
     public FeedMessage transform(FeedMessage message) {
         FeedMessage.Builder builder = message.toBuilder();
-        Iterator<FeedEntity.Builder> entitiesIter = builder.getEntityBuilderList().iterator();
+        List<FeedEntity.Builder> entities = new ArrayList<>(builder.getEntityBuilderList());
+        builder.clearEntity();
+        Iterator<FeedEntity.Builder> entitiesIter = entities.iterator();
         while (entitiesIter.hasNext()) {
             FeedEntity.Builder entity = entitiesIter.next();
             if (!entity.hasVehicle()) {
@@ -76,6 +79,7 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
                 if (bearing != null)
                     vehicle.getPositionBuilder().setBearing(bearing);
             }
+            builder.addEntity(entity);
         }
         return builder.build();
     }
