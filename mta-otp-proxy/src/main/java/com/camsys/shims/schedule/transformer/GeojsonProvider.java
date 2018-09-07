@@ -2,6 +2,7 @@ package com.camsys.shims.schedule.transformer;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.camsys.shims.s3.S3Utils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.FeatureCollection;
 
@@ -13,7 +14,7 @@ public class GeojsonProvider {
 
     private AmazonS3 s3 = null;
 
-    private ObjectMapper _mapper = new ObjectMapper();
+    private ObjectMapper _mapper;
 
     private boolean _cache = true;
 
@@ -22,6 +23,8 @@ public class GeojsonProvider {
     public GeojsonProvider(String url, String s3key, String s3pass) {
         this.url = url;
         s3 = S3Utils.getS3Client(s3key, s3pass);
+        _mapper = new ObjectMapper();
+        _mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public FeatureCollection getGeojson() {
