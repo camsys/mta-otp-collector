@@ -54,6 +54,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected List<String> _inServiceFalseRoutes;
 
+    protected List<String> _inServiceTrueRoutes;
+
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
     public void setSourceUrl(String sourceUrl) {
@@ -98,6 +100,13 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
                     }
                 }
             }
+            if (_inServiceTrueRoutes != null && !_inServiceTrueRoutes.isEmpty()) {
+                for (RouteDetail routeDetail : routeDetails) {
+                    if (_inServiceTrueRoutes.contains(routeDetail.getRouteId())) {
+                        routeDetail.setInService(true);
+                    }
+                }
+            }
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }
@@ -137,5 +146,9 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     public void setInServiceFalseRoutes(String inServiceFalseRoutes) {
         _inServiceFalseRoutes = Arrays.asList(inServiceFalseRoutes.split(","));
+    }
+
+    public void setInServiceTrueRoutes(String inServiceTrueRoutes) {
+        _inServiceTrueRoutes = Arrays.asList(inServiceTrueRoutes.split(","));
     }
 }
