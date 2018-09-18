@@ -32,6 +32,12 @@
     <button type="submit" id="submit">Submit</button>
 </p>
 
+<table>
+    <tr><td>Route: </td><td id="route"></td></tr>
+    <tr><td>Route ID: </td><td id="routeId"></td></tr>
+    <tr><td>Headsign: </td><td id="headsign"></td></tr>
+</table>
+
 <div id="mapid" style="width: 600px; height: 400px;"></div>
 <script>
 
@@ -64,7 +70,13 @@
             map.fitBounds(polyline.getBounds());
 
             var pt = data.vehicleInfo;
-            marker = L.marker(pt, {"rotationAngle": pt.bearing}).addTo(map);
+            if (pt) {
+                marker = L.marker(pt, {"rotationAngle": pt.bearing}).addTo(map);
+            }
+
+            $("#route").text(data.trip.route.longName);
+            $("#routeId").text(data.trip.route.id);
+            $("#headsign").text(data.trip.tripHeadsign);
         })
     })
 

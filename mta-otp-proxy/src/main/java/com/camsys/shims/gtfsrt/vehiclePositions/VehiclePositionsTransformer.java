@@ -38,6 +38,8 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
 
     private static final double DIST_THRESHOLD = 1000.0;
 
+    private static GeometryFactory _geometryFactory = new GeometryFactory();
+
     private boolean _calculateBearing = false;
 
     private GtfsRelationalDao _dao;
@@ -95,7 +97,11 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
             ShapePoint point = points.get(i);
             coords[i] = new Coordinate(point.getLon(), point.getLat());
         }
-        LineString geometry = new GeometryFactory().createLineString(coords);
+        LineString geometry = _geometryFactory.createLineString(coords);
+        return calculateBearing(geometry, lat, lon);
+    }
+
+    Float calculateBearing(LineString geometry, float lat, float lon) {
         LocationIndexedLine line = new LocationIndexedLine(geometry);
         Coordinate origPoint = new Coordinate(lon, lat);
         LinearLocation loc = line.project(origPoint);
@@ -103,11 +109,14 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
         double distance = SphericalGeometryLibrary.distance(lat, lon, newPoint.y, newPoint.x);
         if (distance < DIST_THRESHOLD) {
             LineSegment segment = loc.getSegment(geometry);
-            Coordinate start = segment.getCoordinate(0);
-            Coordinate end = segment.getCoordinate(1);
-            double bearing = SphericalGeometryLibrary.getOrientation(start.y, start.x, end.y, end.x);
+            double bearing = segment.angle() * (180d / Math.PI);
+            bearing = 90d - bearing;
+            while (bearing < 0) {
+                bearing += 360d;
+            }
             return (float) bearing;
         }
         return null;
     }
 }
+
