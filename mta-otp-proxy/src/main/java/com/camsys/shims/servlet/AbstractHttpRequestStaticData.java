@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHandler {
 
+    private static final String CONTENT_TYPE = "application/json";
+
     protected String s3key = null;
 
     public void setS3key(String key) {
@@ -39,6 +41,8 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
     private Map<String, T> _cache = new HashMap<>();
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setContentType(CONTENT_TYPE);
 
         String routeId = req.getParameter("routeId");
 
