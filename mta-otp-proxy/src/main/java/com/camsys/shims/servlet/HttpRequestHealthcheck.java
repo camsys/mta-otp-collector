@@ -18,6 +18,8 @@ import java.util.List;
 
 public class HttpRequestHealthcheck implements HttpRequestHandler {
 
+    private static final String CONTENT_TYPE = "application/json";
+
     private static final Logger _log = LoggerFactory.getLogger(HttpRequestHealthcheck.class);
 
     private static ObjectMapper _mapper = new ObjectMapper();
@@ -30,6 +32,7 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
     private int _gracePeriodSec = 120;
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType(CONTENT_TYPE);
         HealthcheckModel status = getHealthcheck();
         ObjectWriter writer = _mapper.writerWithDefaultPrettyPrinter();
         writer.writeValue(resp.getWriter(), status);

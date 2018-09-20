@@ -36,6 +36,7 @@ public class HttpRequestServiceStatus implements HttpRequestHandler {
     }
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType(CONTENT_TYPE);
         String updatesSince = req.getParameter("updatesSince");
         ServiceStatus status = _source.getStatus(updatesSince);
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();

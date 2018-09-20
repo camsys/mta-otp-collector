@@ -25,6 +25,8 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
 
     private static final String CONTENT_TYPE = "application/x-google-protobuf";
 
+    private static final String DEBUG_CONTENT_TYPE = "text/plain";
+
     private GtfsRealtimeSource _source;
 
     public void setSource(GtfsRealtimeSource source) {
@@ -35,6 +37,7 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
         boolean debug = req.getParameter("debug") != null;
         Message message = _source.getFeed();
         if (debug) {
+            resp.setContentType(DEBUG_CONTENT_TYPE);
             resp.getWriter().print(message);
         } else {
             resp.setContentType(CONTENT_TYPE);
