@@ -14,25 +14,29 @@ package com.camsys.shims.gtfsrt.alerts.siri.transformer;
 
 import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
-import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.Alert;
-import com.google.transit.realtime.GtfsRealtime.EntitySelector;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedHeader;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
+import com.google.transit.realtime.GtfsRealtime.TimeRange;
 import com.google.transit.realtime.GtfsRealtimeConstants;
-import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.nyc.gtfsrt.util.GtfsRealtimeLibrary;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
 import uk.org.siri.siri.Siri;
 
+import java.util.Date;
 import java.util.List;
 
 public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     private GtfsRouteAdapter _gtfsRouteAdapter;
+
+    /**
+     * If this is greater than 0, set alerts without an end time to be the current time plus this many seconds.
+     */
+    private int _autoExpirySec = -1;
 
     @Override
     public FeedMessage transform(Siri siri) {
@@ -50,6 +54,14 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
                 replaceRouteIds(serviceAlert);
             FeedEntity.Builder fe = FeedEntity.newBuilder();
             Alert.Builder alert = GtfsRealtimeLibrary.makeAlert(serviceAlert);
+            if (_autoExpirySec > 0) {
+                for (TimeRange.Builder timeRange : alert.getActivePeriodBuilderList()) {
+                    if (!timeRange.hasEnd()) {
+                        long end = (new Date().getTime()/1000) + _autoExpirySec;
+                        timeRange.setEnd(end);
+                    }
+                }
+            }
             fe.setAlert(alert);
             fe.setId(serviceAlert.getId());
             message.addEntity(fe.build());
@@ -70,5 +82,9 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     public void setGtfsRouteAdapter(GtfsRouteAdapter gtfsRouteAdapter) {
         _gtfsRouteAdapter = gtfsRouteAdapter;
+    }
+
+    public void setAutoExpirySec(int autoExpirySec) {
+        _autoExpirySec = autoExpirySec;
     }
 }
