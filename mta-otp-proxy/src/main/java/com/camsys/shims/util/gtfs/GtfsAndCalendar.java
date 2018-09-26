@@ -3,6 +3,8 @@ package com.camsys.shims.util.gtfs;
 import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
+import org.onebusaway.gtfs.model.Stop;
+import org.onebusaway.gtfs.model.StopTime;
 import org.onebusaway.gtfs.model.Trip;
 import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
@@ -44,6 +46,14 @@ public class GtfsAndCalendar implements GtfsDaoDependency {
 
     public List<Trip> getTripsForRoute(Route route){
         return _gtfsDao.getTripsForRoute(route);
+    }
+
+    public List<StopTime> getStopTimesForTrip(Trip trip) {
+        return _gtfsDao.getStopTimesForTrip(trip);
+    }
+
+    public Collection<Stop> getAllStops() {
+        return _gtfsDao.getAllStops();
     }
 
     public Set<AgencyAndId> getServiceIdsForDate(ServiceDate serviceDate){

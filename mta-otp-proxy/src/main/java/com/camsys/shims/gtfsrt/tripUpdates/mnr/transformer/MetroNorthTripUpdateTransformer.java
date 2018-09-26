@@ -12,6 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer;
 
+import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
@@ -23,13 +24,10 @@ import com.google.transit.realtime.GtfsRealtimeNYCT;
 import com.google.transit.realtime.GtfsRealtimeNYCT.NyctStopTimeUpdate;
 import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 import com.kurtraschke.nyctrtproxy.model.Status;
-import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Trip;
-import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,17 +42,14 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
 
-    private GtfsRelationalDao _dao;
-
-    private CalendarServiceData _csd;
+    private GtfsAndCalendar _dao;
 
     private String _agencyId = "MNR";
 
     private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
-    public void setDao(GtfsRelationalDao dao) {
-        _dao = dao;
-        _csd = new CalendarServiceDataFactoryImpl(_dao).createData();
+    public void setGtfsAndCalendar(GtfsAndCalendar gtfsAndCalendar) {
+        _dao = gtfsAndCalendar;
     }
 
     public void setAgencyId(String agencyId) {
@@ -131,7 +126,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     private Trip findCorrectTrip(Route route, String tripShortName, ServiceDate sd) {
         if (sd == null)
             return null;
-        Set<AgencyAndId> serviceIds = _csd.getServiceIdsForDate(sd);
+        Set<AgencyAndId> serviceIds = _dao.getServiceIdsForDate(sd);
         List<Trip> candidates = new ArrayList<>();
         for (Trip t : _dao.getTripsForRoute(route)) {
             if (serviceIds.contains(t.getServiceId()) && t.getTripShortName().equals(tripShortName)) {
