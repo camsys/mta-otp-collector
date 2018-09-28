@@ -4,3 +4,4 @@ mta-otp-plannedwork/target
 .idea
 *.iml
 /mta-otp-proxy/src/main/resources/data-sources.xml
+mta-gms-service-status/target/

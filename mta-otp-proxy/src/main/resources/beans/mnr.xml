@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Metro North Trip Updates -->
+    <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
+        <property name="gtfsAndCalendar" ref="mnrGtfsAndCalendar" />
+        <property name="cloudwatchService" ref="cloudwatchService" />
+        <property name="namespace" value="${mnr.cloudwatch.namespace}" />
+        <property name="feedId" value="${mnr.feedid}" />
+    </bean>
+    <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="sourceUrl" value="${mnr.gtfsrt.url}" />
+        <property name="transformer" ref="mnrTransformer" />
+        <property name="deserializer" ref="gtfsrt" />
+        <property name="overrideMimeType" value="application/pb" />
+    </bean>
+    <bean id="mnrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="mnrTask" />
+    </bean>
+
+    <!-- Metro North Vehicle Positions -->
+    <bean id="mnrVehiclePositionsTransformer" class="com.camsys.shims.gtfsrt.vehiclePositions.VehiclePositionsTransformer">
+        <property name="agencyId" value="${mnr.feedid}" />
+        <property name="dao" ref="mnrGtfs" />
+        <property name="calculateBearing" value="true" />
+    </bean>
+    <bean id="mnrVehiclePositionsSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource">
+        <property name="upstream" ref="mnrTask" />
+        <property name="transformer" ref="mnrVehiclePositionsTransformer" />
+    </bean>
+    <bean id="mnrVehiclePositions" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="mnrVehiclePositionsSource" />
+    </bean>
+
+    <!-- Metro North Elevators -->
+    <bean name="mnrStationResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StationResultsDeserializer" />
+    <bean name="mnrStatusResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StatusResultsDeserializer" />
+    <bean name="mnrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer.MetroNorthElevatorAlertsTransformer" />
+
+    <bean id="mnrEleTask" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.source.MetroNorthStationsToGtfsRealtimeSources" autowire="byType">
+        <property name="transformer" ref="mnrElevatorsTransformer" />
+        <property name="deserializer" ref="mnrStationResultsDeserializer" />
+        <property name="sourceUrl" value="${mnr.traintime.stations}" />
+        <property name="statusSourceUrl" value="${mnr.traintime.elev}" />
+        <property name="statusDeserializer" ref="mnrStatusResultsDeserializer" />
+    </bean>
+
+    <!-- Metro North alerts -->
+    <bean name="mnrSiriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
+        <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
+        <property name="autoExpirySec" value="${gms.alert.expiry}" />
+    </bean>
+
+    <bean name="mnrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="mnrSiriTransformer" />
+        <property name="sourceUrl" value="${mnr.gms.url}" />
+    </bean>
+
+    <bean name="mnrAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="mnrSiriAlerts" />
+                <ref bean="mnrEleTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="mnrServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="mnrAlertTask" />
+    </bean>
+
+</beans>

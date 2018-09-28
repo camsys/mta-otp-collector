@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <!-- siri alerts deserializers -->
+    <!-- can split off to separate beans if different alert feeds require different white lists -->
+    <bean name="siriDeserializerWithModifications" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
+        <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
+    </bean>
+
+    <!-- shared resources -->
+    <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
+    <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
+    <bean name="gmsServiceStatusDeserializer" class="com.camsys.shims.service_status.deserializer.GmsServiceStatusDeserializer" />
+    <bean name="gmsServiceStatusTransformer" class="com.camsys.shims.service_status.transformer.GmsServiceStatusTransformer">
+        <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
+    </bean>
+    <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
+        <property name="autoExpirySec" value="${gms.alert.expiry}" />
+    </bean>
+    <bean name="atisGtfsMap" class="com.camsys.shims.atis.AtisGtfsMap" init-method="init" />
+    <bean name="routeNameGtfsMap" class="com.camsys.shims.util.gtfs.RouteNameGtfsMap" init-method="init" />
+
+    <!-- html white-list -->
+    <bean name="htmlCleanupUtil" class="com.camsys.shims.util.HtmlCleanupUtil" >
+        <property name="htmlTagWhiteList">
+            <array>
+                <value>p</value>
+                <value>br</value>
+                <value>ol</value>
+                <value>ul</value>
+                <value>li</value>
+                <value>dl</value>
+                <value>table</value>
+                <value>th</value>
+                <value>tr</value>
+                <value>td</value>
+                <value>span</value>
+                <value>b</value>
+                <value>strong</value>
+                <value>div</value>
+                <value>a</value>
+            </array>
+        </property>
+        <property name="htmlAttributesWhiteList">
+            <array>
+                <value>class</value>
+                <value>href</value>
+                <value>target</value>
+            </array>
+        </property>
+    </bean>
+
+    <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck" />
+
+    <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
+
+    <context:property-placeholder location="classpath:collector.properties" />
+
+</beans>

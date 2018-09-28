@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean name="routeBranchStopReader" class="com.camsys.shims.schedule.transformer.RouteBranchStopReader" />
+
+    <bean name="routeShapePointReader" class="com.camsys.shims.schedule.transformer.RouteShapePointReader" />
+
+    <bean name="routeBranchStop" class="com.camsys.shims.servlet.HttpRequestStaticData">
+        <property name="s3key" value="${s3.user}" />
+        <property name="s3pass" value="${s3.pass}" />
+        <property name="sourceUrl" value="${schedule.route_stops}" />
+        <property name="csvReader" ref="routeBranchStopReader" />
+    </bean>
+
+    <bean name="routeInfo" class="com.camsys.shims.servlet.HttpRequestStaticRouteInfo">
+        <property name="s3key" value="${s3.user}" />
+        <property name="s3pass" value="${s3.pass}" />
+        <property name="stopsUrl" value="${schedule.route_stops}" />
+        <property name="shapeUrl" value="${schedule.route_shapes}" />
+        <property name="stopReader" ref="routeBranchStopReader" />
+        <property name="shapeReader" ref="routeShapePointReader" />
+        <property name="gtfsProvider" ref="gtfsRegistry" />
+        <property name="lirrSystemMapUrl" value="${schedule.lirr_map}" />
+    </bean>
+</beans>

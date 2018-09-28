@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- tasks -->
+    <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="${mtabus.gms.url}" />
+        <property name="mode" value="bus" />
+        <property name="gtfsAndCalendar" ref="busGtfsAndCalendar" />
+        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="subwayServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="${subway.gms.url}" />
+        <property name="mode" value="subway" />
+        <property name="gtfsAndCalendar" ref="subwayGtfsAndCalendar" />
+        <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="mnrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="${mnr.gms.url}" />
+        <property name="mode" value="rail" />
+        <property name="gtfsAndCalendar" ref="mnrGtfsAndCalendar" />
+        <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="${lirr.gms.url}" />
+        <property name="mode" value="rail" />
+        <property name="gtfsAndCalendar" ref="lirrGtfsAndCalendar" />
+        <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="njtRailServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="serviceStatusTransformer" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="sourceUrl" value="${mnr.gms.url}" />
+        <property name="mode" value="rail" />
+        <property name="gtfsAndCalendar" ref="njtRailGtfsAndCalendar" />
+        <property name="gtfsRouteAdapter" ref="njtRailGtfsRouteAdapter" />
+    </bean>
+
+    <bean id="gmsServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="transformer" ref="gmsServiceStatusTransformer" />
+        <property name="deserializer" ref="gmsServiceStatusDeserializer" />
+        <property name="sourceUrl" value="${all.gms.url}" />
+        <property name="gtfsAndCalendar"><null /></property>
+        <property name="gtfsRouteAdapter"><null /></property>
+    </bean>
+
+    <bean name="serviceStatusTask" class="com.camsys.shims.service_status.source.MergingServiceStatusSource">
+        <constructor-arg>
+            <list>
+                <ref bean="busServiceStatusTask" />
+                <ref bean="subwayServiceStatusTask" />
+                <ref bean="mnrServiceStatusTask" />
+                <ref bean="lirrServiceStatusTask" />
+                <ref bean="njtRailServiceStatusTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="serviceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">
+        <property name="source" ref="serviceStatusTask" />
+    </bean>
+
+    <bean id="gmsServiceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">
+        <property name="source" ref="gmsServiceStatusTask" />
+    </bean>
+
+    <!-- service status -->
+    <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
+
+</beans>

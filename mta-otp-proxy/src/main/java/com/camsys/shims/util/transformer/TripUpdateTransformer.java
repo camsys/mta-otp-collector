@@ -71,7 +71,7 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                 builder.addEntity(entity);
             }
         }
-        _log.debug("Matched {} / {} TripUpdates", nMatched, nTotal);
+        _log.info("Matched {} / {} TripUpdates", nMatched, nTotal);
         matchMetrics.reportRecordsIn(nTotal);
         if (_cloudwatchService != null && _feedId != null && _namespace != null)
             _cloudwatchService.reportMatchesForTripUpdateFeed(_feedId, matchMetrics, _namespace);
