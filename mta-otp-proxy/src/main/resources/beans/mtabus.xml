@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- MTA bus trip updates -->
+    <bean id="busTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.bus.transformer.MTABusTripUpdateTransformer">
+        <property name="cloudwatchService" ref="cloudwatchService" />
+        <property name="namespace" value="${mtabus.cloudwatch.namespace}" />
+        <property name="feedId" value="${mtabus.feedid}" />
+    </bean>
+    <bean id="busTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="sourceUrl" value="${mtabus.gtfsrt.url}" />
+        <property name="transformer" ref="busTransformer" />
+        <property name="deserializer" ref="gtfsrt" />
+    </bean>
+    <bean id="busTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="busTask" />
+    </bean>
+
+    <!-- Bus service alerts -->
+    <bean name="busAlertTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="siriTransformer" />
+        <property name="sourceUrl" value="${mtabus.gms.url}" />
+    </bean>
+
+    <bean id="busServiceAlertMergeTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="busAlertTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="busServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="busServiceAlertMergeTask" />
+    </bean>
+</beans>

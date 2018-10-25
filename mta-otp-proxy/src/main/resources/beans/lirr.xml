@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- LIRR trip updates -->
+    <bean name="lirrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.deserializer.LIRRFeedMessageDeserializer" />
+    <bean id="lirrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LIRRTripUpdateTransformer">
+        <property name="cloudwatchService" ref="cloudwatchService" />
+        <property name="namespace" value="${lirr.cloudwatch.namespace}" />
+        <property name="feedId" value="${lirr.feedid}" />
+    </bean>
+    <bean id="lirrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="sourceUrl" value="${lirr.gtfsrt.url}" />
+        <property name="transformer" ref="lirrTransformer" />
+        <property name="deserializer" ref="lirrDeserializer" />
+    </bean>
+    <bean id="lirrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="lirrTask" />
+    </bean>
+
+    <!-- LIRR vehiclePositions -->
+    <bean id="lirrVehiclePositionsTransformer" class="com.camsys.shims.gtfsrt.vehiclePositions.VehiclePositionsTransformer">
+        <property name="agencyId" value="${lirr.feedid}" />
+        <property name="dao" ref="lirrGtfs" />
+        <property name="calculateBearing" value="true" />
+    </bean>
+    <bean id="lirrVehiclePositionsSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource" autowire="byType">
+        <property name="upstream" ref="lirrTask" />
+        <property name="transformer" ref="lirrVehiclePositionsTransformer" />
+    </bean>
+    <bean id="lirrVehiclePositions" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="lirrVehiclePositionsSource" />
+    </bean>
+
+    <!-- LIRR Elevators -->
+    <bean name="lirrStationsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.deserializer.StationsDeserializer" />
+    <bean name="lirrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.transformer.LirrElevatorAlertsTransformer" />
+
+    <bean id="lirrEleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="transformer" ref="lirrElevatorsTransformer" />
+        <property name="deserializer" ref="lirrStationsDeserializer" />
+        <property name="sourceUrl" value="${lirr.traintime.elev}" />
+    </bean>
+
+    <!-- LIRR service alerts -->
+    <bean name="lirrSiriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
+        <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
+        <property name="autoExpirySec" value="${gms.alert.expiry}" />
+    </bean>
+
+    <bean name="lirrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="lirrSiriTransformer" />
+        <property name="sourceUrl" value="${lirr.gms.url}" />
+    </bean>
+
+    <bean name="lirrAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="lirrSiriAlerts" />
+                <ref bean="lirrEleTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="lirrServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="lirrAlertTask" />
+    </bean>
+
+</beans>

@@ -11,6 +11,7 @@ import org.onebusaway.gtfs.model.calendar.ServiceDate;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,10 @@ public class GtfsAndCalendar implements GtfsDaoDependency {
 
     public void setRouteIdWhiteList(List<String> routeIdWhiteList) {
         _routeIdWhiteList = routeIdWhiteList;
+    }
+
+    public void setRouteIdWhiteListStr(String value) {
+        _routeIdWhiteList = Arrays.asList(value.split(","));
     }
 
     public Collection<Route> getAllRoutes(){
