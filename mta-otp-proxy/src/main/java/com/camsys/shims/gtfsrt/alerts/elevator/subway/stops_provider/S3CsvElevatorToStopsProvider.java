@@ -20,6 +20,10 @@ import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * <p>S3CsvElevatorToStopsProvider class.</p>
+ *
+ */
 public class S3CsvElevatorToStopsProvider extends AbstractS3CsvProvider implements ElevatorToStopsProvider {
 
     private static final String ELEVATOR_ID_HEADER = "Equip ID";
@@ -30,11 +34,13 @@ public class S3CsvElevatorToStopsProvider extends AbstractS3CsvProvider implemen
 
     private Multimap<String, String> _elevatorToStops = ArrayListMultimap.create();
 
+    /** {@inheritDoc} */
     @Override
     public Collection<String> getStopsForElevator(String elevatorId) {
         return _elevatorToStops.get(elevatorId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void processRecord(CsvReader reader) throws IOException {
         String elevatorId = reader.get(ELEVATOR_ID_HEADER);

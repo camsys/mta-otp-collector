@@ -15,24 +15,48 @@ package com.camsys.shims.util.gtfs.csv;
 
 import org.onebusaway.csv_entities.schema.annotations.CsvFields;
 
+/**
+ * <p>RouteNameGtfsEntry class.</p>
+ *
+ */
 @CsvFields(filename = "entry.csv")
 public class RouteNameGtfsEntry {
     private String routeName;
 
     private String gtfsId;
 
+    /**
+     * <p>Getter for the field <code>routeName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getRouteName() {
         return routeName;
     }
 
+    /**
+     * <p>Setter for the field <code>routeName</code>.</p>
+     *
+     * @param routeName a {@link java.lang.String} object.
+     */
     public void setRouteName(String routeName) {
         this.routeName = routeName;
     }
 
+    /**
+     * <p>Getter for the field <code>gtfsId</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getGtfsId() {
         return gtfsId;
     }
 
+    /**
+     * <p>Setter for the field <code>gtfsId</code>.</p>
+     *
+     * @param gtfsId a {@link java.lang.String} object.
+     */
     public void setGtfsId(String gtfsId) {
         this.gtfsId = gtfsId;
     }

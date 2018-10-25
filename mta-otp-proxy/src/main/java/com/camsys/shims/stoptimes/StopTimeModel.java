@@ -14,6 +14,10 @@ package com.camsys.shims.stoptimes;
 
 import com.google.transit.realtime.GtfsRealtime;
 
+/**
+ * <p>StopTimeModel class.</p>
+ *
+ */
 public class StopTimeModel {
     private String tripId;
 
@@ -23,6 +27,12 @@ public class StopTimeModel {
 
     private long departure;
 
+    /**
+     * <p>Constructor for StopTimeModel.</p>
+     *
+     * @param trip a {@link com.google.transit.realtime.GtfsRealtime.TripDescriptor} object.
+     * @param stop a {@link com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate} object.
+     */
     public StopTimeModel(GtfsRealtime.TripDescriptor trip, GtfsRealtime.TripUpdate.StopTimeUpdate stop) {
         tripId = trip.getTripId();
         routeId = trip.getRouteId();
@@ -30,18 +40,38 @@ public class StopTimeModel {
         departure = stop.getDeparture().getTime();
     }
 
+    /**
+     * <p>Getter for the field <code>tripId</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getTripId() {
         return tripId;
     }
 
+    /**
+     * <p>Getter for the field <code>routeId</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getRouteId() {
         return routeId;
     }
 
+    /**
+     * <p>Getter for the field <code>arrival</code>.</p>
+     *
+     * @return a long.
+     */
     public long getArrival() {
         return arrival;
     }
 
+    /**
+     * <p>Getter for the field <code>departure</code>.</p>
+     *
+     * @return a long.
+     */
     public long getDeparture() {
         return departure;
     }

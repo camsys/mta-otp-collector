@@ -25,6 +25,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
+/**
+ * <p>LirrElevatorAlertsTransformer class.</p>
+ *
+ */
 public class LirrElevatorAlertsTransformer implements GtfsRealtimeTransformer<LirrStationsWrapper> {
 
     private static Logger _log = LoggerFactory.getLogger(LirrElevatorAlertsTransformer.class);
@@ -37,6 +41,7 @@ public class LirrElevatorAlertsTransformer implements GtfsRealtimeTransformer<Li
 
     private static final String OUT_OF_SERVICE = " is out of service.";
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(LirrStationsWrapper stationsWrapper) {
         FeedMessage.Builder message = FeedMessage.newBuilder();

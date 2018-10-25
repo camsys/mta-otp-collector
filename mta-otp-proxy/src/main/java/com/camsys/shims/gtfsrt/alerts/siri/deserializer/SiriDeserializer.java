@@ -21,16 +21,28 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * <p>SiriDeserializer class.</p>
+ *
+ */
 public class SiriDeserializer implements Deserializer<Siri> {
 
     private SiriXmlSerializer _siriXmlSerializer = new SiriXmlSerializer();
 
+    /** {@inheritDoc} */
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
         return deserialize(xml);
     }
 
+    /**
+     * <p>deserialize.</p>
+     *
+     * @param xml a {@link java.lang.String} object.
+     * @return a {@link uk.org.siri.siri.Siri} object.
+     * @throws java.io.IOException if any.
+     */
     protected Siri deserialize(String xml) throws IOException {
         try {
             return _siriXmlSerializer.fromXml(xml);
@@ -40,6 +52,7 @@ public class SiriDeserializer implements Deserializer<Siri> {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "text/xml";

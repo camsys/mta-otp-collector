@@ -20,6 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+/**
+ * <p>AtisIdRouteAdapter class.</p>
+ *
+ */
 public class AtisIdRouteAdapter implements GtfsRouteAdapter {
 
     private static final Logger _log = LoggerFactory.getLogger(AtisIdRouteAdapter.class);
@@ -28,6 +32,7 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
 
     private List<String> _gtfsAgencyId;
 
+    /** {@inheritDoc} */
     @Override
     public String getGtfsRouteId(SituationAffectsBean affectsBean) {
         String routeId = affectsBean.getRouteId();
@@ -46,10 +51,20 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
     }
 
 
+    /**
+     * <p>setAtisGtfsMap.</p>
+     *
+     * @param atisGtfsMap a {@link com.camsys.shims.atis.AtisGtfsMap} object.
+     */
     public void setAtisGtfsMap(AtisGtfsMap atisGtfsMap) {
         _atisGtfsMap = atisGtfsMap;
     }
 
+    /**
+     * <p>setGtfsAgencyId.</p>
+     *
+     * @param gtfsAgencyId a {@link java.util.List} object.
+     */
     public void setGtfsAgencyId(List<String> gtfsAgencyId) {
         _gtfsAgencyId = gtfsAgencyId;
     }

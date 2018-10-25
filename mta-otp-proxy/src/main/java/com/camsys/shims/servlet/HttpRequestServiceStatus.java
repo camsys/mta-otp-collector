@@ -23,6 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * <p>HttpRequestServiceStatus class.</p>
+ *
+ */
 public class HttpRequestServiceStatus implements HttpRequestHandler {
 
     private static final String CONTENT_TYPE = "application/json";
@@ -31,10 +35,16 @@ public class HttpRequestServiceStatus implements HttpRequestHandler {
 
     private ServiceStatusSource _source;
 
+    /**
+     * <p>setSource.</p>
+     *
+     * @param source a {@link com.camsys.shims.service_status.source.ServiceStatusSource} object.
+     */
     public void setSource(ServiceStatusSource source) {
         _source = source;
     }
 
+    /** {@inheritDoc} */
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType(CONTENT_TYPE);
         String updatesSince = req.getParameter("updatesSince");

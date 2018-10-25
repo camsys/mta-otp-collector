@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 
 import static com.camsys.shims.util.TimeUtils.getCurrentDateTime;
 
+/**
+ * <p>MergingServiceStatusSource class.</p>
+ *
+ */
 public class MergingServiceStatusSource implements ServiceStatusSource
 {
 
@@ -21,10 +25,16 @@ public class MergingServiceStatusSource implements ServiceStatusSource
 
     private ServiceStatus _serviceStatus;
 
+    /**
+     * <p>Constructor for MergingServiceStatusSource.</p>
+     *
+     * @param sources a {@link java.util.List} object.
+     */
     public MergingServiceStatusSource(List<ServiceStatusSource> sources) {
         _sources = sources;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update() {
         List<RouteDetail> allRouteDetails = new ArrayList<>();
@@ -36,6 +46,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
 
     }
 
+    /** {@inheritDoc} */
     @Override
     public ServiceStatus getStatus(String updatesSince) {
         if(updatesSince != null)

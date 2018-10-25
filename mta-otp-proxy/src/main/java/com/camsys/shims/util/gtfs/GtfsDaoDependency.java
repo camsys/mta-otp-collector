@@ -14,6 +14,15 @@ package com.camsys.shims.util.gtfs;
 
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
 
+/**
+ * <p>GtfsDaoDependency interface.</p>
+ *
+ */
 public interface GtfsDaoDependency {
+    /**
+     * <p>setGtfsDao.</p>
+     *
+     * @param dao a {@link org.onebusaway.gtfs.services.GtfsRelationalDao} object.
+     */
     void setGtfsDao(GtfsRelationalDao dao);
 }

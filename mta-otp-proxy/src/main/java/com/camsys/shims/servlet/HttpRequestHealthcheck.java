@@ -16,6 +16,10 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * <p>HttpRequestHealthcheck class.</p>
+ *
+ */
 public class HttpRequestHealthcheck implements HttpRequestHandler {
 
     private static final String CONTENT_TYPE = "application/json";
@@ -31,6 +35,7 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
     /** allow the service status last updated time to be this old */
     private int _gracePeriodSec = 120;
 
+    /** {@inheritDoc} */
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType(CONTENT_TYPE);
         HealthcheckModel status = getHealthcheck();
@@ -58,14 +63,29 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
         return new HealthcheckModel(status.getLastUpdated(), stopsForRoute.size());
     }
 
+    /**
+     * <p>setHostname.</p>
+     *
+     * @param hostname a {@link java.lang.String} object.
+     */
     public void setHostname(String hostname) {
         _hostname = hostname;
     }
 
+    /**
+     * <p>setPort.</p>
+     *
+     * @param port a int.
+     */
     public void setPort(int port) {
         _port = port;
     }
 
+    /**
+     * <p>setGracePeriodSec.</p>
+     *
+     * @param gracePeriodSec a int.
+     */
     public void setGracePeriodSec(int gracePeriodSec) {
         _gracePeriodSec = gracePeriodSec;
     }
