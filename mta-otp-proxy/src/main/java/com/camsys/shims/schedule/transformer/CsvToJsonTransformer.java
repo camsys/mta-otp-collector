@@ -12,12 +12,20 @@ import java.util.List;
 
 /**
  * Translate arbitrary CSV to JSON located at a URL.
+ *
  */
 public class CsvToJsonTransformer<T> {
 
     private List<T> records = new ArrayList<>();
     private CsvRecordReader<T> csvRecordReader;
     private AmazonS3 s3 = null;
+    /**
+     * <p>Constructor for CsvToJsonTransformer.</p>
+     *
+     * @param csvRecordReader a {@link com.camsys.shims.schedule.transformer.CsvRecordReader} object.
+     * @param user a {@link java.lang.String} object.
+     * @param pass a {@link java.lang.String} object.
+     */
     public CsvToJsonTransformer(CsvRecordReader<T> csvRecordReader, String user, String pass) {
         this.csvRecordReader = csvRecordReader;
         s3 = S3Utils.getS3Client(user, pass);
@@ -25,7 +33,8 @@ public class CsvToJsonTransformer<T> {
 
     /**
      * load the contents of the file at URL into memory.
-     * @param url
+     *
+     * @param url a {@link java.lang.String} object.
      */
     public void loadUrl(String url) {
         InputStream input = null;
@@ -53,7 +62,7 @@ public class CsvToJsonTransformer<T> {
     /**
      * Coerce the input stream into objects per the csvRecordReader
      * @param input
-     * @return
+     * @return objects representing the csv
      * @throws IOException
      */
     private List<T> getCSV(InputStream input) throws IOException {
@@ -69,8 +78,9 @@ public class CsvToJsonTransformer<T> {
 
     /**
      * return the internal contents as a list of objects while filtering on the given param.
-     * @param filterParamter
-     * @return
+     *
+     * @param filterParamter a {@link java.lang.String} object.
+     * @return list of objects
      */
     public List<T> transform(String filterParamter) {
         List<T> filtered = new ArrayList<>(records.size());

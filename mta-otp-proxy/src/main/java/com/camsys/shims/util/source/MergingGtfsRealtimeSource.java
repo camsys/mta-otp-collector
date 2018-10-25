@@ -23,21 +23,32 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * <p>MergingGtfsRealtimeSource class.</p>
+ *
+ */
 public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
 
     private List<GtfsRealtimeSource> sources;
 
     private FeedMessage message;
 
+    /**
+     * <p>Constructor for MergingGtfsRealtimeSource.</p>
+     *
+     * @param sources a {@link java.util.List} object.
+     */
     public MergingGtfsRealtimeSource(List<GtfsRealtimeSource> sources) {
         this.sources = sources;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage getFeed() {
         return message;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update() {
         for (GtfsRealtimeSource source : sources) {
@@ -65,16 +76,23 @@ public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
         this.message = message.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addIncrementalListener(GtfsRealtimeIncrementalListener listener) {
         throw new NotImplementedException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void removeIncrementalListener(GtfsRealtimeIncrementalListener listener) {
         throw new NotImplementedException();
     }
 
+    /**
+     * <p>Setter for the field <code>sources</code>.</p>
+     *
+     * @param sources a {@link java.util.List} object.
+     */
     public void setSources(List<GtfsRealtimeSource> sources) {
         this.sources = sources;
     }

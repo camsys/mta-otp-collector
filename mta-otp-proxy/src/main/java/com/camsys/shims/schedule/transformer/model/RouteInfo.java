@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * <p>RouteInfo class.</p>
+ *
+ */
 public class RouteInfo {
     private List<ExtendedRouteBranchStop> stops;
 
@@ -22,27 +26,58 @@ public class RouteInfo {
 
     private Route route;
 
+    /**
+     * <p>Constructor for RouteInfo.</p>
+     *
+     * @param stops a {@link java.util.List} object.
+     * @param route a {@link org.onebusaway.gtfs.model.Route} object.
+     */
     public RouteInfo(List<ExtendedRouteBranchStop> stops, Route route) {
         this.stops = stops;
         this.route = route;
     }
 
+    /**
+     * <p>Getter for the field <code>stops</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<ExtendedRouteBranchStop> getStops() {
         return stops;
     }
 
+    /**
+     * <p>Getter for the field <code>geometry</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<RouteGeometry> getGeometry() {
         return geometry;
     }
 
+    /**
+     * <p>Getter for the field <code>route</code>.</p>
+     *
+     * @return a {@link org.onebusaway.gtfs.model.Route} object.
+     */
     public Route getRoute() {
         return route;
     }
 
+    /**
+     * <p>addGeometry.</p>
+     *
+     * @param shapePoints a {@link java.util.List} object.
+     */
     public void addGeometry(List<RouteShapePoint> shapePoints) {
         addGeometry(shapePoints, p -> new CoordinatePoint(p.getLat(), p.getLon()));
     }
 
+    /**
+     * <p>addGeometry.</p>
+     *
+     * @param feature a {@link org.geojson.Feature} object.
+     */
     public void addGeometry(Feature feature) {
         String color = feature.getProperty("Color");
         if (color.startsWith("#")) {

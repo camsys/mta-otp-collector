@@ -34,6 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * <p>SubwayElevatorsTransformer class.</p>
+ *
+ */
 public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOutagesType> {
 
     private static Logger _log = LoggerFactory.getLogger(SubwayElevatorsTransformer.class);
@@ -42,6 +46,7 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
 
     private ElevatorToStopsProvider _stopsProvider;
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(NYCOutagesType obj) {
         FeedMessage.Builder message = FeedMessage.newBuilder();
@@ -111,6 +116,11 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
                         .setLanguage("en"));
     }
 
+    /**
+     * <p>setStopsProvider.</p>
+     *
+     * @param stopsProvider a {@link com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider.ElevatorToStopsProvider} object.
+     */
     public void setStopsProvider(ElevatorToStopsProvider stopsProvider) {
         _stopsProvider = stopsProvider;
     }

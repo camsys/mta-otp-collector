@@ -18,21 +18,35 @@ import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-/** This is a GtfsRealtimeSource that takes the output of a different source */
+/**
+ * This is a GtfsRealtimeSource that takes the output of a different source
+ *
+ */
 public class ChainedGtfsRealtimeSource implements GtfsRealtimeSource {
 
     private GtfsRealtimeSource _upstream;
 
     private GtfsRealtimeTransformer<FeedMessage> _transformer;
 
+    /**
+     * <p>setUpstream.</p>
+     *
+     * @param upstream a {@link org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource} object.
+     */
     public void setUpstream(GtfsRealtimeSource upstream) {
         _upstream = upstream;
     }
 
+    /**
+     * <p>setTransformer.</p>
+     *
+     * @param transformer a {@link com.camsys.shims.util.transformer.GtfsRealtimeTransformer} object.
+     */
     public void setTransformer(GtfsRealtimeTransformer<FeedMessage> transformer) {
         _transformer = transformer;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage getFeed() {
         FeedMessage message = _upstream.getFeed();
@@ -40,11 +54,13 @@ public class ChainedGtfsRealtimeSource implements GtfsRealtimeSource {
         return message;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addIncrementalListener(GtfsRealtimeIncrementalListener gtfsRealtimeIncrementalListener) {
         throw new NotImplementedException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void removeIncrementalListener(GtfsRealtimeIncrementalListener gtfsRealtimeIncrementalListener) {
         throw new NotImplementedException();

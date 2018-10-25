@@ -22,10 +22,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <p>AtisGtfsMap class.</p>
+ *
+ * @version $Id: $Id
+ */
 public class AtisGtfsMap {
 
     private Map<String, AgencyAndId> _atisGtfsMap;
 
+    /**
+     * <p>init.</p>
+     */
     public void init() {
         CsvEntityReader reader = new CsvEntityReader();
         final List<AtisGtfsEntry> entries = new ArrayList<>();
@@ -47,11 +55,23 @@ public class AtisGtfsMap {
         }
     }
 
+    /**
+     * <p>getId.</p>
+     *
+     * @param key a {@link java.lang.String} object.
+     * @return a {@link org.onebusaway.gtfs.model.AgencyAndId} object.
+     */
     public AgencyAndId getId(String key) {
         AgencyAndId atisId = AgencyAndId.convertFromString(key);
         return _atisGtfsMap.get(atisId.getId());
     }
 
+    /**
+     * <p>getAgencyAndIdFromAtisIdWithoutAgency.</p>
+     *
+     * @param id a {@link java.lang.String} object.
+     * @return a {@link org.onebusaway.gtfs.model.AgencyAndId} object.
+     */
     public AgencyAndId getAgencyAndIdFromAtisIdWithoutAgency(String id) {
         return _atisGtfsMap.get(id);
     }

@@ -32,6 +32,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * <p>VehiclePositionsTransformer class.</p>
+ *
+ */
 public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<FeedMessage> {
 
     private static final Logger _log = LoggerFactory.getLogger(VehiclePositionsTransformer.class);
@@ -46,18 +50,34 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
 
     private String _agencyId;
 
+    /**
+     * <p>setCalculateBearing.</p>
+     *
+     * @param calculateBearing a boolean.
+     */
     public void setCalculateBearing(boolean calculateBearing) {
         _calculateBearing = calculateBearing;
     }
 
+    /**
+     * <p>setDao.</p>
+     *
+     * @param dao a {@link org.onebusaway.gtfs.services.GtfsRelationalDao} object.
+     */
     public void setDao(GtfsRelationalDao dao) {
         _dao = dao;
     }
 
+    /**
+     * <p>setAgencyId.</p>
+     *
+     * @param agencyId a {@link java.lang.String} object.
+     */
     public void setAgencyId(String agencyId) {
         _agencyId = agencyId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(FeedMessage message) {
         FeedMessage.Builder builder = message.toBuilder();

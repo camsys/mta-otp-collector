@@ -28,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * <p>PlannedServiceAlertToServiceStatusTransformer class.</p>
+ *
+ */
 public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealtimeTransformer<Getstatus4ResponseType> {
 
     private GtfsRouteAdapter _gtfsRouteAdapter;
@@ -40,22 +44,62 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
 
     private AtisGtfsMap _atisGtfsMap;
 
+    /**
+     * <p>getIncludeDirecton.</p>
+     *
+     * @return a boolean.
+     */
     public boolean getIncludeDirecton() {
         return _includeDirecton;
     }
+    /**
+     * <p>setIncludeDirecton.</p>
+     *
+     * @param includeDirecton a boolean.
+     */
     public void setIncludeDirecton(boolean includeDirecton) {
         this._includeDirecton = _includeDirecton;
     }
 
+    /**
+     * <p>getAgencyId.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getAgencyId(){ return _agencyId; }
+    /**
+     * <p>setAgencyId.</p>
+     *
+     * @param agencyId a {@link java.lang.String} object.
+     */
     public void setAgencyId(String agencyId){ _agencyId = agencyId; }
 
+    /**
+     * <p>getAtisGtfsMap.</p>
+     *
+     * @return a {@link com.camsys.shims.atis.AtisGtfsMap} object.
+     */
     public AtisGtfsMap getAtisGtfsMap() { return _atisGtfsMap; }
+    /**
+     * <p>setAtisGtfsMap.</p>
+     *
+     * @param atisGtfsMap a {@link com.camsys.shims.atis.AtisGtfsMap} object.
+     */
     public void setAtisGtfsMap(AtisGtfsMap atisGtfsMap) {
         _atisGtfsMap = atisGtfsMap;
     }
 
+    /**
+     * <p>getAddPlannedServiceAlerts.</p>
+     *
+     * @return a boolean.
+     */
     public boolean getAddPlannedServiceAlerts() { return _addPlannedServiceAlerts; }
+    /**
+     * <p>setAddPlannedServiceAlerts.</p>
+     *
+     * @param _addPlannedServiceAlerts a boolean.
+     */
     public void setAddPlannedServiceAlerts(boolean _addPlannedServiceAlerts) {
         this._addPlannedServiceAlerts = _addPlannedServiceAlerts;
     }
@@ -65,10 +109,11 @@ public class PlannedServiceAlertToServiceStatusTransformer implements GtfsRealti
      *  Two builders are here. The first is a standard intantiator. The second is part of an experiment to see
      *  if we can make this configurable or extensible because the alerts received are going to be specific to the
      *  the agency this is pulled for.
-      */
+     */
     public PlannedServiceAlertToServiceStatusTransformer() {}
 
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(Getstatus4ResponseType statusResponseType) {
         FeedMessage.Builder message = FeedMessage.newBuilder();

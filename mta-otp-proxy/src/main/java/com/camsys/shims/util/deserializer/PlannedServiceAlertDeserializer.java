@@ -13,15 +13,25 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * <p>PlannedServiceAlertDeserializer class.</p>
+ *
+ */
 public class PlannedServiceAlertDeserializer implements Deserializer<Getstatus4ResponseType> {
 
     private Unmarshaller _um;
 
+    /**
+     * <p>Constructor for PlannedServiceAlertDeserializer.</p>
+     *
+     * @throws java.lang.Exception if any.
+     */
     public PlannedServiceAlertDeserializer() throws Exception {
         JAXBContext jc = JAXBContext.newInstance(Getstatus4ResponseType.class);
         _um = jc.createUnmarshaller();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Getstatus4ResponseType deserialize(InputStream inputStream) throws IOException {
         try {
@@ -46,6 +56,7 @@ public class PlannedServiceAlertDeserializer implements Deserializer<Getstatus4R
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "text/xml";

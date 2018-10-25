@@ -21,6 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * <p>HttpRequestGtfsRealtimeSink class.</p>
+ *
+ */
 public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
 
     private static final String CONTENT_TYPE = "application/x-google-protobuf";
@@ -29,10 +33,16 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
 
     private GtfsRealtimeSource _source;
 
+    /**
+     * <p>setSource.</p>
+     *
+     * @param source a {@link org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource} object.
+     */
     public void setSource(GtfsRealtimeSource source) {
         _source = source;
     }
 
+    /** {@inheritDoc} */
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean debug = req.getParameter("debug") != null;
         Message message = _source.getFeed();

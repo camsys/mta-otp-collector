@@ -38,6 +38,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * <p>MetroNorthTripUpdateTransformer class.</p>
+ *
+ */
 public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
@@ -48,14 +52,25 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
+    /**
+     * <p>setGtfsAndCalendar.</p>
+     *
+     * @param gtfsAndCalendar a {@link com.camsys.shims.util.gtfs.GtfsAndCalendar} object.
+     */
     public void setGtfsAndCalendar(GtfsAndCalendar gtfsAndCalendar) {
         _dao = gtfsAndCalendar;
     }
 
+    /**
+     * <p>setAgencyId.</p>
+     *
+     * @param agencyId a {@link java.lang.String} object.
+     */
     public void setAgencyId(String agencyId) {
         _agencyId = agencyId;
     }
 
+    /** {@inheritDoc} */
     @Override
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         TripUpdate tu = fe.getTripUpdate();

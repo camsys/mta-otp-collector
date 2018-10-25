@@ -19,6 +19,10 @@ import com.google.transit.realtime.GtfsRealtimeExtensions;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * <p>FeedMessageDeserializer class.</p>
+ *
+ */
 public class FeedMessageDeserializer implements Deserializer<FeedMessage> {
 
     private static final ExtensionRegistry _extensionRegistry;
@@ -28,6 +32,7 @@ public class FeedMessageDeserializer implements Deserializer<FeedMessage> {
         GtfsRealtimeExtensions.registerExtensions(_extensionRegistry);
     }
 
+    /** {@inheritDoc} */
     @Override
     public FeedMessage deserialize(InputStream inputStream) throws IOException {
         FeedMessage message = FeedMessage.parseFrom(inputStream, _extensionRegistry);
@@ -36,6 +41,7 @@ public class FeedMessageDeserializer implements Deserializer<FeedMessage> {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "application/x-protobuf";

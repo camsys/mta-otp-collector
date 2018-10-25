@@ -20,41 +20,72 @@ import java.util.List;
 
 /**
  * get RouteInfo - shapes and points for a route
+ *
  */
 public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<RouteInfo> {
 
     private String _stopsUrl = null;
 
+    /**
+     * <p>setStopsUrl.</p>
+     *
+     * @param url a {@link java.lang.String} object.
+     */
     public void setStopsUrl(String url) {
         _stopsUrl = url;
     }
 
     private String _shapeUrl = null;
 
+    /**
+     * <p>setShapeUrl.</p>
+     *
+     * @param url a {@link java.lang.String} object.
+     */
     public void setShapeUrl(String url) {
         _shapeUrl = url;
     }
 
     private CsvRecordReader<RouteBranchStop> _stopReader = null;
 
+    /**
+     * <p>setStopReader.</p>
+     *
+     * @param reader a {@link com.camsys.shims.schedule.transformer.CsvRecordReader} object.
+     */
     public void setStopReader(CsvRecordReader<RouteBranchStop>reader) {
         _stopReader = reader;
     }
 
     private CsvRecordReader<RouteShapePoint> _shapeReader = null;
 
+    /**
+     * <p>setShapeReader.</p>
+     *
+     * @param reader a {@link com.camsys.shims.schedule.transformer.CsvRecordReader} object.
+     */
     public void setShapeReader(CsvRecordReader<RouteShapePoint>reader) {
         _shapeReader = reader;
     }
 
     private GtfsDaoProvider _provider;
 
+    /**
+     * <p>setGtfsProvider.</p>
+     *
+     * @param provider a {@link com.camsys.shims.util.gtfs_provider.GtfsDaoProvider} object.
+     */
     public void setGtfsProvider(GtfsDaoProvider provider) {
         _provider = provider;
     }
 
     private String _lirrSystemMapUrl;
 
+    /**
+     * <p>setLirrSystemMapUrl.</p>
+     *
+     * @param url a {@link java.lang.String} object.
+     */
     public void setLirrSystemMapUrl(String url) {
         _lirrSystemMapUrl = url;
     }
@@ -65,6 +96,7 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
 
     private GeojsonProvider _geojsonProvider = null;
 
+    /** {@inheritDoc} */
     @Override
     protected RouteInfo getData(String routeId) {
         // lookup injected source file
@@ -99,6 +131,11 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         return info;
     }
 
+    /**
+     * <p>getStopTransformer.</p>
+     *
+     * @return a {@link com.camsys.shims.schedule.transformer.CsvToJsonTransformer} object.
+     */
     protected CsvToJsonTransformer<RouteBranchStop> getStopTransformer() {
         if (_stopTransformer == null) {
             _stopTransformer = new CsvToJsonTransformer<>(_stopReader, s3key, s3pass);
@@ -106,6 +143,11 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         return _stopTransformer;
     }
 
+    /**
+     * <p>getShapeTransformer.</p>
+     *
+     * @return a {@link com.camsys.shims.schedule.transformer.CsvToJsonTransformer} object.
+     */
     protected CsvToJsonTransformer<RouteShapePoint> getShapeTransformer() {
         if (_shapeTransformer == null) {
             _shapeTransformer = new CsvToJsonTransformer<>(_shapeReader, s3key, s3pass);

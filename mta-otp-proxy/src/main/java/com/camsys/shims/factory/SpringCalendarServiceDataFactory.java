@@ -18,26 +18,38 @@ import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.onebusaway.gtfs.services.calendar.CalendarServiceDataFactory;
 import org.springframework.beans.factory.FactoryBean;
 
+/**
+ * <p>SpringCalendarServiceDataFactory class.</p>
+ *
+ */
 public class SpringCalendarServiceDataFactory implements FactoryBean<CalendarServiceData> {
 
     private GtfsRelationalDao _dao;
 
+    /** {@inheritDoc} */
     @Override
     public CalendarServiceData getObject() throws Exception {
         CalendarServiceDataFactory csdf = new CalendarServiceDataFactoryImpl(_dao);
         return csdf.createData();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<?> getObjectType() {
         return CalendarServiceData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isSingleton() {
         return true;
     }
 
+    /**
+     * <p>setDao.</p>
+     *
+     * @param dao a {@link org.onebusaway.gtfs.services.GtfsRelationalDao} object.
+     */
     public void setDao(GtfsRelationalDao dao) {
         _dao = dao;
     }

@@ -33,15 +33,24 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-// deserialize SIRI and modify LongDescription
+/**
+ * deserialize SIRI and modify LongDescription
+ *
+ */
 public class SiriDeserializerWithModifications extends SiriDeserializer {
 
     private HtmlCleanupUtil _htmlCleanupUtil;
 
+    /**
+     * <p>setHtmlCleanupUtil.</p>
+     *
+     * @param htmlCleanupUtil a {@link com.camsys.shims.util.HtmlCleanupUtil} object.
+     */
     public void setHtmlCleanupUtil(HtmlCleanupUtil htmlCleanupUtil) {
         _htmlCleanupUtil = htmlCleanupUtil;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);

@@ -16,6 +16,7 @@ import java.util.*;
 
 /**
  * Created by lcaraballo on 4/5/18.
+ *
  */
 public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Service> {
     private static final String STATUS_GOOD_SERVICE = "GOOD SERVICE";
@@ -35,10 +36,16 @@ public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Ser
 
     private HtmlCleanupUtil _htmlCleanupUtil;
 
+    /**
+     * <p>setHtmlCleanupUtil.</p>
+     *
+     * @param htmlCleanupUtil a {@link com.camsys.shims.util.HtmlCleanupUtil} object.
+     */
     public void setHtmlCleanupUtil(HtmlCleanupUtil htmlCleanupUtil) {
         _htmlCleanupUtil = htmlCleanupUtil;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<RouteDetail> transform(Service service, String mode, GtfsAndCalendar gtfsAndCalendar, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
         List<RouteDetail> routeDetails = new ArrayList<>();

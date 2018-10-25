@@ -8,15 +8,15 @@ import java.io.IOException;
 
 /**
  * Map a CSV record to a model that represents it.
+ *
  */
 public class RouteBranchStopReader implements CsvRecordReader<RouteBranchStop> {
 
 
     /**
+     * {@inheritDoc}
+     *
      * read a CSV row and return as an object.
-     * @param reader
-     * @return
-     * @throws IOException
      */
     @Override
     public RouteBranchStop readRecord(CsvReader reader) throws IOException {
@@ -26,10 +26,9 @@ public class RouteBranchStopReader implements CsvRecordReader<RouteBranchStop> {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * filter the object, where filter means return false if filter param == route id
-     * @param rbs
-     * @param filter
-     * @return
      */
     @Override
     public boolean filter(RouteBranchStop rbs, String filter) {

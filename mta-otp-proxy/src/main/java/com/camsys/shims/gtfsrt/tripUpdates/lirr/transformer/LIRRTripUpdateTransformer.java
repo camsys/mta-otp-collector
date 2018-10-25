@@ -20,10 +20,15 @@ import com.google.transit.realtime.GtfsRealtimeLIRR;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
 import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 
+/**
+ * <p>LIRRTripUpdateTransformer class.</p>
+ *
+ */
 public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final String JAMAICA = "15";
 
+    /** {@inheritDoc} */
     @Override
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         if (fe.hasTripUpdate()) {

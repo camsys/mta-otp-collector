@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+/**
+ * <p>RouteNameAdapter class.</p>
+ *
+ */
 public class RouteNameAdapter implements GtfsRouteAdapter {
     private static final Logger _log = LoggerFactory.getLogger(RouteNameAdapter.class);
 
@@ -16,6 +20,7 @@ public class RouteNameAdapter implements GtfsRouteAdapter {
 
     private List<String> _gtfsAgencyId;
 
+    /** {@inheritDoc} */
     @Override
     public String getGtfsRouteId(SituationAffectsBean affectsBean) {
         String routeId = affectsBean.getRouteId();
@@ -34,10 +39,20 @@ public class RouteNameAdapter implements GtfsRouteAdapter {
     }
 
 
+    /**
+     * <p>setGtfsMap.</p>
+     *
+     * @param routeNameGtfsMap a {@link com.camsys.shims.util.gtfs.RouteNameGtfsMap} object.
+     */
     public void setGtfsMap(RouteNameGtfsMap routeNameGtfsMap) {
         _routeNameGtfsMap = routeNameGtfsMap;
     }
 
+    /**
+     * <p>setGtfsAgencyId.</p>
+     *
+     * @param gtfsAgencyId a {@link java.util.List} object.
+     */
     public void setGtfsAgencyId(List<String> gtfsAgencyId) {
         _gtfsAgencyId = gtfsAgencyId;
     }
