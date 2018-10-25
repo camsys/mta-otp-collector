@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  * serve static JSON data backed by something on S3
- *
  */
 public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHandler {
 
@@ -21,33 +20,18 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
 
     protected String s3key = null;
 
-    /**
-     * <p>Setter for the field <code>s3key</code>.</p>
-     *
-     * @param key a {@link java.lang.String} object.
-     */
     public void setS3key(String key) {
         this.s3key = key;
     }
 
     protected String s3pass = null;
 
-    /**
-     * <p>Setter for the field <code>s3pass</code>.</p>
-     *
-     * @param pass a {@link java.lang.String} object.
-     */
     public void setS3pass(String pass) {
         this.s3pass = pass;
     }
 
     private boolean _cacheResults = true;
 
-    /**
-     * <p>setCacheResults.</p>
-     *
-     * @param cacheResults a boolean.
-     */
     public void setCacheResults(boolean cacheResults) {
         this._cacheResults = cacheResults;
     }
@@ -56,7 +40,6 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
 
     private Map<String, T> _cache = new HashMap<>();
 
-    /** {@inheritDoc} */
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         resp.setContentType(CONTENT_TYPE);
@@ -83,11 +66,5 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
 
     }
 
-    /**
-     * <p>getData.</p>
-     *
-     * @param param a {@link java.lang.String} object.
-     * @return a T object.
-     */
     protected abstract T getData(String param);
 }

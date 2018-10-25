@@ -21,10 +21,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * <p>S3MapStopIdTransformStrategy class.</p>
- *
- */
 public class S3MapStopIdTransformStrategy extends AbstractS3CsvProvider implements StopIdTransformStrategy  {
 
     private static final String ROUTE_ID_HEADER = "route_id";
@@ -37,7 +33,6 @@ public class S3MapStopIdTransformStrategy extends AbstractS3CsvProvider implemen
 
     private Map<Triple<String, String, String>, String> _stopRewriteMap = new HashMap<>();
 
-    /** {@inheritDoc} */
     @Override
     public void processRecord(CsvReader reader) throws IOException {
         String routeId = reader.get(ROUTE_ID_HEADER);
@@ -48,7 +43,6 @@ public class S3MapStopIdTransformStrategy extends AbstractS3CsvProvider implemen
         _stopRewriteMap.put(Triple.of(routeId, direction, fromStop), toStop);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String transform(String route, String direction, String stop) {
         return _stopRewriteMap.getOrDefault(Triple.of(route, direction, stop), stop);

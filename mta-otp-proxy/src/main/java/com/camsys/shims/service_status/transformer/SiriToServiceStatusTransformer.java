@@ -22,15 +22,10 @@ import java.util.*;
 
 import static com.camsys.shims.util.TimeUtils.getServiceDate;
 
-/**
- * <p>SiriToServiceStatusTransformer class.</p>
- *
- */
 public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<Siri>{
 
     private static final Logger _log = LoggerFactory.getLogger(SiriToServiceStatusTransformer.class);
 
-    /** {@inheritDoc} */
     @Override
     public List<RouteDetail> transform(Siri siri, String mode, GtfsAndCalendar gtfsAndCalendar,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> routeDetailsMap) {
@@ -39,16 +34,6 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         return  getRouteDetails(serviceAlerts, mode, gtfsAndCalendar, gtfsAdapter, routeDetailsMap);
     }
 
-    /**
-     * <p>getRouteDetails.</p>
-     *
-     * @param serviceAlerts a {@link java.util.List} object.
-     * @param mode a {@link java.lang.String} object.
-     * @param gtfsAndCalendar a {@link com.camsys.shims.util.gtfs.GtfsAndCalendar} object.
-     * @param gtfsAdapter a {@link com.camsys.shims.service_status.adapters.GtfsRouteAdapter} object.
-     * @param routeDetailsMap a {@link java.util.Map} object.
-     * @return a {@link java.util.List} object.
-     */
     protected List<RouteDetail> getRouteDetails(List<ExtendedServiceAlertBean> serviceAlerts, String mode,
                                                 GtfsAndCalendar gtfsAndCalendar, GtfsRouteAdapter gtfsAdapter,
                                                 Map<String, RouteDetail> routeDetailsMap){
@@ -65,16 +50,6 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         return routeDetails;
     }
 
-    /**
-     * <p>generateRouteDetailsForAlerts.</p>
-     *
-     * @param tempRouteDetailsMap a {@link java.util.Map} object.
-     * @param serviceAlerts a {@link java.util.List} object.
-     * @param mode a {@link java.lang.String} object.
-     * @param gtfsAndCalendar a {@link com.camsys.shims.util.gtfs.GtfsAndCalendar} object.
-     * @param gtfsAdapter a {@link com.camsys.shims.service_status.adapters.GtfsRouteAdapter} object.
-     * @param lastUpdated a {@link java.util.Date} object.
-     */
     protected void generateRouteDetailsForAlerts(Map<String, RouteDetail> tempRouteDetailsMap,
                                                List<ExtendedServiceAlertBean> serviceAlerts,
                                                String mode,
@@ -104,14 +79,6 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         }
     }
 
-    /**
-     * <p>generateRouteDetailsForAllRoutes.</p>
-     *
-     * @param tempRouteDetailsMap a {@link java.util.Map} object.
-     * @param mode a {@link java.lang.String} object.
-     * @param gtfsAndCalendar a {@link com.camsys.shims.util.gtfs.GtfsAndCalendar} object.
-     * @param lastUpdated a {@link java.util.Date} object.
-     */
     protected void generateRouteDetailsForAllRoutes(Map<String, RouteDetail> tempRouteDetailsMap,
                                                   String mode, GtfsAndCalendar gtfsAndCalendar,
                                                   Date lastUpdated){
@@ -202,12 +169,6 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         return false;
     }
 
-    /**
-     * <p>updateRouteDetailsMap.</p>
-     *
-     * @param tempRouteDetailsMap a {@link java.util.Map} object.
-     * @param routeDetailMap a {@link java.util.Map} object.
-     */
     protected void updateRouteDetailsMap(Map<String, RouteDetail> tempRouteDetailsMap,
                                        Map<String, RouteDetail> routeDetailMap){
 

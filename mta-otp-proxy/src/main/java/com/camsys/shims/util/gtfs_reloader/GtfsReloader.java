@@ -14,10 +14,6 @@ import java.net.URL;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-/**
- * <p>GtfsReloader class.</p>
- *
- */
 public class GtfsReloader {
 
     private static Logger _log = LoggerFactory.getLogger(GtfsReloader.class);
@@ -27,39 +23,16 @@ public class GtfsReloader {
     private String _user;
     private String _pass;
 
-    /**
-     * <p>getDaosToRefresh.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
     public List<GtfsDaoToSource> getDaosToRefresh() {
         return _daos;
     }
-    /**
-     * <p>setDaosToRefresh.</p>
-     *
-     * @param daosToRefresh a {@link java.util.List} object.
-     */
     public void setDaosToRefresh(List<GtfsDaoToSource> daosToRefresh) {
         this._daos = daosToRefresh;
     }
 
-    /**
-     * <p>setUser.</p>
-     *
-     * @param user a {@link java.lang.String} object.
-     */
     public void setUser (String user) { _user = user; }
-    /**
-     * <p>setPass.</p>
-     *
-     * @param pass a {@link java.lang.String} object.
-     */
     public void setPass (String pass) { _pass = pass; }
 
-    /**
-     * <p>downloadAndUpdateGtfs.</p>
-     */
     public void downloadAndUpdateGtfs(){
 
         DateTime start = DateTime.now();

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 /**
  * Created by lcaraballo on 5/3/18.
- *
  */
 public class CloudWatchService extends CloudwatchProxyDataListener{
 
@@ -40,18 +39,10 @@ public class CloudWatchService extends CloudwatchProxyDataListener{
 
     private String _autoScalingGroupName;
 
-    /**
-     * <p>setAutoScalingGroupName.</p>
-     *
-     * @param autoScalingGroupName a {@link java.lang.String} object.
-     */
     public void setAutoScalingGroupName(String autoScalingGroupName) {
         _autoScalingGroupName = autoScalingGroupName;
     }
 
-    /**
-     * <p>init.</p>
-     */
     @PostConstruct
     public void init() {
         try {
@@ -86,9 +77,6 @@ public class CloudWatchService extends CloudwatchProxyDataListener{
         }
     }
 
-    /**
-     * <p>destroy.</p>
-     */
     @PreDestroy
     public void destroy(){
         _scheduledExecutorService.shutdownNow();

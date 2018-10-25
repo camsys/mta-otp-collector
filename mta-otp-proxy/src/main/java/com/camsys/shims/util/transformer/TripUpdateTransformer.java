@@ -26,10 +26,6 @@ import com.kurtraschke.nyctrtproxy.services.ProxyDataListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * <p>Abstract TripUpdateTransformer class.</p>
- *
- */
 public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<FeedMessage> {
 
     private static final Logger _log = LoggerFactory.getLogger(TripUpdateTransformer.class);
@@ -40,34 +36,18 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
 
     private String _feedId;
 
-    /**
-     * <p>setCloudwatchService.</p>
-     *
-     * @param cloudwatchService a {@link com.kurtraschke.nyctrtproxy.services.ProxyDataListener} object.
-     */
     public void setCloudwatchService(ProxyDataListener cloudwatchService) {
         _cloudwatchService = cloudwatchService;
     }
 
-    /**
-     * <p>setFeedId.</p>
-     *
-     * @param feedId a {@link java.lang.String} object.
-     */
     public void setFeedId(String feedId) {
         _feedId = feedId;
     }
 
-    /**
-     * <p>setNamespace.</p>
-     *
-     * @param namespace a {@link java.lang.String} object.
-     */
     public void setNamespace(String namespace) {
         _namespace = namespace;
     }
 
-    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(FeedMessage message) {
         FeedMessage.Builder builder = FeedMessage.newBuilder();
@@ -98,12 +78,5 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
         return builder.build();
     }
 
-    /**
-     * <p>transformTripUpdate.</p>
-     *
-     * @param fe a {@link com.google.transit.realtime.GtfsRealtime.FeedEntity} object.
-     * @param matchMetrics a {@link com.kurtraschke.nyctrtproxy.model.MatchMetrics} object.
-     * @return a {@link com.google.transit.realtime.GtfsRealtime.TripUpdate.Builder} object.
-     */
     public abstract TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics);
 }

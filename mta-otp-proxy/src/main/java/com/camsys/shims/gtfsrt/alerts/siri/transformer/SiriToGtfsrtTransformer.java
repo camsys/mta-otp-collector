@@ -29,10 +29,6 @@ import uk.org.siri.siri.Siri;
 import java.util.Date;
 import java.util.List;
 
-/**
- * <p>SiriToGtfsrtTransformer class.</p>
- *
- */
 public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     private GtfsRouteAdapter _gtfsRouteAdapter;
@@ -42,7 +38,6 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
      */
     private int _autoExpirySec = -1;
 
-    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(Siri siri) {
         List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri);
@@ -85,20 +80,10 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         }
     }
 
-    /**
-     * <p>setGtfsRouteAdapter.</p>
-     *
-     * @param gtfsRouteAdapter a {@link com.camsys.shims.service_status.adapters.GtfsRouteAdapter} object.
-     */
     public void setGtfsRouteAdapter(GtfsRouteAdapter gtfsRouteAdapter) {
         _gtfsRouteAdapter = gtfsRouteAdapter;
     }
 
-    /**
-     * <p>setAutoExpirySec.</p>
-     *
-     * @param autoExpirySec a int.
-     */
     public void setAutoExpirySec(int autoExpirySec) {
         _autoExpirySec = autoExpirySec;
     }

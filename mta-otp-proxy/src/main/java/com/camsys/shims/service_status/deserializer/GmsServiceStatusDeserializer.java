@@ -17,24 +17,15 @@ import java.io.StringReader;
 
 /**
  * Created by lcaraballo on 4/5/18.
- *
  */
 public class GmsServiceStatusDeserializer implements Deserializer<Service> {
 
-    /** {@inheritDoc} */
     @Override
     public Service deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
         return deserialize(xml);
     }
 
-    /**
-     * <p>deserialize.</p>
-     *
-     * @param xml a {@link java.lang.String} object.
-     * @return a {@link com.camsys.mta.gms_service_status.Service} object.
-     * @throws java.io.IOException if any.
-     */
     protected Service deserialize(String xml) throws IOException {
         try {
             JAXBContext context = JAXBContext.newInstance(Service.class);
@@ -48,7 +39,6 @@ public class GmsServiceStatusDeserializer implements Deserializer<Service> {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "text/xml";

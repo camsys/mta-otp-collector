@@ -9,37 +9,20 @@ import javax.annotation.PostConstruct;
 
 /**
  * Created by lcaraballo on 4/6/18.
- *
  */
 public class HtmlCleanupUtil {
 
     private String[] _htmlTagWhiteList;
     private String[] _htmlAttributesWhiteList;
 
-    /**
-     * <p>setHtmlTagWhiteList.</p>
-     *
-     * @param htmlTagWhiteList an array of {@link java.lang.String} objects.
-     */
     public void setHtmlTagWhiteList(String[] htmlTagWhiteList){
         _htmlTagWhiteList = htmlTagWhiteList;
     }
 
-    /**
-     * <p>setHtmlAttributesWhiteList.</p>
-     *
-     * @param htmlAttributesWhiteList an array of {@link java.lang.String} objects.
-     */
     public void setHtmlAttributesWhiteList(String[] htmlAttributesWhiteList){
         _htmlAttributesWhiteList = htmlAttributesWhiteList;
     }
 
-    /**
-     * <p>filterHtml.</p>
-     *
-     * @param html a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     */
     public String filterHtml(final String html){
         Whitelist wl = Whitelist.none();
         wl.addTags(_htmlTagWhiteList);

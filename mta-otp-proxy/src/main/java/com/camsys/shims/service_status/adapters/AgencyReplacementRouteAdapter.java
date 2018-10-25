@@ -5,15 +5,10 @@ import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
 
-/**
- * <p>AgencyReplacementRouteAdapter class.</p>
- *
- */
 public class AgencyReplacementRouteAdapter implements GtfsRouteAdapter {
 
     private String _replacementAgencyId;
 
-    /** {@inheritDoc} */
     @Override
     public String getGtfsRouteId(SituationAffectsBean affectsBean) {
         AgencyAndId route = AgencyAndId.convertFromString(affectsBean.getRouteId());
@@ -23,11 +18,6 @@ public class AgencyReplacementRouteAdapter implements GtfsRouteAdapter {
         return null;
     }
 
-    /**
-     * <p>setAgencyId.</p>
-     *
-     * @param agencyId a {@link java.lang.String} object.
-     */
     public void setAgencyId(String agencyId) {
         _replacementAgencyId = agencyId;
     }

@@ -24,10 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * <p>TransformingServiceStatusSource class.</p>
- *
- */
 public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 {
     private static final Logger _log = LoggerFactory.getLogger(TransformingServiceStatusSource.class);
@@ -62,61 +58,30 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
-    /**
-     * <p>setSourceUrl.</p>
-     *
-     * @param sourceUrl a {@link java.lang.String} object.
-     */
     public void setSourceUrl(String sourceUrl) {
         _sourceUrl = sourceUrl;
     }
 
-    /**
-     * <p>setMode.</p>
-     *
-     * @param mode a {@link java.lang.String} object.
-     */
     public void setMode(String mode) {
         _mode = mode;
     }
 
-    /**
-     * <p>setTransformer.</p>
-     *
-     * @param transformer a {@link com.camsys.shims.service_status.transformer.ServiceStatusTransformer} object.
-     */
     public void setTransformer(ServiceStatusTransformer transformer) {
         _transformer = transformer;
     }
 
-    /**
-     * <p>setGtfsRouteAdapter.</p>
-     *
-     * @param gtfsAdapter a {@link com.camsys.shims.service_status.adapters.GtfsRouteAdapter} object.
-     */
     public void setGtfsRouteAdapter(GtfsRouteAdapter gtfsAdapter) {
         _gtfsAdapter = gtfsAdapter;
     }
 
-    /**
-     * <p>setDeserializer.</p>
-     *
-     * @param deserializer a {@link com.camsys.shims.util.deserializer.Deserializer} object.
-     */
     public void setDeserializer(Deserializer<T> deserializer) {
         _deserializer = deserializer;
     }
 
-    /**
-     * <p>setGtfsAndCalendar.</p>
-     *
-     * @param gtfsAndCalendar a {@link com.camsys.shims.util.gtfs.GtfsAndCalendar} object.
-     */
     public void setGtfsAndCalendar(GtfsAndCalendar gtfsAndCalendar) {
         _gtfsAndCalendar = gtfsAndCalendar;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void update() {
         T sourceData = getSourceData(_sourceUrl, _deserializer);
@@ -146,13 +111,6 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         }
     }
 
-    /**
-     * <p>getSourceData.</p>
-     *
-     * @param sourceUrl a {@link java.lang.String} object.
-     * @param deserializer a {@link com.camsys.shims.util.deserializer.Deserializer} object.
-     * @return a T object.
-     */
     protected T getSourceData(String sourceUrl, Deserializer<T> deserializer){
         if (_httpClient == null)
             _httpClient = HttpClientBuilder.create().setConnectionManager(_connectionManager).build();
@@ -177,35 +135,19 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ServiceStatus getStatus(String updatesSince) {
         return _serviceStatus;
     }
 
-    /**
-     * <p>setExcludeRoutes.</p>
-     *
-     * @param excludeRoutes a {@link java.lang.String} object.
-     */
     public void setExcludeRoutes(String excludeRoutes) {
         _excludeRoutes = Arrays.asList(excludeRoutes.split(","));
     }
 
-    /**
-     * <p>setInServiceFalseRoutes.</p>
-     *
-     * @param inServiceFalseRoutes a {@link java.lang.String} object.
-     */
     public void setInServiceFalseRoutes(String inServiceFalseRoutes) {
         _inServiceFalseRoutes = Arrays.asList(inServiceFalseRoutes.split(","));
     }
 
-    /**
-     * <p>setInServiceTrueRoutes.</p>
-     *
-     * @param inServiceTrueRoutes a {@link java.lang.String} object.
-     */
     public void setInServiceTrueRoutes(String inServiceTrueRoutes) {
         _inServiceTrueRoutes = Arrays.asList(inServiceTrueRoutes.split(","));
     }

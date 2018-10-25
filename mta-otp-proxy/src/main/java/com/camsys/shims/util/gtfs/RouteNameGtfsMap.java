@@ -11,17 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * <p>RouteNameGtfsMap class.</p>
- *
- */
 public class RouteNameGtfsMap {
 
     private Map<String, AgencyAndId> _routeNameGtfsMap;
 
-    /**
-     * <p>init.</p>
-     */
     public void init() {
         CsvEntityReader reader = new CsvEntityReader();
         final List<RouteNameGtfsEntry> entries = new ArrayList<>();
@@ -43,12 +36,6 @@ public class RouteNameGtfsMap {
         }
     }
 
-    /**
-     * <p>getId.</p>
-     *
-     * @param key a {@link java.lang.String} object.
-     * @return a {@link org.onebusaway.gtfs.model.AgencyAndId} object.
-     */
     public AgencyAndId getId(String key) {
         AgencyAndId atisId = AgencyAndId.convertFromString(key);
         return _routeNameGtfsMap.get(atisId.getId());

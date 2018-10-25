@@ -23,25 +23,15 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * <p>SubwayElevatorsDeserializer class.</p>
- *
- */
 public class SubwayElevatorsDeserializer implements Deserializer<NYCOutagesType> {
 
     private Unmarshaller _um;
 
-    /**
-     * <p>Constructor for SubwayElevatorsDeserializer.</p>
-     *
-     * @throws javax.xml.bind.JAXBException if any.
-     */
     public SubwayElevatorsDeserializer() throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(NYCOutagesType.class);
         _um = jc.createUnmarshaller();
     }
 
-    /** {@inheritDoc} */
     @Override
     public NYCOutagesType deserialize(InputStream inputStream) throws IOException {
         try {
@@ -60,7 +50,6 @@ public class SubwayElevatorsDeserializer implements Deserializer<NYCOutagesType>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "text/xml";

@@ -19,10 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * <p>Abstract AbstractS3CsvProvider class.</p>
- *
- */
 public abstract class AbstractS3CsvProvider {
     private String user;
 
@@ -30,9 +26,6 @@ public abstract class AbstractS3CsvProvider {
 
     private String url;
 
-    /**
-     * <p>init.</p>
-     */
     public void init() {
         if (!url.startsWith("s3://")) {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
@@ -51,37 +44,16 @@ public abstract class AbstractS3CsvProvider {
         reader.close();
     }
 
-    /**
-     * <p>processRecord.</p>
-     *
-     * @param reader a {@link com.csvreader.CsvReader} object.
-     * @throws java.io.IOException if any.
-     */
     public abstract void processRecord(CsvReader reader) throws IOException;
 
-    /**
-     * <p>Setter for the field <code>user</code>.</p>
-     *
-     * @param user a {@link java.lang.String} object.
-     */
     public void setUser(String user) {
         this.user = user;
     }
 
-    /**
-     * <p>Setter for the field <code>pass</code>.</p>
-     *
-     * @param pass a {@link java.lang.String} object.
-     */
     public void setPass(String pass) {
         this.pass = pass;
     }
 
-    /**
-     * <p>Setter for the field <code>url</code>.</p>
-     *
-     * @param url a {@link java.lang.String} object.
-     */
     public void setUrl(String url) {
         this.url = url;
     }

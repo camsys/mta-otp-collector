@@ -19,38 +19,22 @@ import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
 import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
 import org.onebusaway.gtfs.services.calendar.CalendarServiceDataFactory;
 
-/**
- * Manually keep track of CalendarServiceData dependencies in the RT shim.
- *  This is a bad pattern and should be revisited.
- *
- */
+/** Manually keep track of CalendarServiceData dependencies in the RT shim.
+ *  This is a bad pattern and should be revisited. */
 public class SubwayGtfsDaoToSource extends GtfsDaoToSource {
 
     private TripActivator _tripActivator;
 
     private LazyTripMatcher _lazyTripMatcher;
 
-    /**
-     * <p>setTripActivator.</p>
-     *
-     * @param tripActivator a {@link com.kurtraschke.nyctrtproxy.services.TripActivator} object.
-     */
     public void setTripActivator(TripActivator tripActivator) {
         _tripActivator = tripActivator;
     }
 
-    /**
-     * <p>setLazyTripMatcher.</p>
-     *
-     * @param lazyTripMatcher a {@link com.kurtraschke.nyctrtproxy.services.LazyTripMatcher} object.
-     */
     public void setLazyTripMatcher(LazyTripMatcher lazyTripMatcher) {
         _lazyTripMatcher = lazyTripMatcher;
     }
 
-    /**
-     * <p>init.</p>
-     */
     public void init() {
         GtfsDaoDependency subwayDependencies = (dao) -> {
             CalendarServiceDataFactory csdf = new CalendarServiceDataFactoryImpl(dao);

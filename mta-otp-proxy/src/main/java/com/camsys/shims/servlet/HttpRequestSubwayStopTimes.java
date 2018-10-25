@@ -37,10 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * <p>HttpRequestSubwayStopTimes class.</p>
- *
- */
 public class HttpRequestSubwayStopTimes implements HttpRequestHandler {
 
     private static final String BASE_URL = "http://datamine.mta.info/mta_esi.php";
@@ -66,7 +62,6 @@ public class HttpRequestSubwayStopTimes implements HttpRequestHandler {
 
     private static ObjectMapper _mapper = new ObjectMapper();
 
-    /** {@inheritDoc} */
     @Override
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (_httpClient == null)
@@ -95,20 +90,10 @@ public class HttpRequestSubwayStopTimes implements HttpRequestHandler {
         _mapper.writer().writeValue(resp.getWriter(), stopTimes);
     }
 
-    /**
-     * <p>setKey.</p>
-     *
-     * @param key a {@link java.lang.String} object.
-     */
     public void setKey(String key) {
         _key = key;
     }
 
-    /**
-     * <p>setConnectionManager.</p>
-     *
-     * @param connectionManager a {@link org.apache.http.conn.HttpClientConnectionManager} object.
-     */
     public void setConnectionManager(HttpClientConnectionManager connectionManager) {
         _connectionManager = connectionManager;
     }

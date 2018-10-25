@@ -20,22 +20,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * <p>StationResultsDeserializer class.</p>
- *
- */
 public class StationResultsDeserializer implements Deserializer<StationResults> {
 
     private ObjectMapper _mapper;
 
-    /**
-     * <p>Constructor for StationResultsDeserializer.</p>
-     */
     public StationResultsDeserializer() {
         _mapper = new ObjectMapper();
     }
 
-    /** {@inheritDoc} */
     @Override
     public StationResults deserialize(InputStream inputStream) throws IOException {
         try {
@@ -50,7 +42,6 @@ public class StationResultsDeserializer implements Deserializer<StationResults> 
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "text/json";

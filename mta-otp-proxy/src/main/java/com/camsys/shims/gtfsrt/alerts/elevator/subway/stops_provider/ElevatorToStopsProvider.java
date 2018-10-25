@@ -14,16 +14,6 @@ package com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider;
 
 import java.util.Collection;
 
-/**
- * <p>ElevatorToStopsProvider interface.</p>
- *
- */
 public interface ElevatorToStopsProvider {
-    /**
-     * <p>getStopsForElevator.</p>
-     *
-     * @param elevatorId a {@link java.lang.String} object.
-     * @return a {@link java.util.Collection} object.
-     */
     Collection<String> getStopsForElevator(String elevatorId);
 }

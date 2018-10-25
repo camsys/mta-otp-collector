@@ -12,16 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.schedule.transformer.model;
 
-/**
- * <p>ExtendedRouteBranchStop class.</p>
- *
- */
 public class ExtendedRouteBranchStop extends RouteBranchStop {
-    /**
-     * <p>Constructor for ExtendedRouteBranchStop.</p>
-     *
-     * @param rbs a {@link com.camsys.shims.schedule.transformer.model.RouteBranchStop} object.
-     */
     public ExtendedRouteBranchStop(RouteBranchStop rbs) {
         super(rbs);
     }
@@ -30,38 +21,18 @@ public class ExtendedRouteBranchStop extends RouteBranchStop {
 
     private double lon;
 
-    /**
-     * <p>Getter for the field <code>lat</code>.</p>
-     *
-     * @return a double.
-     */
     public double getLat() {
         return lat;
     }
 
-    /**
-     * <p>Setter for the field <code>lat</code>.</p>
-     *
-     * @param lat a double.
-     */
     public void setLat(double lat) {
         this.lat = lat;
     }
 
-    /**
-     * <p>Getter for the field <code>lon</code>.</p>
-     *
-     * @return a double.
-     */
     public double getLon() {
         return lon;
     }
 
-    /**
-     * <p>Setter for the field <code>lon</code>.</p>
-     *
-     * @param lon a double.
-     */
     public void setLon(double lon) {
         this.lon = lon;
     }

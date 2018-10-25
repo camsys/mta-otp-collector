@@ -21,10 +21,6 @@ import com.google.transit.realtime.GtfsRealtimeNYCT;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * <p>LIRRFeedMessageDeserializer class.</p>
- *
- */
 public class LIRRFeedMessageDeserializer implements Deserializer<GtfsRealtime.FeedMessage> {
     private static final ExtensionRegistry _extensionRegistry;
 
@@ -34,7 +30,6 @@ public class LIRRFeedMessageDeserializer implements Deserializer<GtfsRealtime.Fe
         GtfsRealtimeLIRR.registerAllExtensions(_extensionRegistry);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GtfsRealtime.FeedMessage deserialize(InputStream inputStream) throws IOException {
         GtfsRealtime.FeedMessage message = GtfsRealtime.FeedMessage.parseFrom(inputStream, _extensionRegistry);
@@ -43,7 +38,6 @@ public class LIRRFeedMessageDeserializer implements Deserializer<GtfsRealtime.Fe
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getMimeType() {
         return "application/x-protobuf";

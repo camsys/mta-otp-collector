@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * Created by lcaraballo on 2/1/18.
- *
  */
 public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfsRealtimeSource {
 
@@ -20,23 +19,12 @@ public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfs
 
     private Deserializer<T> _statusDeserializer;
 
-    /**
-     * <p>setStatusSourceUrl.</p>
-     *
-     * @param statusSourceUrl a {@link java.lang.String} object.
-     */
     public void setStatusSourceUrl(String statusSourceUrl) {_statusSourceUrl = statusSourceUrl;}
 
-    /**
-     * <p>setStatusDeserializer.</p>
-     *
-     * @param deserializer a {@link com.camsys.shims.util.deserializer.Deserializer} object.
-     */
     public void setStatusDeserializer(Deserializer<T> deserializer) {
         _statusDeserializer = deserializer;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void update() {
         List<StatusResults> statusResultsList = new ArrayList<>();

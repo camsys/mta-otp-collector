@@ -24,10 +24,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-/**
- * <p>MetroNorthElevatorAlertsTransformer class.</p>
- *
- */
 public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransformer<List<StatusResults>> {
 
     private static Logger _log = LoggerFactory.getLogger(MetroNorthElevatorAlertsTransformer.class);
@@ -39,7 +35,6 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
     private static final String WORKING_STATUS = "1";
 
 
-    /** {@inheritDoc} */
     @Override
     public FeedMessage transform(List<StatusResults> statusResultsList) {
         FeedMessage.Builder message = FeedMessage.newBuilder();

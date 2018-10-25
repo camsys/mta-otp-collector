@@ -21,19 +21,10 @@ import com.amazonaws.services.s3.model.S3Object;
 
 import java.io.InputStream;
 
-/**
- * hide some common s3 functionality in a convenience class.  Should eventually be moved
- * to onebusaway-cloud-services
- *
- */
 public class S3Utils {
 
     /**
      * Get an S3 client object with a user name and password
-     *
-     * @param user a {@link java.lang.String} object.
-     * @param pass a {@link java.lang.String} object.
-     * @return client reference
      */
     public static AmazonS3 getS3Client(String user, String pass) {
         BasicAWSCredentials credentials = new BasicAWSCredentials(user, pass);
@@ -44,10 +35,8 @@ public class S3Utils {
 
     /**
      * retrieve an input stream representing the contents of the url at the s3 location.
-     *
-     * @param s3 a {@link com.amazonaws.services.s3.AmazonS3} object.
-     * @param url a {@link java.lang.String} object.
-     * @return contents of file or null
+     * @param url
+     * @return
      */
     public static InputStream getViaS3(AmazonS3 s3, String url) {
         AmazonS3URI uri = new AmazonS3URI(url);

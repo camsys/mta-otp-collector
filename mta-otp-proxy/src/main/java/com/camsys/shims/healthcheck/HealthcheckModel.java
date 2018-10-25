@@ -14,40 +14,20 @@ package com.camsys.shims.healthcheck;
 
 import java.util.Date;
 
-/**
- * <p>HealthcheckModel class.</p>
- *
- */
 public class HealthcheckModel {
 
     private Date serviceStatusLastUpdated;
 
     private int stopsForRoute;
 
-    /**
-     * <p>Getter for the field <code>serviceStatusLastUpdated</code>.</p>
-     *
-     * @return a {@link java.util.Date} object.
-     */
     public Date getServiceStatusLastUpdated() {
         return serviceStatusLastUpdated;
     }
 
-    /**
-     * <p>Getter for the field <code>stopsForRoute</code>.</p>
-     *
-     * @return a int.
-     */
     public int getStopsForRoute() {
         return stopsForRoute;
     }
 
-    /**
-     * <p>Constructor for HealthcheckModel.</p>
-     *
-     * @param serviceStatusLastUpdated a {@link java.util.Date} object.
-     * @param stopsForRoute a int.
-     */
     public HealthcheckModel(Date serviceStatusLastUpdated, int stopsForRoute) {
         this.serviceStatusLastUpdated = serviceStatusLastUpdated;
         this.stopsForRoute = stopsForRoute;

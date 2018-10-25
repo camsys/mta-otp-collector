@@ -20,7 +20,6 @@ import java.util.Map;
 
 /**
  * Created by lcaraballo on 4/5/18.
- *
  */
 public class LocalServiceStatusSource<T> implements ServiceStatusSource {
 
@@ -42,69 +41,33 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
 
     protected ServiceStatus _serviceStatus;
 
-    /**
-     * <p>setDeserializer.</p>
-     *
-     * @param deserializer a {@link com.camsys.shims.util.deserializer.Deserializer} object.
-     */
     public void setDeserializer(Deserializer<T> deserializer) {
         _deserializer = deserializer;
     }
 
-    /**
-     * <p>setGtfsRouteAdapter.</p>
-     *
-     * @param _gtfsAdapter a {@link com.camsys.shims.service_status.adapters.GtfsRouteAdapter} object.
-     */
     public void setGtfsRouteAdapter(GtfsRouteAdapter _gtfsAdapter) {
         _gtfsAdapter = _gtfsAdapter;
     }
-    /**
-     * <p>setMode.</p>
-     *
-     * @param _mode a {@link java.lang.String} object.
-     */
     public void setMode(String _mode) {
         _mode = _mode;
     }
 
-    /**
-     * <p>setGtfsAndCalendar.</p>
-     *
-     * @param _gtfsAndCalendar a {@link com.camsys.shims.util.gtfs.GtfsAndCalendar} object.
-     */
     public void setGtfsAndCalendar(GtfsAndCalendar _gtfsAndCalendar) {
         _gtfsAndCalendar = _gtfsAndCalendar;
     }
 
-    /**
-     * <p>setRouteDetailsMap.</p>
-     *
-     * @param _routeDetailsMap a {@link java.util.Map} object.
-     */
     public void setRouteDetailsMap(Map<String, RouteDetail> _routeDetailsMap) {
         _routeDetailsMap = _routeDetailsMap;
     }
 
-    /**
-     * <p>setSourceUrl.</p>
-     *
-     * @param sourceUrl a {@link java.lang.String} object.
-     */
     public void setSourceUrl(String sourceUrl) {
         _sourceUrl = sourceUrl;
     }
 
-    /**
-     * <p>setTransformer.</p>
-     *
-     * @param transformer a {@link com.camsys.shims.service_status.transformer.ServiceStatusTransformer} object.
-     */
     public void setTransformer(ServiceStatusTransformer transformer) {
         _transformer = transformer;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void update() {
         T sourceData = getSourceData(_sourceUrl, _deserializer);
@@ -126,7 +89,6 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ServiceStatus getStatus(String updatesSince) {
         return _serviceStatus;

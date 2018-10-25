@@ -17,12 +17,7 @@ import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 
-/**
- * <p>MTABusTripUpdateTransformer class.</p>
- *
- */
 public class MTABusTripUpdateTransformer extends TripUpdateTransformer {
-    /** {@inheritDoc} */
     @Override
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
         if (fe.hasTripUpdate()) {
