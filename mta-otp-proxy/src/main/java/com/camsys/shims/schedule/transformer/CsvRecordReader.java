@@ -19,7 +19,7 @@ public interface CsvRecordReader<T> {
 
     /**
      * filter the object, where filter means return false if filter param == route id
-     * @param rbs
+     * @param record
      * @param filter
      * @return
      */
