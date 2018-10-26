@@ -23,4 +23,14 @@
         <property name="gtfsProvider" ref="gtfsRegistry" />
         <property name="lirrSystemMapUrl" value="${schedule.lirr_map}" />
     </bean>
+
+    <bean name="csvMapReader" class="com.camsys.shims.schedule.transformer.CsvMapReader" />
+
+    <bean name="subwayRouteStops" class="com.camsys.shims.servlet.HttpRequestStaticData">
+        <property name="s3key" value="${s3.user}" />
+        <property name="s3pass" value="${s3.pass}" />
+        <property name="sourceUrl" value="${subway.route_stops.csv}" />
+        <property name="csvReader" ref="csvMapReader" />
+    </bean>
+
 </beans>

@@ -6,6 +6,7 @@ import com.csvreader.CsvReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,9 @@ public class CsvToJsonTransformer<T> {
     private AmazonS3 s3 = null;
     public CsvToJsonTransformer(CsvRecordReader<T> csvRecordReader, String user, String pass) {
         this.csvRecordReader = csvRecordReader;
-        s3 = S3Utils.getS3Client(user, pass);
+        if (user != null && pass != null){
+            s3 = S3Utils.getS3Client(user, pass);
+        }
     }
 
     /**
@@ -31,6 +34,13 @@ public class CsvToJsonTransformer<T> {
         InputStream input = null;
         if (url.startsWith("s3://")) {
             input = S3Utils.getViaS3(s3, url);
+        } else if (url.startsWith("http://") || url.startsWith("file://")) {
+            try {
+                URL resource = new URL(url);
+                input = resource.openStream();
+            } catch (IOException e) {
+                throw new UnsupportedOperationException("Bad url: " + url);
+            }
         } else {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
         }
@@ -59,7 +69,8 @@ public class CsvToJsonTransformer<T> {
     private List<T> getCSV(InputStream input) throws IOException {
         CsvReader reader = new CsvReader(input, ',', Charset.forName("UTF8"));
         List<T> records = new ArrayList<>();
-        reader.readRecord();  // discard header
+        reader.readHeaders();
+        csvRecordReader.readHeaders(reader.getHeaders());
         while (reader.readRecord()) {
             records.add(csvRecordReader.readRecord(reader));
         }

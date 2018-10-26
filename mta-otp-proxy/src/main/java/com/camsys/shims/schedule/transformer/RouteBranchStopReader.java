@@ -11,6 +11,10 @@ import java.io.IOException;
  */
 public class RouteBranchStopReader implements CsvRecordReader<RouteBranchStop> {
 
+    @Override
+    public void readHeaders(String[] headers) {
+        // ignore headers
+    }
 
     /**
      * read a CSV row and return as an object.

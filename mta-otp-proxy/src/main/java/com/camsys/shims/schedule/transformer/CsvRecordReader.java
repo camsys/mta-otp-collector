@@ -24,4 +24,9 @@ public interface CsvRecordReader<T> {
      * @return
      */
     boolean filter(T record, String filter);
+
+    /**
+     * Read in headers
+     */
+    void readHeaders(String[] headers);
 }

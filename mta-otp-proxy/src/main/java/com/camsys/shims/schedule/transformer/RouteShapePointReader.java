@@ -7,6 +7,11 @@ import java.io.IOException;
 
 public class RouteShapePointReader implements CsvRecordReader<RouteShapePoint> {
     @Override
+    public void readHeaders(String[] headers) {
+        // ignore headers
+    }
+
+    @Override
     public RouteShapePoint readRecord(CsvReader reader) throws IOException {
         return new RouteShapePoint(reader.get(0), Integer.parseInt(reader.get(1)),
                 Double.parseDouble(reader.get(2)), Double.parseDouble(reader.get(3)));
