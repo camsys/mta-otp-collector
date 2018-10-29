@@ -29,6 +29,7 @@
         <property name="mode" value="rail" />
         <property name="gtfsAndCalendar" ref="mnrGtfsAndCalendar" />
         <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
+        <property name="inServiceTrueRoutes" value="MNR_wassaic" />
     </bean>
 
     <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
