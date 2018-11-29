@@ -17,6 +17,7 @@
         <property name="gtfsRelationalDao" ref="subwayGtfs"/>
         <property name="agencyMatchId" value="${subway.feedid}" />
         <property name="calendarServiceData" ref="subwayCsd" />
+        <property name="allowServiceDayCoercion" value="false" />
     </bean>
 
     <bean name="subwayCsd" class="com.camsys.shims.factory.SpringCalendarServiceDataFactory">
