@@ -35,8 +35,6 @@
     </bean>
 
     <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3MapStopIdTransformStrategy" id="stopIdTransformStrategy" init-method="init">
-        <property name="user" value="${s3.user}" />
-        <property name="pass" value="${s3.pass}" />
         <property name="url" value="${subway.stop_map.url}" />
     </bean>
 
@@ -87,8 +85,6 @@
         <property name="sourceUrl" value="${subway.elev.url}" />
     </bean>
     <bean id="subwayElevatorProvider" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider.S3CsvElevatorToStopsProvider" init-method="init">
-        <property name="user" value="${s3.user}" />
-        <property name="pass" value="${s3.pass}" />
         <property name="url" value="${subway.elev.csv}" />
     </bean>
 

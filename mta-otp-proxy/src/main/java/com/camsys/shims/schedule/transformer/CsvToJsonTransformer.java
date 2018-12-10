@@ -1,8 +1,8 @@
 package com.camsys.shims.schedule.transformer;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.camsys.shims.s3.S3Utils;
 import com.csvreader.CsvReader;
+import org.onebusaway.cloud.api.ExternalServices;
+import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,12 +18,16 @@ public class CsvToJsonTransformer<T> {
 
     private List<T> records = new ArrayList<>();
     private CsvRecordReader<T> csvRecordReader;
-    private AmazonS3 s3 = null;
-    public CsvToJsonTransformer(CsvRecordReader<T> csvRecordReader, String user, String pass) {
+    private String _profile;
+    private ExternalServices _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
+
+    public CsvToJsonTransformer(CsvRecordReader<T> csvRecordReader, String profile) {
         this.csvRecordReader = csvRecordReader;
-        if (user != null && pass != null){
-            s3 = S3Utils.getS3Client(user, pass);
-        }
+        _profile = profile;
+    }
+
+    public CsvToJsonTransformer(CsvRecordReader<T> csvRecordReader) {
+        this(csvRecordReader, null);
     }
 
     /**
@@ -31,32 +35,19 @@ public class CsvToJsonTransformer<T> {
      * @param url
      */
     public void loadUrl(String url) {
-        InputStream input = null;
         if (url.startsWith("s3://")) {
-            input = S3Utils.getViaS3(s3, url);
+            _externalServices.getFileAsStream(url, stream -> records = getCSV(stream), _profile);
         } else if (url.startsWith("http://") || url.startsWith("file://")) {
             try {
                 URL resource = new URL(url);
-                input = resource.openStream();
+                InputStream input = resource.openStream();
+                records = getCSV(input);
+                input.close();
             } catch (IOException e) {
                 throw new UnsupportedOperationException("Bad url: " + url);
             }
         } else {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
-        }
-
-        try {
-            records = getCSV(input);
-        } catch (IOException ioe) {
-            //
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException bury) {
-
-                }
-            }
         }
     }
 

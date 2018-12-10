@@ -12,47 +12,39 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.csvreader.CsvReader;
+import org.onebusaway.cloud.api.ExternalServices;
+import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
+import org.onebusaway.cloud.api.InputStreamConsumer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public abstract class AbstractS3CsvProvider {
-    private String user;
-
-    private String pass;
-
     private String url;
+
+    private ExternalServices _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
 
     public void init() {
         if (!url.startsWith("s3://")) {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
         }
-        AmazonS3 s3 = S3Utils.getS3Client(user, pass);
-        InputStream stream = S3Utils.getViaS3(s3, url);
-        CsvReader reader = new CsvReader(new InputStreamReader(stream));
-        try {
-            reader.readHeaders();
-            while (reader.readRecord()) {
-                processRecord(reader);
+
+        _externalServices.getFileAsStream(url, new InputStreamConsumer() {
+            @Override
+            public void accept(InputStream stream) throws IOException {
+                CsvReader reader = new CsvReader(new InputStreamReader(stream));
+                reader.readHeaders();
+                while (reader.readRecord()) {
+                    processRecord(reader);
+                }
+                reader.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        reader.close();
+        });
     }
 
     public abstract void processRecord(CsvReader reader) throws IOException;
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
 
     public void setUrl(String url) {
         this.url = url;

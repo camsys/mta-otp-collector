@@ -1,10 +1,12 @@
 package com.camsys.shims.util.gtfs_reloader;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.camsys.shims.s3.S3Utils;
 
 import com.camsys.shims.util.gtfs.GtfsDaoDependency;
 import org.joda.time.DateTime;
+import org.onebusaway.cloud.api.ExternalResult;
+import org.onebusaway.cloud.api.ExternalServices;
+import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,7 @@ public class GtfsReloader {
     private List<GtfsDaoToSource> _daos;
     private String _user;
     private String _pass;
+    private ExternalServices _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
 
     public List<GtfsDaoToSource> getDaosToRefresh() {
         return _daos;
@@ -44,20 +47,19 @@ public class GtfsReloader {
 
             for (GtfsDaoToSource dao : _daos) {
 
-                InputStream sourceResult;
-
                 _log.info("Reloading DAO from {} to {}", dao.getGtfsDaoSourceUrl(), dao.getSaveLocation());
 
                 if(dao.getUsesS3())
                 {
-                    AmazonS3 s3 = S3Utils.getS3Client(_user, _pass);
-                    sourceResult = S3Utils.getViaS3(s3, dao.getGtfsDaoSourceUrl());
+                    ExternalResult result = _externalServices.getFileAsStream(dao.getGtfsDaoSourceUrl(),
+                            stream -> saveGtfsToDaoSource(stream, dao.getSaveLocation()));
+                    if (!result.getSuccess()) {
+                        _log.error("Unable to get GTFS file {} ({})", dao.getGtfsDaoSourceUrl(), result.getErrorMessage());
+                        continue;
+                    }
                 }else{
-                    sourceResult = getGtfsSourceDataWithoutS3(dao.getGtfsDaoSourceUrl());
-                }
-
-                if(sourceResult != null){
-                    saveGtfsToDaoSource(sourceResult, dao.getSaveLocation());
+                    InputStream stream = getGtfsSourceDataWithoutS3(dao.getGtfsDaoSourceUrl());
+                    saveGtfsToDaoSource(stream, dao.getSaveLocation());
                 }
 
                 dao.getGtfsRelationalDao().load();

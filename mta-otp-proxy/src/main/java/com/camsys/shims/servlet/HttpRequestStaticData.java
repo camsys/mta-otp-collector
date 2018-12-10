@@ -24,6 +24,8 @@ public class HttpRequestStaticData extends AbstractHttpRequestStaticData<List<Ob
 
     private String _sourceUrl = null;
 
+    private String _profile = null;
+
     public void setSourceUrl(String url) {
         _sourceUrl = url;
     }
@@ -32,6 +34,10 @@ public class HttpRequestStaticData extends AbstractHttpRequestStaticData<List<Ob
 
     public void setCsvReader(CsvRecordReader reader) {
         _reader = reader;
+    }
+
+    public void setProfile(String profile) {
+        _profile = profile;
     }
 
     private CsvToJsonTransformer _transformer = null;
@@ -48,7 +54,7 @@ public class HttpRequestStaticData extends AbstractHttpRequestStaticData<List<Ob
 
     protected CsvToJsonTransformer<Object> getTransformer() {
         if (_transformer == null) {
-            _transformer = new CsvToJsonTransformer(_reader, s3key, s3pass);
+            _transformer = new CsvToJsonTransformer(_reader, _profile);
         }
         return _transformer;
     }

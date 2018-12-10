@@ -1,10 +1,12 @@
 package com.camsys.shims.schedule.transformer;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.camsys.shims.s3.S3Utils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.geojson.FeatureCollection;
+import org.onebusaway.cloud.api.ExternalResult;
+import org.onebusaway.cloud.api.ExternalServices;
+import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
+import org.onebusaway.cloud.api.InputStreamConsumer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,17 +14,16 @@ import java.io.InputStream;
 public class GeojsonProvider {
     private String url;
 
-    private AmazonS3 s3 = null;
-
     private ObjectMapper _mapper;
 
     private boolean _cache = true;
 
     private FeatureCollection geojson;
 
-    public GeojsonProvider(String url, String s3key, String s3pass) {
+    private ExternalServices _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
+
+    public GeojsonProvider(String url) {
         this.url = url;
-        s3 = S3Utils.getS3Client(s3key, s3pass);
         _mapper = new ObjectMapper();
         _mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -31,19 +32,20 @@ public class GeojsonProvider {
         if (_cache && geojson != null) {
             return geojson;
         }
-        InputStream input = null;
         if (url.startsWith("s3://")) {
-            input = S3Utils.getViaS3(s3, url);
+            ExternalResult result = _externalServices.getFileAsStream(url, new InputStreamConsumer() {
+                @Override
+                public void accept(InputStream input) throws IOException {
+                    geojson = _mapper.readValue(input, FeatureCollection.class);
+                }
+            });
+            if (result.getSuccess()) {
+                return geojson;
+            } else {
+                return null;
+            }
         } else {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
-        }
-        try {
-            geojson = _mapper.readValue(input, FeatureCollection.class);
-            input.close();
-            return geojson;
-        } catch(IOException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 

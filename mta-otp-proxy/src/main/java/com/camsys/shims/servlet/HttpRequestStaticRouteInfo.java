@@ -101,21 +101,21 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
 
     protected CsvToJsonTransformer<RouteBranchStop> getStopTransformer() {
         if (_stopTransformer == null) {
-            _stopTransformer = new CsvToJsonTransformer<>(_stopReader, s3key, s3pass);
+            _stopTransformer = new CsvToJsonTransformer<>(_stopReader);
         }
         return _stopTransformer;
     }
 
     protected CsvToJsonTransformer<RouteShapePoint> getShapeTransformer() {
         if (_shapeTransformer == null) {
-            _shapeTransformer = new CsvToJsonTransformer<>(_shapeReader, s3key, s3pass);
+            _shapeTransformer = new CsvToJsonTransformer<>(_shapeReader);
         }
         return _shapeTransformer;
     }
 
     private GeojsonProvider getGeojsonProvider() {
         if (_geojsonProvider == null) {
-            _geojsonProvider = new GeojsonProvider(_lirrSystemMapUrl, s3key, s3pass);
+            _geojsonProvider = new GeojsonProvider(_lirrSystemMapUrl);
         }
         return _geojsonProvider;
     }

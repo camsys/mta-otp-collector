@@ -18,18 +18,6 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
 
     private static final String CONTENT_TYPE = "application/json";
 
-    protected String s3key = null;
-
-    public void setS3key(String key) {
-        this.s3key = key;
-    }
-
-    protected String s3pass = null;
-
-    public void setS3pass(String pass) {
-        this.s3pass = pass;
-    }
-
     private boolean _cacheResults = true;
 
     public void setCacheResults(boolean cacheResults) {
