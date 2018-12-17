@@ -24,9 +24,11 @@ import java.io.InputStreamReader;
 public abstract class AbstractS3CsvProvider {
     private String url;
 
-    private ExternalServices _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
+    private ExternalServices _externalServices;
 
     public void init() {
+        _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
+
         if (!url.startsWith("s3://")) {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
         }
