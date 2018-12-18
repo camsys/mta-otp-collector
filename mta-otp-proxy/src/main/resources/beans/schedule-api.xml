@@ -26,6 +26,7 @@
         <property name="sourceUrl" value="${subway.route_stops.csv}" />
         <property name="csvReader" ref="csvMapReader" />
         <property name="profile" value="${subway.route_stops.profile}" />
+        <property name="cacheExpireSec" value="${subway.route_stops.expiry}" />
     </bean>
 
 </beans>
