@@ -9,6 +9,7 @@
     <bean name="routeBranchStop" class="com.camsys.shims.servlet.HttpRequestStaticData">
         <property name="sourceUrl" value="${schedule.route_stops}" />
         <property name="csvReader" ref="routeBranchStopReader" />
+        <property name="cacheExpireSec" value="${schedule.route_stops.expiry}" />
     </bean>
 
     <bean name="routeInfo" class="com.camsys.shims.servlet.HttpRequestStaticRouteInfo">
