@@ -19,6 +19,8 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
 
     private static final String CONTENT_TYPE = "application/json";
 
+    private static final String NULL_KEY = "NULL_KEY";
+
     private boolean _cacheResults = true;
 
     public void setCacheResults(boolean cacheResults) {
@@ -42,9 +44,9 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
         String routeId = req.getParameter("routeId");
 
         if (_cacheResults) {
-            if (getCache().getIfPresent(routeId) != null) {
+            if (isInCache(routeId)) {
                 ObjectWriter writer = mapper.writer();
-                writer.writeValue(resp.getWriter(), _cache.getIfPresent(routeId));
+                writer.writeValue(resp.getWriter(), getFromCache(routeId));
                 return;
             }
         }
@@ -56,9 +58,22 @@ public abstract class AbstractHttpRequestStaticData<T> implements HttpRequestHan
         writer.writeValue(resp.getWriter(), obj);
 
         if (_cacheResults) {
-            getCache().put(routeId, obj);
+            putInCache(routeId, obj);
         }
+    }
 
+    private T getFromCache(String key) {
+        key = (key == null) ? NULL_KEY : key;
+        return getCache().getIfPresent(key);
+    }
+
+    private boolean isInCache(String key) {
+        return getFromCache(key) != null;
+    }
+
+    private void putInCache(String key, T value) {
+        key = (key == null) ? NULL_KEY : key;
+        getCache().put(key, value);
     }
 
     private Cache<String, T> getCache() {
