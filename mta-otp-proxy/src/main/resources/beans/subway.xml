@@ -38,9 +38,15 @@
         <property name="url" value="${subway.stop_map.url}" />
     </bean>
 
+    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3SubwayFilterStrategy" id="subwayFilterStrategy" init-method="init">
+        <property name="url" value="${subway.route_stops.csv}" />
+        <property name="profile" value="${subway.route_stops.profile}" />
+    </bean>
+
     <bean class="com.kurtraschke.nyctrtproxy.services.TripUpdateProcessor" autowire="byType">
         <property name="directionsService" ref="directionsService" />
         <property name="stopIdTransformStrategy" ref="stopIdTransformStrategy" />
+        <property name="stopFilterStrategy" ref="subwayFilterStrategy" />
         <property name="cloudwatchNamespace" value="subway_collector" />
     </bean>
 
