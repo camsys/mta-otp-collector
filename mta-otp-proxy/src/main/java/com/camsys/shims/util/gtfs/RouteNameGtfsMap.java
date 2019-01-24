@@ -36,14 +36,15 @@ public class RouteNameGtfsMap {
 
         for (RouteNameGtfsEntry entry : entries) {
             String routeName = entry.getRouteName();
+            if (routeName != null) routeName = routeName.toUpperCase();
             AgencyAndId id = AgencyAndId.convertFromString(entry.getGtfsId(), ':');
             _routeNameGtfsMap.put(routeName, id);
         }
     }
 
     public AgencyAndId getId(String key) {
+        if (key != null ) key = key.toUpperCase();
         AgencyAndId atisId = AgencyAndId.convertFromString(key);
-
         AgencyAndId result = _routeNameGtfsMap.get(atisId.getId());
         if (result == null) {
             _log.info("atisId " + atisId.getId() + " not found in " + _routeNameGtfsMap.toString());
