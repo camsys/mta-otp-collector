@@ -63,6 +63,7 @@
         <constructor-arg>
             <list>
                 <ref bean="lirrSiriAlerts" />
+                <ref bean="lirrEleTask" />
             </list>
         </constructor-arg>
     </bean>
