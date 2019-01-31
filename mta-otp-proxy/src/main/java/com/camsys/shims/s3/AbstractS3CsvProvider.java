@@ -26,6 +26,9 @@ public abstract class AbstractS3CsvProvider {
 
     private ExternalServices _externalServices;
 
+    // null is default
+    private String _profile;
+
     public void init() {
         _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
 
@@ -43,12 +46,16 @@ public abstract class AbstractS3CsvProvider {
                 }
                 reader.close();
             }
-        });
+        }, _profile);
     }
 
     public abstract void processRecord(CsvReader reader) throws IOException;
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public void setProfile(String profile) {
+        _profile = profile;
     }
 }

@@ -21,7 +21,7 @@ public class RouteNameAdapter implements GtfsRouteAdapter {
         String routeId = affectsBean.getRouteId();
         AgencyAndId id = _routeNameGtfsMap.getId(routeId);
         if (id == null) {
-            _log.error("missing ID {}" + routeId);
+            _log.error("missing ID {}", routeId);
             return null;
         }
         if (_gtfsAgencyId.contains(id.getAgencyId())) {

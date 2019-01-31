@@ -9,6 +9,7 @@
         <property name="cloudwatchService" ref="cloudwatchService" />
         <property name="namespace" value="${lirr.cloudwatch.namespace}" />
         <property name="feedId" value="${lirr.feedid}" />
+        <property name="stopIdTransformStrategy" ref="lirrStopIdTransformStrategy" />
     </bean>
     <bean id="lirrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
         <property name="sourceUrl" value="${lirr.gtfsrt.url}" />
@@ -17,6 +18,9 @@
     </bean>
     <bean id="lirrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
         <property name="source" ref="lirrTask" />
+    </bean>
+    <bean id="lirrStopIdTransformStrategy" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LirrPoiStopTransformStrategy" init-method="init">
+        <property name="url" value="${lirr.cutover_stops.url}"/>
     </bean>
 
     <!-- LIRR vehiclePositions -->
@@ -59,6 +63,7 @@
         <constructor-arg>
             <list>
                 <ref bean="lirrSiriAlerts" />
+                <ref bean="lirrEleTask" />
             </list>
         </constructor-arg>
     </bean>
