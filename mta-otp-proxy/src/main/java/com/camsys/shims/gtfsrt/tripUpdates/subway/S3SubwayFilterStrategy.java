@@ -19,7 +19,6 @@ import com.camsys.shims.s3.AbstractS3CsvProvider;
 import com.csvreader.CsvReader;
 import com.kurtraschke.nyctrtproxy.transform.StopFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.onebusaway.gtfs.model.AgencyAndId;
 
 import java.io.IOException;
@@ -45,38 +44,31 @@ public class S3SubwayFilterStrategy extends AbstractS3CsvProvider implements Sto
 
     private static final int STATUS_NORTHBOUND_CLOSED = -3;
 
-    private Set<Pair<String, String>> _closedStops;
+    private Set<String> _closedStops;
 
     @Override
     public boolean shouldInclude(String route, String stop) {
-        return !getClosedStops().contains(key(route, stop));
+        return !getClosedStops().contains(stop);
     }
 
     @Override
     public void processRecord(CsvReader reader) throws IOException {
-        String routeIdFull = reader.get(ROUTE_ID_HEADER);
         String stopIdFull = reader.get(STOP_ID_HEADER);
         String statusStr = reader.get(STOP_STATUS_HEADER);
         int status = StringUtils.isEmpty(statusStr) ? STATUS_NOTHING : Integer.parseInt(statusStr);
-        String routeId = AgencyAndId.convertFromString(routeIdFull, ':').getId();
         String stopId = AgencyAndId.convertFromString(stopIdFull, ':').getId();
         if (status == STATUS_CLOSED || status == STATUS_SOUTHBOUND_CLOSED) {
-            getClosedStops().add(key(routeId, stopId + "S"));
+            getClosedStops().add(stopId + "S");
         }
         if (status == STATUS_CLOSED || status == STATUS_NORTHBOUND_CLOSED) {
-            getClosedStops().add(key(routeId, stopId + "N"));
+            getClosedStops().add(stopId + "N");
         }
     }
 
-    private Set<Pair<String, String>> getClosedStops() {
+    private Set<String> getClosedStops() {
         if (_closedStops == null) {
             _closedStops = new HashSet<>();
         }
         return _closedStops;
     }
-
-    private Pair<String, String> key(String route, String stop) {
-        return Pair.of(route, stop);
-    }
-
 }
