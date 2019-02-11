@@ -14,6 +14,7 @@ package com.camsys.shims.gtfsrt.vehiclePositions;
 
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.*;
+import com.kurtraschke.nyctrtproxy.transform.StopIdTransformStrategy;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineSegment;
@@ -45,6 +46,8 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
     private GtfsRelationalDao _dao;
 
     private String _agencyId;
+
+    private StopIdTransformStrategy _stopIdTransformStrategy;
 
     public void setCalculateBearing(boolean calculateBearing) {
         _calculateBearing = calculateBearing;
@@ -80,6 +83,12 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
                 Float bearing = calculateBearing(vehicle.getTrip().getTripId(), vehicle.getPosition().getLatitude(), vehicle.getPosition().getLongitude());
                 if (bearing != null)
                     vehicle.getPositionBuilder().setBearing(bearing);
+            }
+            if (_stopIdTransformStrategy != null) {
+                if (vehicle.hasStopId()) {
+                    String stopId = _stopIdTransformStrategy.transform(null, null, vehicle.getStopId());
+                    vehicle.setStopId(stopId);
+                }
             }
             builder.addEntity(entity);
         }
@@ -117,6 +126,10 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
             return (float) bearing;
         }
         return null;
+    }
+
+    public void setStopIdTransformStrategy(StopIdTransformStrategy stopIdTransformStrategy) {
+        _stopIdTransformStrategy = stopIdTransformStrategy;
     }
 }
 

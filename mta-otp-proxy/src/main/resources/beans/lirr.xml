@@ -28,6 +28,7 @@
         <property name="agencyId" value="${lirr.feedid}" />
         <property name="dao" ref="lirrGtfs" />
         <property name="calculateBearing" value="true" />
+        <property name="stopIdTransformStrategy" ref="lirrStopIdTransformStrategy" />
     </bean>
     <bean id="lirrVehiclePositionsSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource" autowire="byType">
         <property name="upstream" ref="lirrTask" />
