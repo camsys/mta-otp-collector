@@ -90,8 +90,8 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             stopIds = _dao.getAllStops().stream().map(s -> s.getId().getId()).collect(Collectors.toSet());
         } else {
             tub.getTripBuilder().setTripId(trip.getId().getId());
-            stopIds = _dao.getStopTimesForTrip(trip).stream()
-                    .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
+            stopIds = _dao.getStopsForTrip(trip).stream()
+                    .map(st -> st.getId().getId()).collect(Collectors.toSet());
         }
 
         tub.getTripBuilder().setStartDate(formatDate(sd));

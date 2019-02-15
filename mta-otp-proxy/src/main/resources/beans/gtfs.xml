@@ -3,136 +3,59 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- gtfs files -->
-    <bean id="mnrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="${mnr.gtfs.path}" />
-    </bean>
-
-    <bean id="lirrGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="${lirr.gtfs.path}" />
-    </bean>
-
-    <bean id="busGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="${mtabus.gtfs.path}" />
-    </bean>
-
-    <bean id="subwayGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="${subway.gtfs.path}" />
-    </bean>
-
-    <bean id="njtRailGtfs" class="com.camsys.shims.factory.GtfsRelationalDaoFactory">
-        <property name="gtfsPath" value="${njt_rail.gtfs.path}" />
+    <bean id="graphService" class="com.camsys.shims.util.otp.OTPGraphServiceFactoryBean">
+        <property name="graphDirectory" value="/Users/sjacobs/work/mta-otp-work/" />
     </bean>
 
 
-    <bean id="mnrGtfsAndCalendar" class="com.camsys.shims.util.gtfs.GtfsAndCalendar">
-        <property name="gtfsDao" ref="mnrGtfs" />
+    <bean id="subwayGtfs" class="com.camsys.shims.util.otp.OTPGtfsDaoImpl" autowire="byType">
+        <property name="feedId" value="MTASBWY" />
+        <property name="graphService" ref="graphService" />
     </bean>
 
-    <bean id="lirrGtfsAndCalendar" class="com.camsys.shims.util.gtfs.GtfsAndCalendar">
-        <property name="gtfsDao" ref="lirrGtfs" />
+
+    <bean id="mnrGtfsAndCalendar" class="com.camsys.shims.util.otp.OTPGtfsDaoImpl" autowire="byType">
+        <property name="feedId" value="MNR" />
+        <property name="graphService" ref="graphService" />
     </bean>
 
-    <bean id="busGtfsAndCalendar" class="com.camsys.shims.util.gtfs.GtfsAndCalendar">
-        <property name="gtfsDao" ref="busGtfs" />
+    <bean id="lirrGtfsAndCalendar" class="com.camsys.shims.util.otp.OTPGtfsDaoImpl" autowire="byType">
+        <property name="feedId" value="LI" />
+        <property name="graphService" ref="graphService" />
     </bean>
 
-    <bean id="subwayGtfsAndCalendar" class="com.camsys.shims.util.gtfs.GtfsAndCalendar">
-        <property name="gtfsDao" ref="subwayGtfs" />
+    <bean id="busGtfsAndCalendar" class="com.camsys.shims.util.otp.OTPGtfsDaoImpl" autowire="byType">
+        <property name="feedId" value="MTA" />
+        <property name="graphService" ref="graphService" />
     </bean>
 
-    <bean id="njtRailGtfsAndCalendar" class="com.camsys.shims.util.gtfs.GtfsAndCalendar">
-        <property name="gtfsDao" ref="njtRailGtfs" />
-        <property name="routeIdWhiteListStr" value="${njt_rail.whitelist}"/>
+    <bean id="subwayGtfsAndCalendar" class="com.camsys.shims.util.otp.OTPGtfsDaoImpl" autowire="byType">
+        <property name="feedId" value="MTASBWY" />
+        <property name="graphService" ref="graphService" />
     </bean>
 
-    <!-- auto_update GTFS Beans -->
-    <bean id="mnrGtfsDaoToSource" class="com.camsys.shims.util.gtfs_reloader.GtfsDaoToSource">
-        <property name="saveLocation" value="${mnr.gtfs.path}" />
-        <property name="usesS3" value="true" />
-        <property name="gtfsRelationalDao" ref="mnrGtfs"/>
-        <property name="gtfsDaoSourceUrl" value="${mnr.gtfs.url}"/>
-        <property name="gtfsDependencyList">
-            <list>
-                <ref bean="mnrGtfsAndCalendar" />
-            </list>
-        </property>
+    <bean id="njtRailGtfsAndCalendar" class="com.camsys.shims.util.otp.OTPGtfsDaoImpl">
+        <property name="feedId" value="NJT" />
+        <!--<property name="routeIdWhiteListStr" value="${njt_rail.whitelist}"/>-->
+        <property name="graphService" ref="graphService" />
     </bean>
 
-    <bean id="lirrGtfsDaoToSource" class="com.camsys.shims.util.gtfs_reloader.GtfsDaoToSource">
-        <property name="saveLocation" value="${lirr.gtfs.path}" />
-        <property name="usesS3" value="true" />
-        <property name="gtfsRelationalDao" ref="lirrGtfs" />
-        <property name="gtfsDaoSourceUrl" value="${lirr.gtfs.url}"/>
-        <property name="gtfsDependencyList">
-            <list>
-                <ref bean="lirrGtfsAndCalendar" />
-            </list>
-        </property>
-    </bean>
 
-    <bean id="busGtfsDaoToSource" class="com.camsys.shims.util.gtfs_reloader.GtfsDaoToSource">
-        <property name="saveLocation" value="${mtabus.gtfs.path}" />
-        <property name="usesS3" value="true" />
-        <property name="gtfsRelationalDao" ref="busGtfs" />
-        <property name="gtfsDaoSourceUrl" value="${mtabus.gtfs.url}"/>
-        <property name="gtfsDependencyList">
-            <list>
-                <ref bean="busGtfsAndCalendar" />
-            </list>
-        </property>
-    </bean>
 
-    <bean id="subwayGtfsDaoToSource" class="com.camsys.shims.util.gtfs_reloader.SubwayGtfsDaoToSource" init-method="init">
-        <property name="saveLocation" value="${subway.gtfs.path}" />
-        <property name="usesS3" value="true" />
-        <property name="gtfsRelationalDao" ref="subwayGtfs" />
-        <property name="gtfsDaoSourceUrl" value="${subway.gtfs.url}"/>
-        <property name="gtfsDependencyList">
-            <list>
-                <ref bean="subwayGtfsAndCalendar" />
-            </list>
-        </property>
-        <property name="lazyTripMatcher" ref="lazyTripMatcher" />
-        <property name="tripActivator" ref="tripActivator" />
-    </bean>
+    <!--<bean id="subwayGtfsDaoToSource" class="com.camsys.shims.util.gtfs_reloader.SubwayGtfsDaoToSource" init-method="init">-->
+        <!--<property name="saveLocation" value="${subway.gtfs.path}" />-->
+        <!--<property name="usesS3" value="true" />-->
+        <!--<property name="gtfsRelationalDao" ref="subwayGtfs" />-->
+        <!--<property name="gtfsDaoSourceUrl" value="${subway.gtfs.url}"/>-->
+        <!--<property name="gtfsDependencyList">-->
+            <!--<list>-->
+                <!--<ref bean="subwayGtfsAndCalendar" />-->
+            <!--</list>-->
+        <!--</property>-->
+        <!--<property name="lazyTripMatcher" ref="lazyTripMatcher" />-->
+        <!--<property name="tripActivator" ref="tripActivator" />-->
+    <!--</bean>-->
 
-    <bean id="njtRailGtfsDaoToSource" class="com.camsys.shims.util.gtfs_reloader.GtfsDaoToSource">
-        <property name="saveLocation" value="${njt_rail.gtfs.path}" />
-        <property name="usesS3" value="true" />
-        <property name="gtfsRelationalDao" ref="njtRailGtfs" />
-        <property name="gtfsDaoSourceUrl" value="${njt_rail.gtfs.url}"/>
-        <property name="gtfsDependencyList">
-            <list>
-                <ref bean="njtRailGtfsAndCalendar" />
-            </list>
-        </property>
-    </bean>
-
-    <bean id="gtfsReloader" class="com.camsys.shims.util.gtfs_reloader.GtfsReloader">
-        <property name="user" value="${s3.user}" />
-        <property name="pass" value="${s3.pass}" />
-
-        <property name="daosToRefresh">
-            <list>
-                <ref bean="subwayGtfsDaoToSource" />
-                <ref bean="busGtfsDaoToSource" />
-                <ref bean="lirrGtfsDaoToSource" />
-                <ref bean="mnrGtfsDaoToSource" />
-                <ref bean="njtRailGtfsDaoToSource" />
-            </list>
-        </property>
-    </bean>
-
-    <bean name="gtfsRegistry" class="com.camsys.shims.util.gtfs_provider.GtfsDaoProviderImpl">
-        <property name="daos">
-            <list>
-                <ref bean="lirrGtfs" />
-                <ref bean="mnrGtfs" />
-                <ref bean="njtRailGtfs" />
-            </list>
-        </property>
-    </bean>
 
     <!-- route adapters -->
     <bean name="defaultGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.DefaultGtfsRouteAdapter" />

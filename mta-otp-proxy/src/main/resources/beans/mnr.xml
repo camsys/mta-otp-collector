@@ -23,7 +23,7 @@
     <!-- Metro North Vehicle Positions -->
     <bean id="mnrVehiclePositionsTransformer" class="com.camsys.shims.gtfsrt.vehiclePositions.VehiclePositionsTransformer">
         <property name="agencyId" value="${mnr.feedid}" />
-        <property name="dao" ref="mnrGtfs" />
+        <property name="dao" ref="mnrGtfsAndCalendar" />
         <property name="calculateBearing" value="true" />
     </bean>
     <bean id="mnrVehiclePositionsSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource">

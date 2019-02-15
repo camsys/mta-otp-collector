@@ -1,68 +1,33 @@
 package com.camsys.shims.util.gtfs;
 
-import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
+import com.vividsolutions.jts.geom.LineString;
+import org.onebusaway.gtfs.model.Agency;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
+import org.onebusaway.gtfs.model.ShapePoint;
 import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.model.StopTime;
 import org.onebusaway.gtfs.model.Trip;
-import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class GtfsAndCalendar implements GtfsDaoDependency {
+public interface GtfsAndCalendar {
+    Collection<Route> getAllRoutes();
 
-    private GtfsRelationalDao _gtfsDao;
-    private CalendarServiceData _calendarData;
-    private List<String> _routeIdWhiteList = new ArrayList<>();
+    Route getRouteForId(AgencyAndId agencyAndId);
 
-    public void setGtfsDao(GtfsRelationalDao gtfsDao) {
-        _gtfsDao = gtfsDao;
-        _calendarData = new CalendarServiceDataFactoryImpl(_gtfsDao).createData();
-    }
+    List<Trip> getTripsForRoute(Route route);
 
-    public void setRouteIdWhiteList(List<String> routeIdWhiteList) {
-        _routeIdWhiteList = routeIdWhiteList;
-    }
+    List<Stop> getStopsForTrip(Trip trip);
 
-    public void setRouteIdWhiteListStr(String value) {
-        _routeIdWhiteList = Arrays.asList(value.split(","));
-    }
+    Collection<Stop> getAllStops();
 
-    public Collection<Route> getAllRoutes(){
-        if(_routeIdWhiteList.size() > 0) {
-            return _gtfsDao.getAllRoutes().stream()
-                    .filter(route -> _routeIdWhiteList.contains(route.getId().toString()))
-                    .collect(Collectors.toList());
-        }
-        return _gtfsDao.getAllRoutes();
-    }
+    Set<AgencyAndId> getServiceIdsForDate(ServiceDate serviceDate);
 
-    public Route getRouteForId(AgencyAndId agencyAndId){
-        return _gtfsDao.getRouteForId(agencyAndId);
-    }
+    LineString getGeometryForTrip(Trip trip);
 
-    public List<Trip> getTripsForRoute(Route route){
-        return _gtfsDao.getTripsForRoute(route);
-    }
-
-    public List<StopTime> getStopTimesForTrip(Trip trip) {
-        return _gtfsDao.getStopTimesForTrip(trip);
-    }
-
-    public Collection<Stop> getAllStops() {
-        return _gtfsDao.getAllStops();
-    }
-
-    public Set<AgencyAndId> getServiceIdsForDate(ServiceDate serviceDate){
-        return _calendarData.getServiceIdsForDate(serviceDate);
-    }
-
+    Trip getTripForId(AgencyAndId id);
 }

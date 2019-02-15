@@ -12,6 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.vehiclePositions;
 
+import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.*;
 import com.kurtraschke.nyctrtproxy.transform.StopIdTransformStrategy;
@@ -23,9 +24,7 @@ import com.vividsolutions.jts.linearref.LinearLocation;
 import com.vividsolutions.jts.linearref.LocationIndexedLine;
 import org.onebusaway.geospatial.services.SphericalGeometryLibrary;
 import org.onebusaway.gtfs.model.AgencyAndId;
-import org.onebusaway.gtfs.model.ShapePoint;
 import org.onebusaway.gtfs.model.Trip;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
 
     private boolean _calculateBearing = false;
 
-    private GtfsRelationalDao _dao;
+    private GtfsAndCalendar _dao;
 
     private String _agencyId;
 
@@ -53,7 +52,7 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
         _calculateBearing = calculateBearing;
     }
 
-    public void setDao(GtfsRelationalDao dao) {
+    public void setDao(GtfsAndCalendar dao) {
         _dao = dao;
     }
 
@@ -100,13 +99,7 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
         if (trip == null || trip.getShapeId() == null) {
             return null;
         }
-        List<ShapePoint> points = _dao.getShapePointsForShapeId(trip.getShapeId());
-        Coordinate[] coords = new Coordinate[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            ShapePoint point = points.get(i);
-            coords[i] = new Coordinate(point.getLon(), point.getLat());
-        }
-        LineString geometry = _geometryFactory.createLineString(coords);
+        LineString geometry = _dao.getGeometryForTrip(trip);
         return calculateBearing(geometry, lat, lon);
     }
 

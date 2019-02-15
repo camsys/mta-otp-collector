@@ -7,8 +7,8 @@
         http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
     <task:scheduled-tasks scheduler="myScheduler">
-        <task:scheduled ref="subwayTuTask" method="update" fixed-delay="5000"/>
-        <task:scheduled ref="subwayAlertTask" method="update" fixed-delay="30000"/>
+        <!--<task:scheduled ref="subwayTuTask" method="update" fixed-delay="5000"/>-->
+        <!--<task:scheduled ref="subwayAlertTask" method="update" fixed-delay="30000"/>-->
         <task:scheduled ref="mnrTask" method="update" fixed-delay="5000"/>
         <task:scheduled ref="mnrAlertTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="lirrTask" method="update" fixed-delay="30000"/>
@@ -16,7 +16,7 @@
         <task:scheduled ref="busTask" method="update" fixed-delay="5000"/>
         <task:scheduled ref="busServiceAlertMergeTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="30000" />
-        <task:scheduled ref="gtfsReloader" method="downloadAndUpdateGtfs" cron="${gtfs.reload.cron}" />
+        <!--<task:scheduled ref="gtfsReloader" method="downloadAndUpdateGtfs" cron="${gtfs.reload.cron}" />-->
         <task:scheduled ref="gmsServiceStatusTask" method="update" fixed-delay="180000" />
     </task:scheduled-tasks>
 

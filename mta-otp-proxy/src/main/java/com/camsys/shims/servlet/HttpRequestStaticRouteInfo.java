@@ -7,7 +7,6 @@ import com.camsys.shims.schedule.transformer.model.ExtendedRouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteInfo;
 import com.camsys.shims.schedule.transformer.model.RouteShapePoint;
-import com.camsys.shims.util.gtfs_provider.GtfsDaoProvider;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
 import org.onebusaway.gtfs.model.AgencyAndId;
@@ -47,11 +46,11 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         _shapeReader = reader;
     }
 
-    private GtfsDaoProvider _provider;
-
-    public void setGtfsProvider(GtfsDaoProvider provider) {
-        _provider = provider;
-    }
+//    private GtfsDaoProvider _provider;
+//
+//    public void setGtfsProvider(GtfsDaoProvider provider) {
+//        _provider = provider;
+//    }
 
     private String _lirrSystemMapUrl;
 
@@ -75,28 +74,29 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         List<RouteBranchStop> stopsNoLocation = getStopTransformer().transform(routeId);
         List<ExtendedRouteBranchStop> stops = new ArrayList<>();
         String agency = routeId.split(":")[0];
-        GtfsRelationalDao dao = _provider.getDaoForAgency(agency);
-        for (RouteBranchStop s : stopsNoLocation) {
-            ExtendedRouteBranchStop stop = new ExtendedRouteBranchStop(s);
-            if (dao != null) {
-                Stop gtfsStop = dao.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
-                if (gtfsStop != null) {
-                    stop.setLat(gtfsStop.getLat());
-                    stop.setLon(gtfsStop.getLon());
-                }
-            }
-            stops.add(stop);
-        }
-        AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
-        Route route = dao != null ? dao.getRouteForId(aid) : null;
-        RouteInfo info = new RouteInfo(stops, route);
-        if (!points.isEmpty()) {
-            info.addGeometry(points);
-        }
-        if (aid.getAgencyId().equals("LI")) {
-            addLirrSystemMap(info);
-        }
-        return info;
+//        GtfsRelationalDao dao = _provider.getDaoForAgency(agency);
+//        for (RouteBranchStop s : stopsNoLocation) {
+//            ExtendedRouteBranchStop stop = new ExtendedRouteBranchStop(s);
+//            if (dao != null) {
+//                Stop gtfsStop = dao.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
+//                if (gtfsStop != null) {
+//                    stop.setLat(gtfsStop.getLat());
+//                    stop.setLon(gtfsStop.getLon());
+//                }
+//            }
+//            stops.add(stop);
+//        }
+//        AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
+//        Route route = dao != null ? dao.getRouteForId(aid) : null;
+//        RouteInfo info = new RouteInfo(stops, route);
+//        if (!points.isEmpty()) {
+//            info.addGeometry(points);
+//        }
+//        if (aid.getAgencyId().equals("LI")) {
+//            addLirrSystemMap(info);
+//        }
+//        return info;
+        return null;
     }
 
     protected CsvToJsonTransformer<RouteBranchStop> getStopTransformer() {

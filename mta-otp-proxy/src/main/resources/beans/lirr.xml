@@ -26,7 +26,7 @@
     <!-- LIRR vehiclePositions -->
     <bean id="lirrVehiclePositionsTransformer" class="com.camsys.shims.gtfsrt.vehiclePositions.VehiclePositionsTransformer">
         <property name="agencyId" value="${lirr.feedid}" />
-        <property name="dao" ref="lirrGtfs" />
+        <property name="dao" ref="lirrGtfsAndCalendar" />
         <property name="calculateBearing" value="true" />
         <property name="stopIdTransformStrategy" ref="lirrStopIdTransformStrategy" />
     </bean>

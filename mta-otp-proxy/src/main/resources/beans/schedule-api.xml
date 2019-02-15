@@ -17,7 +17,7 @@
         <property name="shapeUrl" value="${schedule.route_shapes}" />
         <property name="stopReader" ref="routeBranchStopReader" />
         <property name="shapeReader" ref="routeShapePointReader" />
-        <property name="gtfsProvider" ref="gtfsRegistry" />
+        <!--<property name="gtfsProvider" ref="gtfsRegistry" />-->
         <property name="lirrSystemMapUrl" value="${schedule.lirr_map}" />
     </bean>
 

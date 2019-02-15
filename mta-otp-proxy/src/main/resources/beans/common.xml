@@ -59,6 +59,13 @@
 
     <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
 
+    <bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" init-method="init">
+        <property name="accessKey" value="${cloudwatch.access_key}" />
+        <property name="secretKey" value="${cloudwatch.secret_key}" />
+        <property name="env" value="${cloudwatch.env}" />
+        <property name="region" value="us-east-1" />
+    </bean>
+
     <context:property-placeholder location="classpath:collector.properties" />
 
 </beans>
