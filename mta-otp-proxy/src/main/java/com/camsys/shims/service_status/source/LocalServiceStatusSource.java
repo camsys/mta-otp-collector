@@ -1,14 +1,11 @@
 package com.camsys.shims.service_status.source;
 
-import com.camsys.mta.gms_service_status.Service;
 import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
-import com.camsys.shims.service_status.transformer.GmsServiceStatusTransformer;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
-import com.camsys.shims.util.gtfs.GtfsAndCalendar;
-import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
+import org.onebusaway.gtfs.services.GtfsDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +30,7 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
 
     protected String _mode;
 
-    protected GtfsAndCalendar _gtfsAndCalendar;
+    protected GtfsDataService _gtfsDataService;
 
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
@@ -52,8 +49,8 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
         _mode = _mode;
     }
 
-    public void setGtfsAndCalendar(GtfsAndCalendar _gtfsAndCalendar) {
-        _gtfsAndCalendar = _gtfsAndCalendar;
+    public void setGtfsDataService(GtfsDataService gtfsDataService) {
+        _gtfsDataService = gtfsDataService;
     }
 
     public void setRouteDetailsMap(Map<String, RouteDetail> _routeDetailsMap) {
@@ -73,7 +70,7 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
         T sourceData = getSourceData(_sourceUrl, _deserializer);
         if (sourceData != null) {
             List<RouteDetail> routeDetails = _transformer
-                    .transform(sourceData, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
+                    .transform(sourceData, _mode, _gtfsDataService, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }

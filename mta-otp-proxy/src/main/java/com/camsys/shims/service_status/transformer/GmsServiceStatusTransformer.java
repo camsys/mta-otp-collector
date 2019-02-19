@@ -6,11 +6,8 @@ import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.StatusDetail;
 import com.camsys.shims.util.HtmlCleanupUtil;
-import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.onebusaway.gtfs.services.GtfsDataService;
 
 import java.util.*;
 
@@ -40,7 +37,7 @@ public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Ser
     }
 
     @Override
-    public List<RouteDetail> transform(Service service, String mode, GtfsAndCalendar gtfsAndCalendar, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
+    public List<RouteDetail> transform(Service service, String mode, GtfsDataService gtfsDataService, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
         List<RouteDetail> routeDetails = new ArrayList<>();
         for(Line subwayLine : service.getSubway().getLine()){
             if(!subwayLine.getStatus().equalsIgnoreCase(STATUS_GOOD_SERVICE)){

@@ -5,14 +5,12 @@ import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
-import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.onebusaway.gtfs.impl.calendar.CalendarServiceDataFactoryImpl;
-import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
+import org.onebusaway.gtfs.services.GtfsDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +46,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected String _mode;
 
-    protected GtfsAndCalendar _gtfsAndCalendar;
+    protected GtfsDataService _gtfsDataService;
 
     protected List<String> _excludeRoutes;
 
@@ -78,8 +76,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         _deserializer = deserializer;
     }
 
-    public void setGtfsAndCalendar(GtfsAndCalendar gtfsAndCalendar) {
-        _gtfsAndCalendar = gtfsAndCalendar;
+    public void setGtfsDataService(GtfsDataService gtfsDataService) {
+        _gtfsDataService = gtfsDataService;
     }
 
     @Override
@@ -87,7 +85,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         T sourceData = getSourceData(_sourceUrl, _deserializer);
         if (sourceData != null) {
             List<RouteDetail>  routeDetails = _transformer
-                    .transform(sourceData, _mode, _gtfsAndCalendar, _gtfsAdapter, _routeDetailsMap);
+                    .transform(sourceData, _mode, _gtfsDataService, _gtfsAdapter, _routeDetailsMap);
             if (_excludeRoutes != null && !_excludeRoutes.isEmpty()) {
                 routeDetails = routeDetails.stream()
                         .filter(r -> !_excludeRoutes.contains(r.getRouteId()))

@@ -12,12 +12,11 @@
         <property name="cacheExpireSec" value="${schedule.route_stops.expiry}" />
     </bean>
 
-    <bean name="routeInfo" class="com.camsys.shims.servlet.HttpRequestStaticRouteInfo">
+    <bean name="routeInfo" class="com.camsys.shims.servlet.HttpRequestStaticRouteInfo" autowire="byType">
         <property name="stopsUrl" value="${schedule.route_stops}" />
         <property name="shapeUrl" value="${schedule.route_shapes}" />
         <property name="stopReader" ref="routeBranchStopReader" />
         <property name="shapeReader" ref="routeShapePointReader" />
-        <property name="gtfsProvider" ref="gtfsRegistry" />
         <property name="lirrSystemMapUrl" value="${schedule.lirr_map}" />
     </bean>
 

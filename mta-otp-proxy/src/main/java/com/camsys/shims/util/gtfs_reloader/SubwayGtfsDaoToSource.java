@@ -36,12 +36,12 @@ public class SubwayGtfsDaoToSource extends GtfsDaoToSource {
     }
 
     public void init() {
-        GtfsDaoDependency subwayDependencies = (dao) -> {
-            CalendarServiceDataFactory csdf = new CalendarServiceDataFactoryImpl(dao);
-            CalendarServiceData csd = csdf.createData();
-            _tripActivator.setCalendarServiceData(csd);
-            _lazyTripMatcher.setCalendarServiceData(csd);
-        };
-        addGtfsDependency(subwayDependencies);
+//        GtfsDaoDependency subwayDependencies = (dao) -> {
+//            CalendarServiceDataFactory csdf = new CalendarServiceDataFactoryImpl(dao);
+//            CalendarServiceData csd = csdf.createData();
+//            _tripActivator.setCalendarServiceData(csd);
+//            _lazyTripMatcher.setCalendarServiceData(csd);
+//        };
+//        addGtfsDependency(subwayDependencies);
     }
 }

@@ -3,13 +3,13 @@ package com.camsys.shims.service_status.transformer;
 import com.camsys.shims.service_status.adapters.GtfsRouteAdapter;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.StatusDetail;
-import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Trip;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
 
+import org.onebusaway.gtfs.services.GtfsDataService;
 import org.onebusaway.nyc.transit_data_manager.model.ExtendedServiceAlertBean;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
@@ -27,22 +27,22 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     private static final Logger _log = LoggerFactory.getLogger(SiriToServiceStatusTransformer.class);
 
     @Override
-    public List<RouteDetail> transform(Siri siri, String mode, GtfsAndCalendar gtfsAndCalendar,
+    public List<RouteDetail> transform(Siri siri, String mode, GtfsDataService gtfsDataService,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> routeDetailsMap) {
         List<ExtendedServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsExtendedServiceAlertBeans(siri);
 
-        return  getRouteDetails(serviceAlerts, mode, gtfsAndCalendar, gtfsAdapter, routeDetailsMap);
+        return  getRouteDetails(serviceAlerts, mode, gtfsDataService, gtfsAdapter, routeDetailsMap);
     }
 
     protected List<RouteDetail> getRouteDetails(List<ExtendedServiceAlertBean> serviceAlerts, String mode,
-                                                GtfsAndCalendar gtfsAndCalendar, GtfsRouteAdapter gtfsAdapter,
+                                                GtfsDataService gtfsDataService, GtfsRouteAdapter gtfsAdapter,
                                                 Map<String, RouteDetail> routeDetailsMap){
 
         Map<String, RouteDetail> tempRouteDetailsMap = new HashMap<String, RouteDetail>(400);
         Date lastUpdated = new Date();
 
-        generateRouteDetailsForAlerts(tempRouteDetailsMap, serviceAlerts, mode, gtfsAndCalendar, gtfsAdapter, lastUpdated);
-        generateRouteDetailsForAllRoutes(tempRouteDetailsMap, mode, gtfsAndCalendar, lastUpdated);
+        generateRouteDetailsForAlerts(tempRouteDetailsMap, serviceAlerts, mode, gtfsDataService, gtfsAdapter, lastUpdated);
+        generateRouteDetailsForAllRoutes(tempRouteDetailsMap, mode, gtfsDataService, lastUpdated);
         updateRouteDetailsMap(tempRouteDetailsMap, routeDetailsMap);
 
         List<RouteDetail> routeDetails = new ArrayList<>(routeDetailsMap.values());
@@ -53,7 +53,7 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     protected void generateRouteDetailsForAlerts(Map<String, RouteDetail> tempRouteDetailsMap,
                                                List<ExtendedServiceAlertBean> serviceAlerts,
                                                String mode,
-                                               GtfsAndCalendar gtfsAndCalendar,
+                                               GtfsDataService gtfsDataService,
                                                GtfsRouteAdapter gtfsAdapter,
                                                Date lastUpdated){
 
@@ -62,13 +62,13 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
                 String routeId = gtfsAdapter.getGtfsRouteId(affectsBean);
                 if (routeId == null)
                     continue;
-                Route route = getRoute(routeId, gtfsAndCalendar);
+                Route route = getRoute(routeId, gtfsDataService);
                 if(route != null) {
                     StatusDetail statusDetail = generateStatusDetail(alert, affectsBean);
                     if (!tempRouteDetailsMap.containsKey(routeId)) {
                         Set<StatusDetail> statusDetails = new LinkedHashSet<>();
                         statusDetails.add(statusDetail);
-                        RouteDetail routeDetail = generateRouteDetail(route, mode, gtfsAndCalendar, lastUpdated);
+                        RouteDetail routeDetail = generateRouteDetail(route, mode, gtfsDataService, lastUpdated);
                         routeDetail.setStatusDetails(statusDetails);
                         tempRouteDetailsMap.put(routeId, routeDetail);
                     } else {
@@ -80,13 +80,13 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     }
 
     protected void generateRouteDetailsForAllRoutes(Map<String, RouteDetail> tempRouteDetailsMap,
-                                                  String mode, GtfsAndCalendar gtfsAndCalendar,
+                                                  String mode, GtfsDataService gtfsDataService,
                                                   Date lastUpdated){
 
-        for (Route route : gtfsAndCalendar.getAllRoutes()) {
+        for (Route route : gtfsDataService.getAllRoutes()) {
             String routeId = route.getId().toString();
             if (!tempRouteDetailsMap.containsKey(routeId)) {
-                RouteDetail routeDetail = generateRouteDetail(route, mode, gtfsAndCalendar, lastUpdated);
+                RouteDetail routeDetail = generateRouteDetail(route, mode, gtfsDataService, lastUpdated);
                 tempRouteDetailsMap.put(routeId, routeDetail);
             }
         }
@@ -94,13 +94,13 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
 
     private RouteDetail generateRouteDetail(Route route,
                                             String mode,
-                                            GtfsAndCalendar gtfsAndCalendar,
+                                            GtfsDataService gtfsDataService,
                                             Date lastUpdated){
 
         RouteDetail routeDetail = new RouteDetail();
         routeDetail.setRouteName(getRouteName(route));
         routeDetail.setColor(route.getColor());
-        routeDetail.setInService(isRouteInService(route, gtfsAndCalendar));
+        routeDetail.setInService(isRouteInService(route, gtfsDataService));
         routeDetail.setRouteId(route.getId().toString());
         routeDetail.setAgency(route.getId().getAgencyId());
         routeDetail.setMode(mode);
@@ -136,10 +136,10 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         return statusDetail;
     }
 
-    private Route getRoute(String routeId, GtfsAndCalendar gtfsAndCalendar){
+    private Route getRoute(String routeId, GtfsDataService gtfsDataService){
         try {
             AgencyAndId agencyAndRouteId = AgencyAndId.convertFromString(routeId);
-            return gtfsAndCalendar.getRouteForId(agencyAndRouteId);
+            return gtfsDataService.getRouteForId(agencyAndRouteId);
         } catch (IllegalArgumentException iae) {
             _log.error("Unable to get agencyAndId from route {}", routeId, iae);
         }
@@ -154,14 +154,14 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         return route.getId().getId();
     }
 
-    private Boolean isRouteInService(Route route, GtfsAndCalendar gtfsAndCalendar) {
+    private Boolean isRouteInService(Route route, GtfsDataService gtfsDataService) {
         ServiceDate serviceDate = getServiceDate();
         if (serviceDate == null){
             _log.error("Unable to generate service date");
             return null;
         }
-        Set<AgencyAndId> serviceIds = gtfsAndCalendar.getServiceIdsForDate(serviceDate);
-        for (Trip t : gtfsAndCalendar.getTripsForRoute(route)) {
+        Set<AgencyAndId> serviceIds = gtfsDataService.getServiceIdsOnDate(serviceDate);
+        for (Trip t : gtfsDataService.getTripsForRoute(route)) {
             if (serviceIds.contains(t.getServiceId())) {
                 return true;
             }

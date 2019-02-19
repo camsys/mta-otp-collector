@@ -12,7 +12,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer;
 
-import com.camsys.shims.util.gtfs.GtfsAndCalendar;
 import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
@@ -28,6 +27,7 @@ import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Trip;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
+import org.onebusaway.gtfs.services.GtfsDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,14 +42,14 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
 
-    private GtfsAndCalendar _dao;
+    private GtfsDataService _gtfsDataService;
 
     private String _agencyId = "MNR";
 
     private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
-    public void setGtfsAndCalendar(GtfsAndCalendar gtfsAndCalendar) {
-        _dao = gtfsAndCalendar;
+    public void setGtfsDataService(GtfsDataService gtfsDataService) {
+        _gtfsDataService = gtfsDataService;
     }
 
     public void setAgencyId(String agencyId) {
@@ -77,7 +77,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             return null;
         }
         ServiceDate sd = parseDate(startDate);
-        Route route = _dao.getRouteForId(new AgencyAndId(_agencyId, routeId));
+        Route route = _gtfsDataService.getRouteForId(new AgencyAndId(_agencyId, routeId));
         if (route == null) {
             return null;
         }
@@ -87,10 +87,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             matchMetrics.addStatus(Status.NO_MATCH);
             tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
             tub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
-            stopIds = _dao.getAllStops().stream().map(s -> s.getId().getId()).collect(Collectors.toSet());
+            stopIds = _gtfsDataService.getAllStops().stream().map(s -> s.getId().getId()).collect(Collectors.toSet());
         } else {
             tub.getTripBuilder().setTripId(trip.getId().getId());
-            stopIds = _dao.getStopTimesForTrip(trip).stream()
+            stopIds = _gtfsDataService.getStopTimesForTrip(trip).stream()
                     .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
         }
 
@@ -126,9 +126,9 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     private Trip findCorrectTrip(Route route, String tripShortName, ServiceDate sd) {
         if (sd == null)
             return null;
-        Set<AgencyAndId> serviceIds = _dao.getServiceIdsForDate(sd);
+        Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(sd);
         List<Trip> candidates = new ArrayList<>();
-        for (Trip t : _dao.getTripsForRoute(route)) {
+        for (Trip t : _gtfsDataService.getTripsForRoute(route)) {
             if (serviceIds.contains(t.getServiceId()) && t.getTripShortName().equals(tripShortName)) {
                 candidates.add(t);
             }

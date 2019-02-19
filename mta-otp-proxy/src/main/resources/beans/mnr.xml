@@ -5,7 +5,7 @@
 
     <!-- Metro North Trip Updates -->
     <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
-        <property name="gtfsAndCalendar" ref="mnrGtfsAndCalendar" />
+        <property name="gtfsDataService" ref="mnrGtfsService" />
         <property name="cloudwatchService" ref="cloudwatchService" />
         <property name="namespace" value="${mnr.cloudwatch.namespace}" />
         <property name="feedId" value="${mnr.feedid}" />
@@ -20,10 +20,11 @@
         <property name="source" ref="mnrTask" />
     </bean>
 
+
     <!-- Metro North Vehicle Positions -->
     <bean id="mnrVehiclePositionsTransformer" class="com.camsys.shims.gtfsrt.vehiclePositions.VehiclePositionsTransformer">
         <property name="agencyId" value="${mnr.feedid}" />
-        <property name="dao" ref="mnrGtfs" />
+        <property name="gtfsDataService" ref="mnrGtfsService" />
         <property name="calculateBearing" value="true" />
     </bean>
     <bean id="mnrVehiclePositionsSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource">

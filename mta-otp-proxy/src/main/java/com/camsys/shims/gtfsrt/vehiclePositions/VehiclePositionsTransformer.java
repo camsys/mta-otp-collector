@@ -25,7 +25,7 @@ import org.onebusaway.geospatial.services.SphericalGeometryLibrary;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.ShapePoint;
 import org.onebusaway.gtfs.model.Trip;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
+import org.onebusaway.gtfs.services.GtfsDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
 
     private boolean _calculateBearing = false;
 
-    private GtfsRelationalDao _dao;
+    private GtfsDataService _gtfs;
 
     private String _agencyId;
 
@@ -53,8 +53,8 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
         _calculateBearing = calculateBearing;
     }
 
-    public void setDao(GtfsRelationalDao dao) {
-        _dao = dao;
+    public void setGtfsDataService(GtfsDataService gtfs) {
+        _gtfs = gtfs;
     }
 
     public void setAgencyId(String agencyId) {
@@ -96,11 +96,11 @@ public class VehiclePositionsTransformer implements GtfsRealtimeTransformer<Feed
     }
 
     private Float calculateBearing(String tripId, float lat, float lon) {
-        Trip trip = _dao.getTripForId(new AgencyAndId(_agencyId, tripId));
+        Trip trip = _gtfs.getTripForId(new AgencyAndId(_agencyId, tripId));
         if (trip == null || trip.getShapeId() == null) {
             return null;
         }
-        List<ShapePoint> points = _dao.getShapePointsForShapeId(trip.getShapeId());
+        List<ShapePoint> points = _gtfs.getShapePointsForShapeId(trip.getShapeId());
         Coordinate[] coords = new Coordinate[points.size()];
         for (int i = 0; i < points.size(); i++) {
             ShapePoint point = points.get(i);

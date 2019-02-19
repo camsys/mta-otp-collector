@@ -14,23 +14,18 @@
     </bean>
 
     <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType" name="lazyTripMatcher">
-        <property name="gtfsRelationalDao" ref="subwayGtfs"/>
+        <property name="gtfsDataService" ref="subwayGtfsService"/>
         <property name="agencyMatchId" value="${subway.feedid}" />
-        <property name="calendarServiceData" ref="subwayCsd" />
         <property name="allowServiceDayCoercion" value="false" />
     </bean>
 
-    <bean name="subwayCsd" class="com.camsys.shims.factory.SpringCalendarServiceDataFactory">
-        <property name="dao" ref="subwayGtfs" />
-    </bean>
     <bean class="com.kurtraschke.nyctrtproxy.services.TripActivator" name="tripActivator">
         <property name="agencyMatchId" value="${subway.feedid}" />
-        <property name="gtfsRelationalDao" ref="subwayGtfs" />
-        <property name="calendarServiceData" ref="subwayCsd" />
+        <property name="gtfsDataService" ref="subwayGtfsService" />
     </bean>
 
     <bean class="com.kurtraschke.nyctrtproxy.services.DirectionsService" id="directionsService" init-method="init" autowire="byType">
-        <property name="gtfsRelationalDao" ref="subwayGtfs" />
+        <property name="gtfsDataService" ref="subwayGtfsService" />
         <property name="directionCsv" value="directions.csv" />
     </bean>
 

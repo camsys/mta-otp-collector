@@ -7,13 +7,13 @@ import com.camsys.shims.schedule.transformer.model.ExtendedRouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteBranchStop;
 import com.camsys.shims.schedule.transformer.model.RouteInfo;
 import com.camsys.shims.schedule.transformer.model.RouteShapePoint;
-import com.camsys.shims.util.gtfs_provider.GtfsDaoProvider;
+import com.camsys.shims.util.gtfs_provider.GtfsDataServiceProvider;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Stop;
-import org.onebusaway.gtfs.services.GtfsRelationalDao;
+import org.onebusaway.gtfs.services.GtfsDataService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +47,9 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         _shapeReader = reader;
     }
 
-    private GtfsDaoProvider _provider;
+    private GtfsDataServiceProvider _provider;
 
-    public void setGtfsProvider(GtfsDaoProvider provider) {
+    public void setGtfsProvider(GtfsDataServiceProvider provider) {
         _provider = provider;
     }
 
@@ -75,11 +75,11 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         List<RouteBranchStop> stopsNoLocation = getStopTransformer().transform(routeId);
         List<ExtendedRouteBranchStop> stops = new ArrayList<>();
         String agency = routeId.split(":")[0];
-        GtfsRelationalDao dao = _provider.getDaoForAgency(agency);
+        GtfsDataService gtfs = _provider.getGtfsDataService(agency);
         for (RouteBranchStop s : stopsNoLocation) {
             ExtendedRouteBranchStop stop = new ExtendedRouteBranchStop(s);
-            if (dao != null) {
-                Stop gtfsStop = dao.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
+            if (gtfs != null) {
+                Stop gtfsStop = gtfs.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
                 if (gtfsStop != null) {
                     stop.setLat(gtfsStop.getLat());
                     stop.setLon(gtfsStop.getLon());
@@ -88,7 +88,7 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             stops.add(stop);
         }
         AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
-        Route route = dao != null ? dao.getRouteForId(aid) : null;
+        Route route = gtfs != null ? gtfs.getRouteForId(aid) : null;
         RouteInfo info = new RouteInfo(stops, route);
         if (!points.isEmpty()) {
             info.addGeometry(points);

@@ -9,7 +9,7 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mtabus.gms.url}" />
         <property name="mode" value="bus" />
-        <property name="gtfsAndCalendar" ref="busGtfsAndCalendar" />
+        <property name="gtfsDataService" ref="busGtfsService" />
         <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
 
@@ -18,7 +18,7 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${subway.gms.url}" />
         <property name="mode" value="subway" />
-        <property name="gtfsAndCalendar" ref="subwayGtfsAndCalendar" />
+        <property name="gtfsDataService" ref="subwayGtfsService" />
         <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
     </bean>
 
@@ -27,7 +27,7 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mnr.gms.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsAndCalendar" ref="mnrGtfsAndCalendar" />
+        <property name="gtfsDataService" ref="mnrGtfsService" />
         <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
         <property name="inServiceTrueRoutes" value="MNR_wassaic" />
     </bean>
@@ -37,7 +37,7 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${lirr.gms.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsAndCalendar" ref="lirrGtfsAndCalendar" />
+        <property name="gtfsDataService" ref="lirrGtfsService" />
         <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
     </bean>
 
@@ -46,7 +46,7 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mnr.gms.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsAndCalendar" ref="njtRailGtfsAndCalendar" />
+        <property name="gtfsDataService" ref="njtGtfsService" />
         <property name="gtfsRouteAdapter" ref="njtRailGtfsRouteAdapter" />
     </bean>
 
@@ -54,7 +54,7 @@
         <property name="transformer" ref="gmsServiceStatusTransformer" />
         <property name="deserializer" ref="gmsServiceStatusDeserializer" />
         <property name="sourceUrl" value="${all.gms.url}" />
-        <property name="gtfsAndCalendar"><null /></property>
+        <property name="gtfsDataService"><null /></property>
         <property name="gtfsRouteAdapter"><null /></property>
     </bean>
 
