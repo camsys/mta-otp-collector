@@ -42,7 +42,7 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
         Date lastUpdated = new Date();
 
         generateRouteDetailsForAlerts(tempRouteDetailsMap, serviceAlerts, mode, gtfsDataService, gtfsAdapter, lastUpdated);
-        generateRouteDetailsForAllRoutes(tempRouteDetailsMap, mode, gtfsDataService, lastUpdated);
+        generateRouteDetailsForAllRoutes(tempRouteDetailsMap, mode, gtfsDataService, gtfsAdapter, lastUpdated);
         updateRouteDetailsMap(tempRouteDetailsMap, routeDetailsMap);
 
         List<RouteDetail> routeDetails = new ArrayList<>(routeDetailsMap.values());
@@ -80,14 +80,17 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     }
 
     protected void generateRouteDetailsForAllRoutes(Map<String, RouteDetail> tempRouteDetailsMap,
-                                                  String mode, GtfsDataService gtfsDataService,
-                                                  Date lastUpdated){
+                                                    String mode, GtfsDataService gtfsDataService,
+                                                    GtfsRouteAdapter gtfsRouteAdapter,
+                                                    Date lastUpdated){
 
         for (Route route : gtfsDataService.getAllRoutes()) {
-            String routeId = route.getId().toString();
-            if (!tempRouteDetailsMap.containsKey(routeId)) {
-                RouteDetail routeDetail = generateRouteDetail(route, mode, gtfsDataService, lastUpdated);
-                tempRouteDetailsMap.put(routeId, routeDetail);
+            if (gtfsRouteAdapter.shouldIncludeRoute(route)) {
+                String routeId = route.getId().toString();
+                if (!tempRouteDetailsMap.containsKey(routeId)) {
+                    RouteDetail routeDetail = generateRouteDetail(route, mode, gtfsDataService, lastUpdated);
+                    tempRouteDetailsMap.put(routeId, routeDetail);
+                }
             }
         }
     }

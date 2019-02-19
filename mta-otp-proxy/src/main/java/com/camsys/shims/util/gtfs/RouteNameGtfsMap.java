@@ -43,4 +43,8 @@ public class RouteNameGtfsMap {
         return _routeNameGtfsMap.get(atisId.getId());
     }
 
+    public boolean isIdInMap(AgencyAndId id) {
+        return _routeNameGtfsMap.values().contains(id);
+    }
+
 }

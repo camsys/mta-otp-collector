@@ -27,12 +27,8 @@
         <property name="gtfsPath" value="${njt_rail.gtfs.path}" />
     </bean>
 
-    <!--<bean id="njtRailGtfsAndCalendar" class="com.camsys.shims.util.gtfs.GtfsAndCalendar">-->
-        <!--<property name="gtfsDao" ref="njtRailGtfs" />-->
-        <!--<property name="routeIdWhiteListStr" value="${njt_rail.whitelist}"/>-->
-    <!--</bean>-->
+    <!-- Route adapters: Map from GMS API to GTFS route ID -->
 
-    <!-- route adapters -->
     <bean name="defaultGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.DefaultGtfsRouteAdapter" />
 
     <bean name="subwayGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.AgencyReplacementRouteAdapter">

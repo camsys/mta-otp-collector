@@ -14,6 +14,7 @@ package com.camsys.shims.service_status.adapters;
 
 import com.camsys.shims.atis.AtisGtfsMap;
 import org.onebusaway.gtfs.model.AgencyAndId;
+import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,10 @@ public class AtisIdRouteAdapter implements GtfsRouteAdapter {
         }
     }
 
+    @Override
+    public boolean shouldIncludeRoute(Route route) {
+        return true;
+    }
 
     public void setAtisGtfsMap(AtisGtfsMap atisGtfsMap) {
         _atisGtfsMap = atisGtfsMap;

@@ -18,6 +18,11 @@ public class AgencyReplacementRouteAdapter implements GtfsRouteAdapter {
         return null;
     }
 
+    @Override
+    public boolean shouldIncludeRoute(Route route) {
+        return true;
+    }
+
     public void setAgencyId(String agencyId) {
         _replacementAgencyId = agencyId;
     }
