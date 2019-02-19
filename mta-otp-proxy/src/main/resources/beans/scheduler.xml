@@ -17,6 +17,7 @@
         <task:scheduled ref="busServiceAlertMergeTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="30000" />
         <task:scheduled ref="gmsServiceStatusTask" method="update" fixed-delay="180000" />
+        <task:scheduled ref="gtfsDataServiceProvider" method="update" cron="${gtfs.reload.cron}" />
     </task:scheduled-tasks>
 
     <task:scheduler id="myScheduler" pool-size="32"/>

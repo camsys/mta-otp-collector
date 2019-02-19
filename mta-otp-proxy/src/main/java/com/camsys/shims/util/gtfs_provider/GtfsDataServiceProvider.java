@@ -25,5 +25,8 @@ public interface GtfsDataServiceProvider {
      */
     void addGtfsDataService(GtfsDataService service, String path);
 
+    /**
+     * @return a GtfsDataService which has the given feedId
+     */
     GtfsDataService getGtfsDataService(String feedId);
 }

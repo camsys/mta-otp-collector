@@ -20,6 +20,7 @@ import org.onebusaway.gtfs.impl.GtfsDataServiceImpl;
 import org.onebusaway.gtfs.impl.GtfsRelationalDaoImpl;
 import org.onebusaway.gtfs.serialization.GtfsReader;
 import org.onebusaway.gtfs.services.GtfsDataService;
+import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -44,16 +45,7 @@ public class GtfsDataServiceFactory implements FactoryBean<GtfsDataService> {
 
     @Override
     public GtfsDataService getObject() throws Exception {
-        GtfsRelationalDaoImpl dao = new GtfsRelationalDaoImpl();
-        GtfsReader reader = new GtfsReader();
-        reader.setEntityStore(dao);
-        try {
-            reader.setInputLocation(new File(_gtfsPath));
-            reader.run();
-            reader.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Failure while reading GTFS", e);
-        }
+        GtfsRelationalDao dao = readDao(_gtfsPath);
         GtfsDataServiceImpl dataService = new GtfsDataServiceImpl();
         dataService.setGtfsDao(dao);
         _provider.addGtfsDataService(dataService, _gtfsPath);
@@ -63,6 +55,20 @@ public class GtfsDataServiceFactory implements FactoryBean<GtfsDataService> {
     @Override
     public Class<?> getObjectType() {
         return GtfsDataService.class;
+    }
+
+    public static GtfsRelationalDao readDao(String path) {
+        GtfsRelationalDaoImpl dao = new GtfsRelationalDaoImpl();
+        GtfsReader reader = new GtfsReader();
+        reader.setEntityStore(dao);
+        try {
+            reader.setInputLocation(new File(path));
+            reader.run();
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Failure while reading GTFS", e);
+        }
+        return dao;
     }
 
 }
