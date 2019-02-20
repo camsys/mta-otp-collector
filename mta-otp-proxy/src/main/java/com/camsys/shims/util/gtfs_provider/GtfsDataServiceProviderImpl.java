@@ -38,11 +38,12 @@ public class GtfsDataServiceProviderImpl implements GtfsDataServiceProvider {
 
     @Override
     public void addGtfsDataService(GtfsDataService service, String path) {
-        String feedId = service.getFeedId();
+        LoadableService loadableService = new LoadableService(service, path);
+        String feedId = loadableService.getFeedId();
         if (_services.containsKey(feedId)) {
             _log.error("Multiple GTFS feeds for feed ID {}", feedId);
         }
-        _services.put(feedId, new LoadableService(service, path));
+        _services.put(feedId, loadableService);
     }
 
     @Override
@@ -104,7 +105,7 @@ public class GtfsDataServiceProviderImpl implements GtfsDataServiceProvider {
         }
 
         String getFeedId() {
-            return service.getFeedId();
+            return service.getAllFeedInfos().iterator().next().getId();
         }
     }
 }
