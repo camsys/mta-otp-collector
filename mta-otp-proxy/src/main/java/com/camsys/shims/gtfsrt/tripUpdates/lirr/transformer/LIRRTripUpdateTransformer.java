@@ -6,7 +6,6 @@ import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtimeLIRR;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
-import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 import com.kurtraschke.nyctrtproxy.transform.StopIdTransformStrategy;
 
 public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
@@ -14,7 +13,7 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
     private StopIdTransformStrategy _stopIdTransformStrategy;
 
     @Override
-    public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
+    public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
         if (fe.hasTripUpdate()) {
             TripUpdate.Builder tripUpdate = fe.getTripUpdate().toBuilder();
             for (StopTimeUpdate.Builder stub : tripUpdate.getStopTimeUpdateBuilderList()) {

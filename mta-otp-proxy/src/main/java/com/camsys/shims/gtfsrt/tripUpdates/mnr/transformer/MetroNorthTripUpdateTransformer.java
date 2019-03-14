@@ -12,7 +12,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer;
 
+import com.amazonaws.services.cloudwatch.model.Dimension;
+import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.camsys.shims.util.transformer.TripUpdateTransformer;
+import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
@@ -25,6 +28,7 @@ import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 import com.kurtraschke.nyctrtproxy.model.Status;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
+import org.onebusaway.gtfs.model.StopTime;
 import org.onebusaway.gtfs.model.Trip;
 import org.onebusaway.gtfs.model.calendar.ServiceDate;
 import org.onebusaway.gtfs.services.GtfsDataService;
@@ -32,11 +36,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.kurtraschke.nyctrtproxy.model.MatchMetrics.metricCount;
+import static com.kurtraschke.nyctrtproxy.model.MatchMetrics.metricPct;
 
 public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
@@ -57,7 +66,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     }
 
     @Override
-    public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
+    public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
         TripUpdate tu = fe.getTripUpdate();
         TripUpdate.Builder tub = TripUpdate.newBuilder();
         tub.getTripBuilder().setScheduleRelationship(tu.getTrip().getScheduleRelationship());
@@ -73,7 +82,6 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
         if (routeId == null || tripShortName == null || startDate == null) {
             _log.info("not enough info for tripUpdate routeId={} tripShortName={} startDate={}", routeId, tripShortName, startDate);
-            matchMetrics.addStatus(Status.BAD_TRIP_ID);
             return null;
         }
         ServiceDate sd = parseDate(startDate);
@@ -84,7 +92,6 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         Trip trip = findCorrectTrip(route, tripShortName, sd);
         Set<String> stopIds = null;
         if (trip == null) {
-            matchMetrics.addStatus(Status.NO_MATCH);
             tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
             tub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
             stopIds = _gtfsDataService.getAllStops().stream().map(s -> s.getId().getId()).collect(Collectors.toSet());
@@ -121,6 +128,40 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         tub.setDelay(delay);
 
         return tub;
+    }
+
+    @Override
+    public Set<MetricDatum> getMetrics(GtfsRealtime.FeedMessageOrBuilder messageIn, GtfsRealtime.FeedMessageOrBuilder messageOut, Date timestamp, Dimension dim) {
+        Set<MetricDatum> metrics = super.getMetrics(messageIn, messageOut, timestamp, dim);
+        int nService = 0;
+        int nRtInService = 0;
+        Set<String> tripIds = messageOut.getEntityList().stream()
+                .filter(FeedEntity::hasTripUpdate)
+                .map(fe -> fe.getTripUpdate().getTrip().getTripId())
+                .collect(Collectors.toSet());
+        ServiceDate today = new ServiceDate(timestamp);
+        for (ServiceDate sd : Arrays.asList(today.previous(), today, today.next())) {
+            Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(sd);
+            for (AgencyAndId serviceId : serviceIds) {
+                List<Trip> trips = _gtfsDataService.getTripsForServiceId(serviceId);
+                for (Trip trip : trips) {
+                    List<StopTime> stopTimes = _gtfsDataService.getStopTimesForTrip(trip);
+                    long startTime = sd.getAsDate().getTime() + (stopTimes.get(0).getDepartureTime() * 1000);
+                    long endTime = sd.getAsDate().getTime() + (stopTimes.get(stopTimes.size() - 1).getArrivalTime() * 1000);
+                    if (startTime < timestamp.getTime() && endTime > timestamp.getTime()) {
+                        nService++;
+                        if (tripIds.contains(trip.getId().getId())) {
+                            nRtInService++;
+                        }
+                    }
+                }
+            }
+        }
+        MetricDatum dTripsInService = metricCount(timestamp, "TripsInService", nService, dim);
+        MetricDatum dTripsInServiceRealtime = metricCount(timestamp, "TripsInServiceRealtime", nRtInService, dim);
+        MetricDatum dTripsInServicePct = metricPct(timestamp, "TripsInServiceRtPct", (double) nRtInService / (double) nService, dim);
+        metrics.addAll(Arrays.asList(dTripsInService, dTripsInServiceRealtime, dTripsInServicePct));
+        return metrics;
     }
 
     private Trip findCorrectTrip(Route route, String tripShortName, ServiceDate sd) {

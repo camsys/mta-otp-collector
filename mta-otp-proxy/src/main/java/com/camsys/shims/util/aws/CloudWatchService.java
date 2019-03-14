@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Created by lcaraballo on 5/3/18.
  */
-public class CloudWatchService extends CloudwatchProxyDataListener{
+public class CloudWatchService extends CloudwatchProxyDataListener {
 
     private static final Logger _log = LoggerFactory.getLogger(CloudWatchService.class);
 
@@ -43,11 +43,16 @@ public class CloudWatchService extends CloudwatchProxyDataListener{
         _autoScalingGroupName = autoScalingGroupName;
     }
 
+    @Override
+    public boolean isDisabled() {
+        return super.isDisabled() || !_primary;
+    }
+
     @PostConstruct
     public void init() {
         try {
             super.init();
-            if(_autoScalingGroupName != null && _autoScalingGroupName.equalsIgnoreCase("none") && !_env.equalsIgnoreCase("local")) {
+            if(_autoScalingGroupName != null && !_autoScalingGroupName.equalsIgnoreCase("none") && !_env.equalsIgnoreCase("local")) {
                 scheduleLeadershipElection();
             }
             else{

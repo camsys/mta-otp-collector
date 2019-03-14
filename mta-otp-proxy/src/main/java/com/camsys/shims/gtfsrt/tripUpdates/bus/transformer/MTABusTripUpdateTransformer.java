@@ -15,11 +15,10 @@ package com.camsys.shims.gtfsrt.tripUpdates.bus.transformer;
 import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
-import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
 
 public class MTABusTripUpdateTransformer extends TripUpdateTransformer {
     @Override
-    public TripUpdate.Builder transformTripUpdate(FeedEntity fe, MatchMetrics matchMetrics) {
+    public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
         if (fe.hasTripUpdate()) {
             TripUpdate.Builder tub = fe.getTripUpdate().toBuilder();
             String tripId = tub.getTrip().getTripId();
