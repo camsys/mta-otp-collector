@@ -6,8 +6,7 @@
     <!-- Metro North Trip Updates -->
     <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
         <property name="gtfsDataService" ref="mnrGtfsService" />
-        <property name="cloudwatchService" ref="cloudwatchService" />
-        <property name="namespace" value="${mnr.cloudwatch.namespace}" />
+        <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${mnr.feedid}" />
     </bean>
     <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">

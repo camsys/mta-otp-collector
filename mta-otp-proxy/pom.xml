@@ -99,30 +99,9 @@
         <dependency>
             <groupId>org.onebusaway</groupId>
             <artifactId>onebusaway-cloud-aws</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.8-SNAPSHOT</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>${aws.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-cloudwatch</artifactId>
-            <version>${aws.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-autoscaling</artifactId>
-            <version>${aws.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-ec2</artifactId>
-            <version>${aws.version}</version>
-        </dependency>
         <!-- CSV parser -->
         <dependency>
             <groupId>net.sourceforge.javacsv</groupId>

@@ -6,8 +6,7 @@
     <!-- LIRR trip updates -->
     <bean name="lirrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.deserializer.LIRRFeedMessageDeserializer" />
     <bean id="lirrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LIRRTripUpdateTransformer">
-        <property name="cloudwatchService" ref="cloudwatchService" />
-        <property name="namespace" value="${lirr.cloudwatch.namespace}" />
+        <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${lirr.feedid}" />
         <property name="stopIdTransformStrategy" ref="lirrStopIdTransformStrategy" />
     </bean>

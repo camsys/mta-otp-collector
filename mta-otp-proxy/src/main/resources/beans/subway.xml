@@ -6,12 +6,7 @@
     <!-- subway - this is essentially equivalent to Kurt's ProxyModule class  -->
     <bean class="org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeExporterImpl" id="subwayTuExporter" />
 
-    <bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" init-method="init">
-        <property name="accessKey" value="${cloudwatch.access_key}" />
-        <property name="secretKey" value="${cloudwatch.secret_key}" />
-        <property name="env" value="${cloudwatch.env}" />
-        <property name="region" value="us-east-1" />
-    </bean>
+    <bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" />
 
     <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType" name="lazyTripMatcher">
         <property name="gtfsDataService" ref="subwayGtfsService"/>
@@ -42,7 +37,7 @@
         <property name="directionsService" ref="directionsService" />
         <property name="stopIdTransformStrategy" ref="stopIdTransformStrategy" />
         <property name="stopFilterStrategy" ref="subwayFilterStrategy" />
-        <property name="cloudwatchNamespace" value="subway_collector" />
+        <property name="cloudwatchNamespace" value="${subway.cloudwatch.namespace}" />
     </bean>
 
     <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">

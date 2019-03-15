@@ -4,8 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- MTA bus trip updates -->
     <bean id="busTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.bus.transformer.MTABusTripUpdateTransformer">
-        <property name="cloudwatchService" ref="cloudwatchService" />
-        <property name="namespace" value="${mtabus.cloudwatch.namespace}" />
+        <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${mtabus.feedid}" />
     </bean>
     <bean id="busTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">

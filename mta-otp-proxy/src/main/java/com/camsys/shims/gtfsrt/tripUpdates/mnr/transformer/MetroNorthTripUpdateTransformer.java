@@ -12,8 +12,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer;
 
-import com.amazonaws.services.cloudwatch.model.Dimension;
-import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
@@ -24,8 +22,6 @@ import com.google.transit.realtime.GtfsRealtimeMNR;
 import com.google.transit.realtime.GtfsRealtimeMNR.MnrStopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
 import com.google.transit.realtime.GtfsRealtimeNYCT.NyctStopTimeUpdate;
-import com.kurtraschke.nyctrtproxy.model.MatchMetrics;
-import com.kurtraschke.nyctrtproxy.model.Status;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.StopTime;
@@ -43,9 +39,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static com.kurtraschke.nyctrtproxy.model.MatchMetrics.metricCount;
-import static com.kurtraschke.nyctrtproxy.model.MatchMetrics.metricPct;
 
 public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
@@ -130,15 +123,17 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         return tub;
     }
 
+    // Capture metrics for scheduled trips with realtime. Could push this upstream for all transformers that have a GtfsDataService
     @Override
-    public Set<MetricDatum> getMetrics(GtfsRealtime.FeedMessageOrBuilder messageIn, GtfsRealtime.FeedMessageOrBuilder messageOut, Date timestamp, Dimension dim) {
-        Set<MetricDatum> metrics = super.getMetrics(messageIn, messageOut, timestamp, dim);
+    public void publishMetrics(GtfsRealtime.FeedMessageOrBuilder messageIn, GtfsRealtime.FeedMessageOrBuilder messageOut) {
+        super.publishMetrics(messageIn, messageOut);
         int nService = 0;
         int nRtInService = 0;
         Set<String> tripIds = messageOut.getEntityList().stream()
                 .filter(FeedEntity::hasTripUpdate)
                 .map(fe -> fe.getTripUpdate().getTrip().getTripId())
                 .collect(Collectors.toSet());
+        Date timestamp = new Date();
         ServiceDate today = new ServiceDate(timestamp);
         for (ServiceDate sd : Arrays.asList(today.previous(), today, today.next())) {
             Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(sd);
@@ -157,11 +152,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 }
             }
         }
-        MetricDatum dTripsInService = metricCount(timestamp, "TripsInService", nService, dim);
-        MetricDatum dTripsInServiceRealtime = metricCount(timestamp, "TripsInServiceRealtime", nRtInService, dim);
-        MetricDatum dTripsInServicePct = metricPct(timestamp, "TripsInServiceRtPct", (double) nRtInService / (double) nService, dim);
-        metrics.addAll(Arrays.asList(dTripsInService, dTripsInServiceRealtime, dTripsInServicePct));
-        return metrics;
+        publishMetric("TripsInService", nService);
+        publishMetric("TripsInService", nService);
+        publishMetric("TripsInServiceRealtime", nRtInService);
+        publishMetric("TripsInServiceRtPct", (double) nRtInService / (double) nService);
     }
 
     private Trip findCorrectTrip(Route route, String tripShortName, ServiceDate sd) {
