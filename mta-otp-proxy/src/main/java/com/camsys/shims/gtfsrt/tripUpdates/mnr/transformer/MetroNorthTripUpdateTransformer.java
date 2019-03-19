@@ -48,6 +48,8 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private String _agencyId = "MNR";
 
+    private boolean _startDateIsServiceDate = true;
+
     private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
     public void setGtfsDataService(GtfsDataService gtfsDataService) {
@@ -56,6 +58,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     public void setAgencyId(String agencyId) {
         _agencyId = agencyId;
+    }
+
+    public void setStartDateIsServiceDate(boolean startDateIsServiceDate) {
+        _startDateIsServiceDate = startDateIsServiceDate;
     }
 
     @Override
@@ -82,13 +88,15 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         if (route == null) {
             return null;
         }
-        Trip trip = findCorrectTrip(route, tripShortName, sd);
+        ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, sd);
         Set<String> stopIds = null;
-        if (trip == null) {
+        if (activatedTrip == null) {
             tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
             tub.getTripBuilder().setScheduleRelationship(ScheduleRelationship.ADDED);
             stopIds = _gtfsDataService.getAllStops().stream().map(s -> s.getId().getId()).collect(Collectors.toSet());
         } else {
+            Trip trip = activatedTrip.trip;
+            sd = activatedTrip.date;
             tub.getTripBuilder().setTripId(trip.getId().getId());
             stopIds = _gtfsDataService.getStopTimesForTrip(trip).stream()
                     .map(st -> st.getStop().getId().getId()).collect(Collectors.toSet());
@@ -158,14 +166,30 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         publishMetric("TripsInServiceRtPct", (double) nRtInService / (double) nService);
     }
 
-    private Trip findCorrectTrip(Route route, String tripShortName, ServiceDate sd) {
-        if (sd == null)
-            return null;
-        Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(sd);
-        List<Trip> candidates = new ArrayList<>();
-        for (Trip t : _gtfsDataService.getTripsForRoute(route)) {
-            if (serviceIds.contains(t.getServiceId()) && t.getTripShortName().equals(tripShortName)) {
-                candidates.add(t);
+    private ActivatedTrip findCorrectTrip(Route route, String tripShortName, ServiceDate date) {
+        if (date == null)
+           return null;
+        List<ActivatedTrip> candidates = new ArrayList<>();
+        if (_startDateIsServiceDate) {
+            Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(date);
+            for (Trip t : _gtfsDataService.getTripsForRoute(route)) {
+                if (serviceIds.contains(t.getServiceId()) && t.getTripShortName().equals(tripShortName)) {
+                    candidates.add(new ActivatedTrip(t, date));
+                }
+            }
+        } else {
+            // start date is calendar date. Check ServiceIds for yesterday's service date as well.
+            Set<AgencyAndId> serviceIdsToday = _gtfsDataService.getServiceIdsOnDate(date);
+            Set<AgencyAndId> serviceIdsYesterday = _gtfsDataService.getServiceIdsOnDate(date.previous());
+            for (Trip t : _gtfsDataService.getTripsForRoute(route)) {
+                if (t.getTripShortName().equals(tripShortName)) {
+                    boolean afterMidnight = tripStartsAfterMidnight(t);
+                    if (!afterMidnight && serviceIdsToday.contains(t.getServiceId())) {
+                        candidates.add(new ActivatedTrip(t, date));
+                    } else if (afterMidnight && serviceIdsYesterday.contains(t.getServiceId())) {
+                        candidates.add(new ActivatedTrip(t, date.previous()));
+                    }
+                }
             }
         }
         if (candidates.size() == 1)
@@ -175,6 +199,11 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         else
             _log.error("Too many trips for shortName {} ({})", tripShortName, candidates);
         return null;
+    }
+
+    private boolean tripStartsAfterMidnight(Trip trip) {
+        int startTime = _gtfsDataService.getStopTimesForTrip(trip).get(0).getDepartureTime();
+        return startTime > (24 * 3600);
     }
 
     private ServiceDate parseDate(String date) {
@@ -194,4 +223,12 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         return String.format("%04d%02d%02d", sd.getYear(), sd.getMonth(), sd.getDay());
     }
 
+    private class ActivatedTrip {
+        Trip trip;
+        ServiceDate date;
+        ActivatedTrip(Trip trip, ServiceDate date) {
+            this.trip = trip;
+            this.date = date;
+        }
+    }
 }

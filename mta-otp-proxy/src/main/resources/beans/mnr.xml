@@ -8,6 +8,7 @@
         <property name="gtfsDataService" ref="mnrGtfsService" />
         <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${mnr.feedid}" />
+        <property name="startDateIsServiceDate" value="${mnr.use_service_date}" />
     </bean>
     <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
         <property name="sourceUrl" value="${mnr.gtfsrt.url}" />
