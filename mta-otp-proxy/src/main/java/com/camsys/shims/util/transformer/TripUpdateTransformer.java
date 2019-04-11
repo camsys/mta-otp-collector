@@ -10,6 +10,8 @@ import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<FeedMessage> {
 
     private static final Logger _log = LoggerFactory.getLogger(TripUpdateTransformer.class);
@@ -67,6 +69,9 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                 }
             }
         }
+        long timestamp = messageIn.getHeader().getTimestamp();
+        long latency = (new Date().getTime()/1000) - timestamp;
+        publishMetric("Latency", latency);
         publishMetric( "RecordsIn", recordsIn);
         publishMetric("AddedTrips", addedTrips);
         publishMetric("MatchedTrips", matchedTrips);
