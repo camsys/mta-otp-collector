@@ -53,8 +53,6 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private boolean _startDateIsServiceDate = true;
 
-    private int _tripsInServiceBuffer = 3600;
-
     private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
     public void setGtfsDataService(GtfsDataService gtfsDataService) {
@@ -67,10 +65,6 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     public void setStartDateIsServiceDate(boolean startDateIsServiceDate) {
         _startDateIsServiceDate = startDateIsServiceDate;
-    }
-
-    public void setTripsInServiceBuffer(int tripsInServiceBuffer) {
-        _tripsInServiceBuffer = tripsInServiceBuffer;
     }
 
     @Override
@@ -162,6 +156,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
 
         Date timestamp = new Date();
+        long now = timestamp.getTime();
         ServiceDate today = new ServiceDate(timestamp);
 
         for (ServiceDate sd : Arrays.asList(today.previous(), today, today.next())) {
@@ -172,9 +167,15 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                     List<StopTime> stopTimes = _gtfsDataService.getStopTimesForTrip(trip);
                     long startTime = sd.getAsDate().getTime() + (stopTimes.get(0).getDepartureTime() * 1000);
                     long endTime = sd.getAsDate().getTime() + (stopTimes.get(stopTimes.size() - 1).getArrivalTime() * 1000);
-                    int bufferMs = _tripsInServiceBuffer * 1000;
-                    if ((startTime - bufferMs) < timestamp.getTime()
-                            && (endTime + bufferMs) > timestamp.getTime()) {
+
+                    // For MNR, we expect trips to be in the RT feed if they start up to 6 hours in the future, or if they
+                    // start in the past and haven't reached their destination yet
+
+                    boolean tracks_startOk = startTime - (6 * 3600 * 1000) <= now;
+                    int endBuffer = 300 * 1000;
+                    boolean endInFuture = startTime <= now && (endTime + endBuffer) >= now;
+
+                    if (tracks_startOk || endInFuture) {
                         nService++;
                         if (rtTripIdsByServiceDate.get(sd).contains(trip.getId().getId())) {
                             nRtInService++;
