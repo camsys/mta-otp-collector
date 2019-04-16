@@ -10,7 +10,9 @@ import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<FeedMessage> {
 
@@ -34,6 +36,7 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
     public FeedMessage transform(FeedMessage message) {
         FeedMessage.Builder builder = FeedMessage.newBuilder();
         builder.setHeader(message.getHeader());
+        List<FeedEntity> unmatchedEntities = new ArrayList<>();
         for (int i = 0; i < message.getEntityCount(); i++) {
             FeedEntity entity = message.getEntity(i);
             if (entity.hasTripUpdate()) {
@@ -41,6 +44,8 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
                 if (tu != null) {
                     FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
                     builder.addEntity(feb);
+                } else {
+                    unmatchedEntities.add(entity);
                 }
             } else {
                 builder.addEntity(entity);
@@ -49,14 +54,14 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
         _log.info("Output {} entities", builder.getEntityCount());
 
         if (_feedId != null && _namespace != null) {
-            publishMetrics(message, builder);
+            publishMetrics(message, builder, unmatchedEntities);
         }
         return builder.build();
     }
 
     public abstract TripUpdate.Builder transformTripUpdate(FeedEntity fe);
 
-    public void publishMetrics(FeedMessageOrBuilder messageIn, FeedMessageOrBuilder messageOut) {
+    public void publishMetrics(FeedMessageOrBuilder messageIn, FeedMessageOrBuilder messageOut, List<FeedEntity> unmatchedEntities) {
         long recordsIn = messageIn.getEntityList().stream().filter(FeedEntity::hasTripUpdate).count();
         int matchedTrips = 0, addedTrips = 0, recordsOut = 0;
         for (FeedEntity entity : messageOut.getEntityList()) {
@@ -76,7 +81,7 @@ public abstract class TripUpdateTransformer implements GtfsRealtimeTransformer<F
         publishMetric("AddedTrips", addedTrips);
         publishMetric("MatchedTrips", matchedTrips);
         publishMetric("RecordsOut", recordsOut);
-
+        publishMetric("UnmatchedTrips", unmatchedEntities.size());
     }
 
     public void publishMetric(String name, double value) {
