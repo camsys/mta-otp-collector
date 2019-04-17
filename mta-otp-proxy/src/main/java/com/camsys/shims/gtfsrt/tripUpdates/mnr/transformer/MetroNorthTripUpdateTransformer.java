@@ -37,6 +37,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -138,8 +139,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     @Override
     public void publishMetrics(GtfsRealtime.FeedMessageOrBuilder messageIn, GtfsRealtime.FeedMessageOrBuilder messageOut, List<FeedEntity> unmatchedEntities) {
         super.publishMetrics(messageIn, messageOut, unmatchedEntities);
-        int nService = 0;
-        int nRtInService = 0;
+
 
         Multimap<ServiceDate, String> rtTripIdsByServiceDate = ArrayListMultimap.create();
         try {
@@ -156,9 +156,27 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
 
         Date timestamp = new Date();
-        long now = timestamp.getTime();
-        ServiceDate today = new ServiceDate(timestamp);
+        Set<ActivatedTrip> tripsInService = getTripsInService(timestamp);
+        int nService = tripsInService.size();
+        int nRtInService = 0;
+        for (ActivatedTrip trip : tripsInService) {
+            if (rtTripIdsByServiceDate.get(trip.date).contains(trip.trip.getId().getId())) {
+                nRtInService++;
+            }
+        }
 
+        long totalRtTrips = messageOut.getEntityList()
+                .stream().filter(FeedEntity::hasTripUpdate).count();
+        publishMetric("TripsInService", nService);
+        publishMetric("TripsInServiceRealtime", nRtInService);
+        publishMetric("TripsInServiceRtPct", (double) nRtInService / (double) nService);
+        publishMetric("ExtraRtTrips", totalRtTrips - nRtInService);
+    }
+
+    private Set<ActivatedTrip> getTripsInService(Date date) {
+        Set<ActivatedTrip> activatedTrips = new HashSet<>();
+        long now = date.getTime();
+        ServiceDate today = new ServiceDate(date);
         for (ServiceDate sd : Arrays.asList(today.previous(), today, today.next())) {
             Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(sd);
             for (AgencyAndId serviceId : serviceIds) {
@@ -171,25 +189,17 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                     // For MNR, we expect trips to be in the RT feed if they start up to 6 hours in the future, or if they
                     // start in the past and haven't reached their destination yet
 
-                    boolean tracks_startOk = startTime - (6 * 3600 * 1000) <= now;
+                    boolean tracks_startOk = (startTime >= now) && (startTime <= now + 6 * 3600 * 1000);
                     int endBuffer = 300 * 1000;
                     boolean endInFuture = startTime <= now && (endTime + endBuffer) >= now;
 
                     if (tracks_startOk || endInFuture) {
-                        nService++;
-                        if (rtTripIdsByServiceDate.get(sd).contains(trip.getId().getId())) {
-                            nRtInService++;
-                        }
+                        activatedTrips.add(new ActivatedTrip(trip, sd));
                     }
                 }
             }
         }
-        long totalRtTrips = messageOut.getEntityList()
-                .stream().filter(FeedEntity::hasTripUpdate).count();
-        publishMetric("TripsInService", nService);
-        publishMetric("TripsInServiceRealtime", nRtInService);
-        publishMetric("TripsInServiceRtPct", (double) nRtInService / (double) nService);
-        publishMetric("ExtraRtTrips", totalRtTrips - nRtInService);
+        return activatedTrips;
     }
 
     private ActivatedTrip findCorrectTrip(Route route, String tripShortName, ServiceDate date) {
