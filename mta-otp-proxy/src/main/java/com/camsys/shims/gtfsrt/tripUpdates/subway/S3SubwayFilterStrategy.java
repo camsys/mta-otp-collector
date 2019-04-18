@@ -65,10 +65,20 @@ public class S3SubwayFilterStrategy extends AbstractS3CsvProvider implements Sto
         }
     }
 
+    @Override
+    public void update() {
+        clearClosedStops();
+        super.update();
+    }
+
     private Set<String> getClosedStops() {
         if (_closedStops == null) {
             _closedStops = new HashSet<>();
         }
         return _closedStops;
+    }
+
+    private void clearClosedStops() {
+        _closedStops = null;
     }
 }
