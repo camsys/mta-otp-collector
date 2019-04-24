@@ -5,3 +5,4 @@ mta-otp-plannedwork/target
 *.iml
 /mta-otp-proxy/src/main/resources/data-sources.xml
 mta-gms-service-status/target/
+/mta-otp-proxy/src/main/resources/collector.properties

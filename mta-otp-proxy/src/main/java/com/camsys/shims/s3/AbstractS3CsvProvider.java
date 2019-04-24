@@ -36,6 +36,10 @@ public abstract class AbstractS3CsvProvider {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
         }
 
+        update();
+    }
+
+    public void update() {
         _externalServices.getFileAsStream(url, new InputStreamConsumer() {
             @Override
             public void accept(InputStream stream) throws IOException {
