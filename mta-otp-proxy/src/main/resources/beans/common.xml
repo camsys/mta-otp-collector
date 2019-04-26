@@ -56,9 +56,13 @@
     </bean>
 
     <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck" />
+    <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
+
 
     <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
 
     <context:property-placeholder location="classpath:collector.properties" />
+    <context:property-placeholder location="classpath:maven-version.properties" />
+
 
 </beans>
