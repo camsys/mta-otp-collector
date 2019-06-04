@@ -16,7 +16,7 @@ import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 
 /** This is a GtfsRealtimeSource that takes the output of a different source */
 public class ChainedGtfsRealtimeSource implements GtfsRealtimeSource {
