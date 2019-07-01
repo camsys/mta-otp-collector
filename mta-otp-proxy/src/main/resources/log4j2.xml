@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+    <Properties>
+        <!-- this can be overridden via -Dcollector.logging.dir=/path/to/elsewhere -->
+        <Property name="LOG_FILE_ROOT" value="${collector.logging.dir:-/opt/tomcat_collector/logs}" />
+    </Properties>
     <Appenders>
+        <RollingFile name="FileLogger" fileName="${LOG_FILE_ROOT}/collector.log" filePattern="${LOG_FILE_ROOT}/collector.%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <pattern>[%-5p] %d %c - %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%-5p] %d %c - %m%n"/>
         </Console>
@@ -8,7 +21,9 @@
     <Loggers>
         <Logger name="org.springframework.beans.factory" level="INFO"/>
         <Root level="info">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileLogger"/>
+            <!-- uncomment for typical console logging -->
+<!--            <AppenderRef ref="Console"/>-->
         </Root>
     </Loggers>
 </Configuration>
