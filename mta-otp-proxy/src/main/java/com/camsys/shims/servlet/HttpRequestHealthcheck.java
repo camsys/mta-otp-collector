@@ -31,6 +31,8 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
     /** allow the service status last updated time to be this old */
     private int _gracePeriodSec = 120;
 
+    private int _minStopsForRoute = 10;
+
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType(CONTENT_TYPE);
         HealthcheckModel status = getHealthcheck();
@@ -44,6 +46,8 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
         ServiceStatus status = _mapper.readValue(serviceStatusUrl, ServiceStatus.class);
 
         if ((new Date().getTime() - status.getLastUpdated().getTime()) > (_gracePeriodSec * 1000)) {
+            _log.error("FATAL:  serviceStatusURL has lastUpdated time of " + new Date(status.getLastUpdated().getTime())
+            + ", configured grace=" + _gracePeriodSec);
             throw new RuntimeException("Service status API is too old.");
         }
 
@@ -51,7 +55,9 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
         URL stopsForRouteUrl = new URL("http://" + _hostname + ":" + _port + "/schedule/stopsForRoute");
         List<?> stopsForRoute = _mapper.readValue(stopsForRouteUrl, List.class);
 
-        if (stopsForRoute.size() < 10) {
+        if (stopsForRoute.size() < _minStopsForRoute) {
+            _log.error("FATAL:  stopsForRouteUrl has count of " + stopsForRoute.size()
+            + ", configured min=" + _minStopsForRoute);
             throw new RuntimeException("no stops for route in data!");
         }
 
@@ -68,5 +74,9 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
 
     public void setGracePeriodSec(int gracePeriodSec) {
         _gracePeriodSec = gracePeriodSec;
+    }
+
+    public void setMinStopsForRoute(int stopsForRoute) {
+        _minStopsForRoute = stopsForRoute;
     }
 }
