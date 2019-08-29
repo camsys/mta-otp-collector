@@ -48,7 +48,8 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
         if ((new Date().getTime() - status.getLastUpdated().getTime()) > (_gracePeriodSec * 1000)) {
             _log.error("FATAL:  serviceStatusURL has lastUpdated time of " + new Date(status.getLastUpdated().getTime())
             + ", configured grace=" + _gracePeriodSec);
-            throw new RuntimeException("Service status API is too old.");
+            // monitoring will catch this -- don't bring down the service
+//            throw new RuntimeException("Service status API is too old.");
         }
 
         // check stops for route
