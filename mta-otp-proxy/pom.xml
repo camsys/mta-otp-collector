@@ -102,6 +102,12 @@
             <artifactId>onebusaway-cloud-aws</artifactId>
             <version>0.0.8</version>
         </dependency>
+        <dependency>
+            <groupId>org.onebusaway</groupId>
+            <artifactId>onebusaway-cloud-noop</artifactId>
+            <version>0.0.8</version>
+        </dependency>
+
 
         <!-- CSV parser -->
         <dependency>
