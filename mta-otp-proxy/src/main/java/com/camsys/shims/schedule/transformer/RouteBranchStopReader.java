@@ -24,6 +24,9 @@ public class RouteBranchStopReader implements CsvRecordReader<RouteBranchStop> {
      */
     @Override
     public RouteBranchStop readRecord(CsvReader reader) throws IOException {
+        if (reader.getColumnCount() > 5 && StringUtils.isNotBlank(reader.get(5)))
+            return new RouteBranchStop(reader.get(0), reader.get(1), reader.get(2), reader.get(3), reader.get(4),
+                    Boolean.valueOf(reader.get(5)));
         if (reader.getColumnCount() > 4 && StringUtils.isNotBlank(reader.get(4)))
             return new RouteBranchStop(reader.get(0), reader.get(1), reader.get(2), reader.get(3), reader.get(4));
         return new RouteBranchStop(reader.get(0), reader.get(1), reader.get(2), reader.get(3));

@@ -6,6 +6,18 @@ public class RouteBranchStop {
     private String lineName; // aka branch
     private String routeId; // GTFS Route Id -- the filter param
     private String locationIndex; // optional and can be .5
+    private Boolean regionalFareCardAccepted;
+
+    public RouteBranchStop(String stopId, String locationName, String lineName, String routeId, String locationIndex,
+                           Boolean regionalFareCardAccepted) {
+        this.id = stopId;
+        this.locationName = locationName;
+        this.lineName = lineName;
+        this.routeId = routeId;
+        this.locationIndex = locationIndex;
+        this.regionalFareCardAccepted = regionalFareCardAccepted;
+    }
+
 
     public RouteBranchStop(String stopId, String locationName, String lineName, String routeId, String locationIndex) {
         this.id = stopId;
@@ -49,4 +61,6 @@ public class RouteBranchStop {
     public String getLocationIndex() {
         return locationIndex;
     }
+
+    public Boolean getRegionalFareCardAccepted() { return regionalFareCardAccepted; }
 }
