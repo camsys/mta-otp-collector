@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.camsys</groupId>
     <artifactId>mta-otp-collector</artifactId>
-    <version>0.0.53</version>
+    <version>0.0.54-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>mta-otp-collector</name>
     <description>realtime collector/aggregator for NYC MTA</description>
@@ -30,7 +30,7 @@
         <connection>scm:git:http://github.com/camsys/mta-otp-collector.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/camsys/mta-otp-collector.git</developerConnection>
         <url>http://github.com/camsys/mta-otp-collector</url>
-    <tag>mta-otp-collector-0.0.53</tag>
+    <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
