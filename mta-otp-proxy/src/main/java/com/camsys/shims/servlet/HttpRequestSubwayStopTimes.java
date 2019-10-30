@@ -36,7 +36,7 @@ import java.net.URISyntaxException;
 
 public class HttpRequestSubwayStopTimes implements HttpRequestHandler {
 
-    private static final String BASE_URL = "http://datamine.mta.info/mta_esi.php";
+    private static final String BASE_URL = "http://api.mta.info/mta_esi.php";
 
     private Multimap<String, String> _routeToFeedMap = ImmutableMultimap.<String, String>builder()
             .putAll("1",    "1", "2", "3", "4", "5", "6", "GS")
