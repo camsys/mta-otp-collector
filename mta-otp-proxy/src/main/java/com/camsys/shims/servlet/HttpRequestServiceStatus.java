@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class HttpRequestServiceStatus implements HttpRequestHandler {
 
-    private static final String CONTENT_TYPE = "application/json";
+    private static final String CONTENT_TYPE = "application/json; charset=UTF-8";
 
     private static ObjectMapper mapper = new ObjectMapper();
 
