@@ -34,14 +34,6 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
     }
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String contentType = req.getParameter("contentType");
-        if (contentType != null && contentType.length() > 0) {
-            resp.setContentType(contentType);
-            Message message = _source.getFeed();
-            message.writeTo(resp.getOutputStream());
-            return;
-        }
-
         boolean debug = req.getParameter("debug") != null;
         Message message = _source.getFeed();
         if (debug) {
