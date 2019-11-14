@@ -83,6 +83,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         if (fe.hasVehicle() && fe.getVehicle().hasVehicle() && fe.getVehicle().getVehicle().hasLabel()) {
             tripShortName = fe.getVehicle().getVehicle().getLabel();
         }
+        // tripShortName can come from either FeedEntity (old convention) or TripUpdate (new convention)
+        if (tripShortName == null && tu.hasVehicle() &&  tu.getVehicle().hasLabel()) {
+            tripShortName = tu.getVehicle().getLabel();
+        }
         if (routeId == null || tripShortName == null || startDate == null) {
             _log.info("not enough info for tripUpdate routeId={} tripShortName={} startDate={}", routeId, tripShortName, startDate);
             return null;
