@@ -15,7 +15,7 @@
         <property name="apiKey" value="${mta.api.key:}" />
         <property name="transformer" ref="mnrTransformer" />
         <property name="deserializer" ref="gtfsrt" />
-        <property name="overrideMimeType" value="application/pb" />
+<!--        <property name="overrideMimeType" value="application/pb" />-->
     </bean>
     <bean id="mnrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
         <property name="source" ref="mnrTask" />

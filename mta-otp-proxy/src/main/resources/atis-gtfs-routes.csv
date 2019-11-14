@@ -45,15 +45,15 @@ HUDSON,MNR:1,,Hudson
 NCANAAN,MNR:4,,New Canaan
 NHAVEN,MNR:3,,New Haven
 WTRBURY,MNR:6,,Waterbury
-JBNTNM,NJT:1,,Montclair-Boonton Line
-JMNBN,NJT:4,,Main/Bergen County Line
-JMNBNP,NJT:5,,Port Jervis Line
-JMNEG,NJT:6,,Morris & Essex Line
-JNEC,NJT:8,,Northeast Corridor
-JNJCL,NJT:9,,North Jersey Coast Line
+JBNTNM,NJT:2,,Montclair-Boonton Line
+JMNBN,NJT:5,,Main/Bergen County Line
+JMNBNP,NJT:6,,Port Jervis Line
+JMNEG,NJT:7,,Morris & Essex Line
+JNEC,NJT:9,,Northeast Corridor
 JNJCL,NJT:10,,North Jersey Coast Line
-JPASC,NJT:12,,Pascack Valley Line
-JRARV,NJT:14,,Raritan Valley Line
+JNJCL,NJT:11,,North Jersey Coast Line
+JPASC,NJT:13,,Pascack Valley Line
+JRARV,NJT:15,,Raritan Valley Line
 B100,MTA:B100,B100,Mill Basin - Midwood
 B103-LTD,MTA:B103,B103,Canarsie - Downtown Brooklyn Ltd
 BM1,MTA:BM1,BM1,Mill Basin - Downtown/Midtown
