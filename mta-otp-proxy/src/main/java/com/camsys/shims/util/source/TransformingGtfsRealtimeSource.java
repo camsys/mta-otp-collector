@@ -50,6 +50,8 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     private String _overrideMimeType;
 
+    private String _apiKey;
+
     public void setConnectionManager(HttpClientConnectionManager connectionManager) {
         _connectionManager = connectionManager;
     }
@@ -78,6 +80,8 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
         _overrideMimeType = overrideMimeType;
     }
 
+    public void setApiKey(String apiKey) { _apiKey = apiKey; }
+
     @Override
     public void update() {
         T message = getMessage(_sourceUrl, _deserializer);
@@ -93,6 +97,8 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
         HttpGet get = new HttpGet(sourceUrl);
         get.setHeader("accept", _overrideMimeType == null ? deserializer.getMimeType() : _overrideMimeType);
+        if (_apiKey != null)
+            get.setHeader("x-api-key", _apiKey);
 
         T message = null;
         for (int tries = 0; tries < _nTries; tries++) {
