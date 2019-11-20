@@ -105,7 +105,11 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
             try {
                 CloseableHttpResponse response = _httpClient.execute(get);
                 try (InputStream streamContent = response.getEntity().getContent()) {
-                    message = deserializer.deserialize(streamContent);
+                    try {
+                        message = deserializer.deserialize(streamContent);
+                    } catch (Throwable t) {
+                        _log.error("fail for " + sourceUrl);
+                    }
                     if (message != null)
                         return message;
                     Thread.sleep(_retryDelay * 1000);

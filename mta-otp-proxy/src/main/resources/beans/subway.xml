@@ -41,6 +41,29 @@
     </bean>
 
     <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">
+        <!-- for DEV testing only -->
+        <property name="overrideFeedToUrl">
+            <map>
+                <entry key="16">
+                    <value>s3://gtfs-rt/nyct/gtfs-nqrw</value>
+                </entry>
+            </map>
+        </property>
+        <property name="feedToProfile">
+            <map>
+                <entry key="16">
+                    <value>mtaqa</value>
+                </entry>
+            </map>
+        </property>
+        <property name="feedToRegion">
+            <map>
+                <entry key="16">
+                    <value>us-east-2</value>
+                </entry>
+            </map>
+        </property>
+
         <property name="key" value="${datamine.key}" />
         <property name="tripUpdatesSink" ref="subwayTuExporter" />
         <property name="feedIds" value="[1, 2, 11, 16, 21, 26, 31, 36, 51]" />
@@ -87,6 +110,28 @@
 
     <!-- this was for a debug UI for subway predictions, to grab predictions direct from the source RT feed -->
     <bean name="subwayStopTimes" class="com.camsys.shims.servlet.HttpRequestSubwayStopTimes">
+        <!-- for DEV testing only -->
+        <property name="overrideFeedToUrl">
+            <map>
+                <entry key="16">
+                    <value>s3://gtfs-rt/nyct/gtfs-nqrw</value>
+                </entry>
+            </map>
+        </property>
+        <property name="feedToProfile">
+            <map>
+                <entry key="16">
+                    <value>mtaqa</value>
+                </entry>
+            </map>
+        </property>
+        <property name="feedToRegion">
+            <map>
+                <entry key="16">
+                    <value>us-east-2</value>
+                </entry>
+            </map>
+        </property>
         <property name="key" value="${datamine.key}" />
     </bean>
 </beans>
