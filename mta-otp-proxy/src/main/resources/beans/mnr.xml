@@ -12,7 +12,7 @@
     </bean>
     <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
         <property name="sourceUrl" value="${mnr.gtfsrt.url}" />
-        <property name="apiKey" value="${mta.api.key:}" />
+        <property name="apiKey" value="${mta.api.key:}" /> <!-- colons allows default value empty -->
         <property name="transformer" ref="mnrTransformer" />
         <property name="deserializer" ref="gtfsrt" />
 <!--        <property name="overrideMimeType" value="application/pb" />-->
