@@ -15,11 +15,7 @@ package com.camsys.shims.util.source;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import com.kurtraschke.nyctrtproxy.FeedManager;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +28,13 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     private static final Logger _log = LoggerFactory.getLogger(TransformingGtfsRealtimeSource.class);
 
+    private static final String feedId = "_default";
+
+    protected FeedManager _feedManager;
+
     protected FeedMessage _feedMessage;
 
     protected GtfsRealtimeTransformer<T> _transformer;
-
-    protected HttpClientConnectionManager _connectionManager;
-
-    protected CloseableHttpClient _httpClient;
 
     protected Deserializer<T> _deserializer;
 
@@ -48,24 +44,15 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     protected String _sourceUrl;
 
-    private String _overrideMimeType;
-
-    private String _apiKey;
-
-    public void setConnectionManager(HttpClientConnectionManager connectionManager) {
-        _connectionManager = connectionManager;
+    public void setFeedManager(FeedManager feedManager) {
+        _feedManager = feedManager;
     }
-
     public void setNTries(int nTries) {
         _nTries = nTries;
     }
 
     public void setRetryDelay(int retryDelay) {
         _retryDelay = retryDelay;
-    }
-
-    public void setSourceUrl(String sourceUrl) {
-        _sourceUrl = sourceUrl;
     }
 
     public void setTransformer(GtfsRealtimeTransformer transformer) {
@@ -76,46 +63,38 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
         this._deserializer = deserializer;
     }
 
-    public void setOverrideMimeType(String overrideMimeType) {
-        _overrideMimeType = overrideMimeType;
-    }
-
-    public void setApiKey(String apiKey) { _apiKey = apiKey; }
 
     @Override
     public void update() {
-        T message = getMessage(_sourceUrl, _deserializer);
+        T message = getMessage(_deserializer);
 
         if (message != null) {
             _feedMessage = _transformer.transform(message);
         }
     }
+    public T getMessage(Deserializer<T> deserializer){
+        if (_feedManager == null) throw new IllegalStateException("_feedManager cannot be null for " + this.getClass().getName() + " and feed=" + feedId);
+        String feedUrl = _feedManager.getFeedOrDefault(String.valueOf(feedId));
+        return getMessage(feedUrl, deserializer);
+    }
 
-    public T getMessage(String sourceUrl, Deserializer<T> deserializer){
-        if (_httpClient == null)
-            _httpClient = HttpClientBuilder.create().setConnectionManager(_connectionManager).build();
 
-        HttpGet get = new HttpGet(sourceUrl);
-        get.setHeader("accept", _overrideMimeType == null ? deserializer.getMimeType() : _overrideMimeType);
-        if (_apiKey != null)
-            get.setHeader("x-api-key", _apiKey);
-
+    public T getMessage(String feedUrl, Deserializer<T> deserializer){
         T message = null;
         for (int tries = 0; tries < _nTries; tries++) {
             try {
-                CloseableHttpResponse response = _httpClient.execute(get);
-                try (InputStream streamContent = response.getEntity().getContent()) {
+                try (InputStream streamContent = _feedManager.getStream(feedUrl, feedId)) {
                     try {
                         message = deserializer.deserialize(streamContent);
                     } catch (Throwable t) {
-                        _log.error("fail for " + sourceUrl);
+                        _log.error("fail for " + feedUrl);
                     }
                     if (message != null)
                         return message;
                     Thread.sleep(_retryDelay * 1000);
                 }
             } catch (Exception e) {
-                _log.error("Error parsing protocol feed: {}", sourceUrl);
+                _log.error("Error parsing protocol feed: {}", feedUrl);
                 e.printStackTrace();
             }
         }

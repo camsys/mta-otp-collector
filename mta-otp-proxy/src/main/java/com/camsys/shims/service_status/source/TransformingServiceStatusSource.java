@@ -5,6 +5,7 @@ import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
+import com.kurtraschke.nyctrtproxy.FeedManager;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -37,6 +38,8 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     protected CloseableHttpClient _httpClient;
 
     protected Deserializer<T> _deserializer;
+
+    protected FeedManager _feedManager;
 
     protected int _nTries = 5;
 

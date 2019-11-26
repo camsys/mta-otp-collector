@@ -3,6 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean name="mnrFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${mnr.gtfsrt.url}</value>
+        </property>
+        <property name="defaultCredential" ref="${mnr.gtfsrt.credential.key}" />
+    </bean>
+
     <!-- Metro North Trip Updates -->
     <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
         <property name="gtfsDataService" ref="mnrGtfsService" />
@@ -11,8 +18,7 @@
         <property name="startDateIsServiceDate" value="${mnr.use_service_date}" />
     </bean>
     <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
-        <property name="sourceUrl" value="${mnr.gtfsrt.url}" />
-        <property name="apiKey" value="${mta.api.key:}" /> <!-- colons allows default value empty -->
+        <property name="feedManager" ref="mnrFeedManager"/>
         <property name="transformer" ref="mnrTransformer" />
         <property name="deserializer" ref="gtfsrt" />
 <!--        <property name="overrideMimeType" value="application/pb" />-->
@@ -41,10 +47,17 @@
     <bean name="mnrStatusResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StatusResultsDeserializer" />
     <bean name="mnrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer.MetroNorthElevatorAlertsTransformer" />
 
+    <bean name="mnrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${mnr.traintime.stations}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
     <bean id="mnrEleTask" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.source.MetroNorthStationsToGtfsRealtimeSources" autowire="byType">
+        <property name="feedManager" ref="mnrEleFeedManager" />
         <property name="transformer" ref="mnrElevatorsTransformer" />
         <property name="deserializer" ref="mnrStationResultsDeserializer" />
-        <property name="sourceUrl" value="${mnr.traintime.stations}" />
         <property name="statusSourceUrl" value="${mnr.traintime.elev}" />
         <property name="statusDeserializer" ref="mnrStatusResultsDeserializer" />
     </bean>
@@ -55,10 +68,17 @@
         <property name="autoExpirySec" value="${gms.alert.expiry}" />
     </bean>
 
+    <bean name="mnrSiriFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${mnr.gms.url}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
     <bean name="mnrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="mnrSiriFeedManager" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="transformer" ref="mnrSiriTransformer" />
-        <property name="sourceUrl" value="${mnr.gms.url}" />
     </bean>
 
     <bean name="mnrAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">

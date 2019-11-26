@@ -28,7 +28,7 @@ public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfs
     @Override
     public void update() {
         List<StatusResults> statusResultsList = new ArrayList<>();
-        StationResults stationResults = (StationResults)getMessage(_sourceUrl, _deserializer);
+        StationResults stationResults = (StationResults)getMessage(_feedManager.getBaseUrl(), _deserializer);
 
         if (stationResults != null) {
             Station[] stations = stationResults.getGetStationsJsonResult();

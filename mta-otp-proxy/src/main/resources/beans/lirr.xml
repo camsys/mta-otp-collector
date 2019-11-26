@@ -3,6 +3,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean name="lirrTUFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${lirr.gtfsrt.url}</value>
+        </property>
+        <property name="defaultCredential" ref="mtaApiCredential" />
+    </bean>
+
     <!-- LIRR trip updates -->
     <bean name="lirrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.deserializer.LIRRFeedMessageDeserializer" />
     <bean id="lirrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LIRRTripUpdateTransformer">
@@ -11,8 +18,7 @@
         <property name="stopIdTransformStrategy" ref="lirrStopIdTransformStrategy" />
     </bean>
     <bean id="lirrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
-        <property name="sourceUrl" value="${lirr.gtfsrt.url}" />
-        <property name="apiKey" value="${mta.api.key:}" />  <!-- colon allows default value empty -->
+        <property name="feedManager" ref="lirrTUFeedManager"/>
         <property name="transformer" ref="lirrTransformer" />
         <property name="deserializer" ref="lirrDeserializer" />
     </bean>
@@ -42,10 +48,17 @@
     <bean name="lirrStationsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.deserializer.StationsDeserializer" />
     <bean name="lirrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.transformer.LirrElevatorAlertsTransformer" />
 
+    <bean name="lirrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${lirr.traintime.elev}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
     <bean id="lirrEleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="feedManager" ref="lirrEleFeedManager"/>
         <property name="transformer" ref="lirrElevatorsTransformer" />
         <property name="deserializer" ref="lirrStationsDeserializer" />
-        <property name="sourceUrl" value="${lirr.traintime.elev}" />
     </bean>
 
     <!-- LIRR service alerts -->
@@ -54,10 +67,17 @@
         <property name="autoExpirySec" value="${gms.alert.expiry}" />
     </bean>
 
+    <bean name="lirrSirFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${lirr.gms.url}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
     <bean name="lirrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="lirrSirFeedManager" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="transformer" ref="lirrSiriTransformer" />
-        <property name="sourceUrl" value="${lirr.gms.url}" />
     </bean>
 
     <bean name="lirrAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">

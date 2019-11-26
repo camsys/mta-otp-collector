@@ -40,31 +40,9 @@
         <property name="cloudwatchNamespace" value="${subway.cloudwatch.namespace}" />
     </bean>
 
-    <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">
-        <!-- for DEV testing only -->
-        <property name="overrideFeedToUrl">
-            <map>
-                <entry key="16">
-                    <value>s3://gtfs-rt/nyct/gtfs-nqrw</value>
-                </entry>
-            </map>
-        </property>
-        <property name="feedToProfile">
-            <map>
-                <entry key="16">
-                    <value>mtaqa</value>
-                </entry>
-            </map>
-        </property>
-        <property name="feedToRegion">
-            <map>
-                <entry key="16">
-                    <value>us-east-2</value>
-                </entry>
-            </map>
-        </property>
 
-        <property name="key" value="${datamine.key}" />
+    <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">
+        <property name="feedManager" ref="subwayFeedManager" />
         <property name="tripUpdatesSink" ref="subwayTuExporter" />
         <property name="feedIds" value="[1, 2, 11, 16, 21, 26, 31, 36, 51]" />
     </bean>
@@ -86,11 +64,18 @@
     <bean id="subwayServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
         <property name="source" ref="subwayAlertTask" />
     </bean>
+    <bean name="subwayAlertsFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${subway.gms.url}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
 
     <bean name="subwayStatusAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="subwayAlertsFeedManager" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="transformer" ref="siriTransformer" />
-        <property name="sourceUrl" value="${subway.gms.url}" />
     </bean>
 
     <!-- Subway Elevators -->
@@ -98,40 +83,59 @@
     <bean name="elevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer.SubwayElevatorsTransformer">
         <property name="stopsProvider" ref="subwayElevatorProvider" />
     </bean>
+    <bean name="subwayElevatorsFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${subway.elev.url}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
     <bean id="subwayElevatorAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="feedManager" ref="subwayElevatorsFeedManager" />
         <property name="transformer" ref="elevatorsTransformer" />
         <property name="deserializer" ref="elevatorsDeserializer" />
-        <property name="sourceUrl" value="${subway.elev.url}" />
     </bean>
     <bean id="subwayElevatorProvider" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider.S3CsvElevatorToStopsProvider" init-method="init">
         <property name="url" value="${subway.elev.csv}" />
     </bean>
 
+    <bean name="subwayFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>http://datamine.mta.info/mta_esi.php</value>
+        </property>
+        <property name="defaultCredential" ref="datamineApiCredential" />
+        <!-- for DEV testing only -->
+        <property name="feedToUrlOverride">
+            <map>
+                <entry key="1" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs" />
+                <entry key="2" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-l" />
+                <entry key="11" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si" />
+                <entry key="16" value="s3://gtfs-rt/nyct/gtfs-nqrw" />
+                <entry key="21" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm" />
+                <entry key="26" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace" />
+                <entry key="31" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g" />
+                <entry key="36" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz" />
+                <entry key="51" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7" />
 
+            </map>
+        </property>
+        <property name="feedToCredentialOverride">
+            <map>
+                <entry key="1" value-ref="mtaApiCredential" />
+                <entry key="2" value-ref="mtaApiCredential" />
+                <entry key="11" value-ref="mtaApiCredential" />
+                <entry key="16" value-ref="mtaqaApiCredential" />
+                <entry key="21" value-ref="mtaApiCredential" />
+                <entry key="26" value-ref="mtaApiCredential" />
+                <entry key="31" value-ref="mtaApiCredential" />
+                <entry key="36" value-ref="mtaApiCredential" />
+                <entry key="51" value-ref="mtaApiCredential" />
+            </map>
+        </property>
+
+    </bean>
     <!-- this was for a debug UI for subway predictions, to grab predictions direct from the source RT feed -->
     <bean name="subwayStopTimes" class="com.camsys.shims.servlet.HttpRequestSubwayStopTimes">
-        <!-- for DEV testing only -->
-        <property name="overrideFeedToUrl">
-            <map>
-                <entry key="16">
-                    <value>s3://gtfs-rt/nyct/gtfs-nqrw</value>
-                </entry>
-            </map>
-        </property>
-        <property name="feedToProfile">
-            <map>
-                <entry key="16">
-                    <value>mtaqa</value>
-                </entry>
-            </map>
-        </property>
-        <property name="feedToRegion">
-            <map>
-                <entry key="16">
-                    <value>us-east-2</value>
-                </entry>
-            </map>
-        </property>
-        <property name="key" value="${datamine.key}" />
+    <property name="feedManager" ref="subwayFeedManager" />
     </bean>
 </beans>
