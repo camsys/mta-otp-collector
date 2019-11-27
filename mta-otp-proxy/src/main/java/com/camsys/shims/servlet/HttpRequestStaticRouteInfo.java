@@ -15,6 +15,7 @@ import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.services.GtfsDataService;
 
+import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +68,10 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
 
     @Override
     protected RouteInfo getData(String routeId) {
+        if (routeId == null )
+            throw new RuntimeException("Supply routeId");
+        if (!routeId.contains(":"))
+            throw new RuntimeException("routeId format expected of <feedId>:<routeId>");
         // lookup injected source file
         // download and load
         getShapeTransformer().loadUrl(_shapeUrl);
