@@ -13,6 +13,12 @@
         </property>
         <property name="defaultCredential" ref="NoOpCredential" />
     </bean>
+    <bean name="busAlertsLMMFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${bus.lmm.url}</value>
+        </property>
+        <property name="defaultCredential" ref="lmmCredential" />
+    </bean>
 
     <bean id="busTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
         <property name="feedManager" ref="busManager" />
@@ -31,11 +37,27 @@
     </bean>
 
     <!-- Bus service alerts -->
-    <bean name="busAlertTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+    <bean name="busAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="busLMMAlerts" />
+                <ref bean="busSiriAlerts" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean name="busSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
         <property name="feedManager" ref="busAlertManager" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="transformer" ref="siriTransformer" />
     </bean>
+
+    <bean name="busLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="busAlertsLMMFeedManager" />
+        <property name="deserializer" ref="gtfsrt" />
+        <property name="transformer" ref="forwarderTransformer" />
+    </bean>
+
 
     <bean id="busServiceAlertMergeTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
         <constructor-arg>

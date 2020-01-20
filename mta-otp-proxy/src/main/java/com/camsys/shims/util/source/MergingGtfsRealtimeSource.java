@@ -17,7 +17,10 @@ import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import org.apache.commons.lang.NotImplementedException;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -25,6 +28,7 @@ import java.util.Set;
 
 public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
 
+    private static final Logger _log = LoggerFactory.getLogger(MergingGtfsRealtimeSource.class);
     private List<GtfsRealtimeSource> sources;
 
     private FeedMessage message;
@@ -40,28 +44,44 @@ public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
 
     @Override
     public void update() {
+        List<GtfsRealtimeSource> successfulSources = new ArrayList<GtfsRealtimeSource>();
         for (GtfsRealtimeSource source : sources) {
             if (source instanceof UpdatingGtfsRealtimeSource) {
-                ((UpdatingGtfsRealtimeSource) source).update();
+                try {
+                    ((UpdatingGtfsRealtimeSource) source).update();
+                    successfulSources.add(source);
+                } catch (Throwable t) {
+                    _log.error("update failed for source " + source, t);
+                }
             }
         }
         FeedMessage.Builder message = FeedMessage.newBuilder();
         Set<String> ids = new HashSet<>();
-        for (GtfsRealtimeSource source : sources) {
-            FeedMessage feed = source.getFeed();
-            if (!message.hasHeader()) {
-                message.setHeader(feed.getHeader());
-            }
-            for (FeedEntity entity : feed.getEntityList()) {
-                String id = entity.getId();
-                if (ids.contains(id)) {
-                    id = id + " " + new Random().nextInt();
-                    ids.add(id);
-                    entity = entity.toBuilder().setId(id).build();
+        for (GtfsRealtimeSource source : successfulSources) {
+            try {
+                FeedMessage feed = source.getFeed();
+                if (feed == null) {
+                    continue;
                 }
-                message.addEntity(entity);
-            }
+                if (!message.hasHeader()) {
+                    message.setHeader(feed.getHeader());
+                }
+                if (feed.getEntityList() == null) {
+                    continue;
+                }
+                for (FeedEntity entity : feed.getEntityList()) {
+                    String id = entity.getId();
+                    if (ids.contains(id)) {
+                        id = id + " " + new Random().nextInt();
+                        ids.add(id);
+                        entity = entity.toBuilder().setId(id).build();
+                    }
+                    message.addEntity(entity);
+                }
+            } catch (Throwable tt) {
+                _log.error("Exception:", tt);
         }
+    }
         this.message = message.build();
     }
 

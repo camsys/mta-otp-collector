@@ -66,16 +66,26 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     @Override
     public void update() {
-        T message = getMessage(_deserializer);
+        try {
+            T message = getMessage(_deserializer);
 
-        if (message != null) {
-            _feedMessage = _transformer.transform(message);
+            if (message != null) {
+                _feedMessage = _transformer.transform(message);
+            }
+        } catch (Throwable t) {
+            _log.error("update failed:", t);
         }
     }
     public T getMessage(Deserializer<T> deserializer){
-        if (_feedManager == null) throw new IllegalStateException("_feedManager cannot be null for " + this.getClass().getName() + " and feed=" + feedId);
-        String feedUrl = _feedManager.getFeedOrDefault(String.valueOf(feedId));
-        return getMessage(feedUrl, deserializer);
+        try {
+            if (_feedManager == null)
+                throw new IllegalStateException("_feedManager cannot be null for " + this.getClass().getName() + " and feed=" + feedId);
+            String feedUrl = _feedManager.getFeedOrDefault(String.valueOf(feedId));
+            return getMessage(feedUrl, deserializer);
+        } catch (Throwable t) {
+            _log.error("getMessage failed: ", t);
+        }
+        return null;
     }
 
 

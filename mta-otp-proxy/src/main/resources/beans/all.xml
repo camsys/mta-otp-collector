@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+
+    <bean id="allServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="allAlertTask" />
+    </bean>
+    <bean name="allAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="busLMMAlerts" />
+                <ref bean="busSiriAlerts" />
+                <ref bean="subwayLMMAlerts" />
+                <ref bean="subwayStatusAlerts" />
+                <ref bean="subwayElevatorAlerts" />
+                <ref bean="mnrSiriAlerts" />
+                <ref bean="mnrLMMAlerts" />
+<!--                <ref bean="mnrEleTask" />-->
+                <ref bean="lirrSiriAlerts" />
+                <ref bean="lirrLMMAlerts" />
+                <ref bean="lirrEleTask" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

@@ -11,7 +11,6 @@
     <bean name="siriDeserializerWithModifications" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
         <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
     </bean>
-
     <!-- shared resources -->
     <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
     <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
@@ -22,6 +21,8 @@
     <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
         <property name="autoExpirySec" value="${gms.alert.expiry}" />
     </bean>
+    <bean name="forwarderTransformer" class="com.camsys.shims.gtfsrt.alerts.ForwarderTransformer" />
+
     <bean name="atisGtfsMap" class="com.camsys.shims.atis.AtisGtfsMap" init-method="init" />
     <bean name="routeNameGtfsMap" class="com.camsys.shims.util.gtfs.RouteNameGtfsMap" init-method="init" />
 
@@ -62,6 +63,12 @@
         <property name="key" value="${mta.api.key}" />
         <property name="keyName" value="x-api-key" />
     </bean>
+    <bean id="lmmCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="application/x-protobuf" />
+        <property name="keyName" value="Accept" />
+    </bean>
+
     <bean id="datamineApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
         <property name="type" value="api_key_param" />
         <property name="key" value="${datamine.key}" />
@@ -85,6 +92,7 @@
 
     <context:property-placeholder location="classpath:collector.properties" />
     <context:property-placeholder location="classpath:maven-version.properties" />
+
 
 
 </beans>

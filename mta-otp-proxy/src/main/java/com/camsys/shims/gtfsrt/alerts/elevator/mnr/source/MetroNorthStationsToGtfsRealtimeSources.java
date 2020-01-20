@@ -6,6 +6,8 @@ import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StationResults;
 import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StatusResults;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.camsys.shims.util.source.TransformingGtfsRealtimeSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
  */
 public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfsRealtimeSource {
 
+    private final Logger _log = LoggerFactory.getLogger(MetroNorthStationsToGtfsRealtimeSources.class);
     private String _statusSourceUrl;
 
     private Deserializer<T> _statusDeserializer;
@@ -27,22 +30,26 @@ public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfs
 
     @Override
     public void update() {
-        List<StatusResults> statusResultsList = new ArrayList<>();
-        StationResults stationResults = (StationResults)getMessage(_feedManager.getBaseUrl(), _deserializer);
+        try {
+            List<StatusResults> statusResultsList = new ArrayList<>();
+            StationResults stationResults = (StationResults) getMessage(_feedManager.getBaseUrl(), _deserializer);
 
-        if (stationResults != null) {
-            Station[] stations = stationResults.getGetStationsJsonResult();
-            for(Station station : stations){
-                if(station.getStationID() != null) {
-                    StatusResults statusResults = (StatusResults) getMessage(getStatusSourceUrlWithStation(station.getStationID()),_statusDeserializer);
-                    if (statusResults != null) {
-                        statusResultsList.add(statusResults);
+            if (stationResults != null) {
+                Station[] stations = stationResults.getGetStationsJsonResult();
+                for (Station station : stations) {
+                    if (station.getStationID() != null) {
+                        StatusResults statusResults = (StatusResults) getMessage(getStatusSourceUrlWithStation(station.getStationID()), _statusDeserializer);
+                        if (statusResults != null) {
+                            statusResultsList.add(statusResults);
+                        }
                     }
                 }
+                if (statusResultsList.size() > 0) {
+                    _feedMessage = _transformer.transform(statusResultsList);
+                }
             }
-            if (statusResultsList.size() > 0) {
-                _feedMessage = _transformer.transform(statusResultsList);
-            }
+        } catch (Throwable t) {
+            _log.error("update failed:", t);
         }
     }
 

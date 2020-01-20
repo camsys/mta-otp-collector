@@ -55,6 +55,7 @@
     <bean name="subwayAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
         <constructor-arg>
             <list>
+                <ref bean="subwayLMMAlerts" />
                 <ref bean="subwayStatusAlerts" />
                 <ref bean="subwayElevatorAlerts" />
             </list>
@@ -71,11 +72,24 @@
         <property name="defaultCredential" ref="NoOpCredential" />
     </bean>
 
+    <bean name="subwayAlertsLMMFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${subway.lmm.url}</value>
+        </property>
+        <property name="defaultCredential" ref="lmmCredential" />
+    </bean>
+
 
     <bean name="subwayStatusAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
         <property name="feedManager" ref="subwayAlertsFeedManager" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="transformer" ref="siriTransformer" />
+    </bean>
+
+    <bean name="subwayLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="subwayAlertsLMMFeedManager" />
+        <property name="deserializer" ref="gtfsrt" />
+        <property name="transformer" ref="forwarderTransformer" />
     </bean>
 
     <!-- Subway Elevators -->
