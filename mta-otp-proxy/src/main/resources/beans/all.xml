@@ -20,7 +20,7 @@
                 <ref bean="subwayElevatorAlerts" />
                 <ref bean="mnrSiriAlerts" />
                 <ref bean="mnrLMMAlerts" />
-<!--                <ref bean="mnrEleTask" />-->
+                <ref bean="mnrEleTask" />
                 <ref bean="lirrSiriAlerts" />
                 <ref bean="lirrLMMAlerts" />
                 <ref bean="lirrEleTask" />
