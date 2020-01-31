@@ -30,6 +30,8 @@ public class MergingServiceStatusSource implements ServiceStatusSource
         List<RouteDetail> allRouteDetails = new ArrayList<>();
         for (ServiceStatusSource source : _sources) {
             source.update();
+            if (source.getStatus(null) == null || source.getStatus(null).getRouteDetails() == null)
+                continue;
             allRouteDetails.addAll(source.getStatus(null).getRouteDetails());
         }
         _serviceStatus = new ServiceStatus(new Date(), allRouteDetails);

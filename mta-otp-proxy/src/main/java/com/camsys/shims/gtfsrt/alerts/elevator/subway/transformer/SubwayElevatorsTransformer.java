@@ -101,6 +101,8 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
         } catch(ParseException ex) {
             ex.printStackTrace();
             return 0;
+        } catch (NullPointerException npe) {
+            return 0;
         }
     }
 
