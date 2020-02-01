@@ -31,23 +31,30 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     public List<RouteDetail> transform(GtfsRealtime.FeedMessage obj, String mode, GtfsDataService gtfsDataService,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
         ArrayList<RouteDetail> routeDetails = new ArrayList<>();
+        int sortOrder = 0;
         if (obj == null) return routeDetails;
         for (GtfsRealtime.FeedEntity feedEntity : obj.getEntityList()) {
             if (feedEntity.hasAlert()) {
                 GtfsRealtime.Alert alert = feedEntity.getAlert();
                 if (!validAlert(alert)) continue;
-                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, alert));
+                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, alert, sortOrder));
+                sortOrder++;
             }
         }
         _log.info("returning " + routeDetails + " route detail objects");
         return routeDetails;
     }
 
-    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.Alert alert) {
+    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.Alert alert, int sortOrder) {
         RouteDetail rd = new RouteDetail();
+        rd.setRouteSortOrder(sortOrder);
+        rd.setInService(true);
         rd.setStatusDetails(new HashSet<StatusDetail>());
         for (GtfsRealtime.EntitySelector informedEntity : alert.getInformedEntityList()) {
             rd.setAgency(informedEntity.getAgencyId());
+            if (informedEntity.getAgencyId() == null || informedEntity.getAgencyId().length() == 0) {
+                rd.setAgency("MTASBWY");
+            }
 
             if (informedEntity.hasRouteId()) {
                 if (informedEntity.hasAgencyId() && informedEntity.getRouteId().length() > 0) {
