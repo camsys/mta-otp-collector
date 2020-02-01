@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,6 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
     private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.Alert alert) {
         RouteDetail rd = new RouteDetail();
-
         rd.setStatusDetails(new HashSet<StatusDetail>());
         for (GtfsRealtime.EntitySelector informedEntity : alert.getInformedEntityList()) {
             rd.setAgency(informedEntity.getAgencyId());
@@ -87,8 +87,13 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         sd1.setStatusSummary(alert.getHeaderText().getTranslation(0).getText());
         sd1.setStatusDescription(alert.getDescriptionText().getTranslation(0).getText());
         sd1.setDirection("0");
+        // TODO provide real dates
+        sd1.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
+        sd1.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
         // TODO check feed for this info
         StatusDetail sd2 = new StatusDetail();
+        sd2.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
+        sd2.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
         sd2.setDirection("1");
         statusDetails.add(sd2);
         sd2.setStatusSummary(sd1.getStatusSummary());
