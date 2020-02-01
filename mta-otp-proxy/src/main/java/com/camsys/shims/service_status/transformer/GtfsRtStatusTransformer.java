@@ -111,14 +111,14 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         sd1.setPriority(BigInteger.valueOf(6));
         //sd1.setCreationDate(new Date());
         // TODO provide real dates
-        sd1.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
-        sd1.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
+//        sd1.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
+//        sd1.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
         // TODO check feed for this info
         StatusDetail sd2 = new StatusDetail();
         sd2.setPriority(BigInteger.valueOf(6));
         //sd2.setCreationDate(new Date());
-        sd2.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
-        sd2.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
+//        sd2.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
+//        sd2.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
         sd2.setDirection("1");
         statusDetails.add(sd2);
         sd2.setStatusSummary(sd1.getStatusSummary());
