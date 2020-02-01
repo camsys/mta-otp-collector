@@ -8,12 +8,14 @@ import com.google.transit.realtime.GtfsRealtime;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.services.GtfsDataService;
+import org.onebusaway.transit_data_federation.services.AgencyAndIdLibrary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +49,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
     private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.Alert alert, int sortOrder) {
         RouteDetail rd = new RouteDetail();
+
         rd.setRouteSortOrder(sortOrder);
         rd.setInService(true);
         rd.setStatusDetails(new HashSet<StatusDetail>());
@@ -76,12 +79,21 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
             }
             rd.getStatusDetails().addAll(getStatusDetailFromAlert(alert));
             rd.setMode(mode);
-            Route route = gtfsDataService.getRouteForId(new AgencyAndId("MTASBWY", rd.getRouteId()));
+            Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
             if (route == null) {
+                for (Route aRoute : gtfsDataService.getAllRoutes()) {
+                    if (rd.getRouteId().equals(aRoute.getId().getId())) {
+                        _log.error("route not found, but exists as " + aRoute.getId());
+                    }
+                }
+                rd.setColor("black");
+                rd.setRouteName(rd.getRouteId());
+                rd.setRouteType(1);
                 _log.warn("could not find route = " + new AgencyAndId("MTASBWY", rd.getRouteId()));
             } else {
                 rd.setColor(route.getColor());
                 rd.setRouteType(route.getType());
+                rd.setRouteName(route.getShortName());
             }
 
         }
