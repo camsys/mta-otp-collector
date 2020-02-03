@@ -71,7 +71,7 @@
         <constructor-arg>
             <list>
                 <ref bean="busServiceStatusTask" />
-<!--                <ref bean="subwayServiceStatusTask" />-->
+                <ref bean="subwayServiceStatusTask" />
                 <ref bean="subwayLMMServiceStatusTask" />
                 <ref bean="mnrServiceStatusTask" />
                 <ref bean="lirrServiceStatusTask" />
