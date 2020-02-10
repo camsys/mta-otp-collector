@@ -39,7 +39,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
             if (feedEntity.hasAlert()) {
                 GtfsRealtime.Alert alert = feedEntity.getAlert();
                 if (!validAlert(alert)) continue;
-                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, alert, sortOrder));
+                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, sortOrder));
                 sortOrder++;
             }
         }
@@ -47,13 +47,13 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return routeDetails;
     }
 
-    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.Alert alert, int sortOrder) {
+    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.FeedEntity entity, int sortOrder) {
         RouteDetail rd = new RouteDetail();
 
         rd.setRouteSortOrder(sortOrder);
         rd.setInService(true);
         rd.setStatusDetails(new HashSet<StatusDetail>());
-        for (GtfsRealtime.EntitySelector informedEntity : alert.getInformedEntityList()) {
+        for (GtfsRealtime.EntitySelector informedEntity : entity.getAlert().getInformedEntityList()) {
             rd.setAgency(informedEntity.getAgencyId());
             if (informedEntity.getAgencyId() == null || informedEntity.getAgencyId().length() == 0) {
                 rd.setAgency("MTASBWY");
@@ -77,7 +77,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                     }
                 }
             }
-            rd.getStatusDetails().addAll(getStatusDetailFromAlert(alert));
+            rd.getStatusDetails().addAll(getStatusDetailFromAlert(entity));
             rd.setMode(mode);
             Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
             if (route == null) {
@@ -100,10 +100,13 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return rd;
     }
 
-    private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.Alert alert) {
+    private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.FeedEntity entity) {
+        GtfsRealtime.Alert alert = entity.getAlert();
         List<StatusDetail> statusDetails = new ArrayList<>();
 
         StatusDetail sd1 = new StatusDetail();
+        if (entity.hasId())
+            sd1.setId(entity.getId());
         statusDetails.add(sd1);
         sd1.setStatusSummary(alert.getHeaderText().getTranslation(0).getText());
         sd1.setStatusDescription(alert.getDescriptionText().getTranslation(0).getText());
@@ -115,6 +118,8 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 //        sd1.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
         // TODO check feed for this info
         StatusDetail sd2 = new StatusDetail();
+        if (entity.hasId())
+            sd2.setId(entity.getId());
         sd2.setPriority(BigInteger.valueOf(6));
         sd2.setCreationDate(new Date());
 //        sd2.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));

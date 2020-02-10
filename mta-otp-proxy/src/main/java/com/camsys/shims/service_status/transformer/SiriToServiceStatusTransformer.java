@@ -116,12 +116,17 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     private StatusDetail generateStatusDetail(ExtendedServiceAlertBean alertBean, SituationAffectsBean affectsBean){
 
         StatusDetail statusDetail = new StatusDetail();
+        if (alertBean.getId() != null) {
+            statusDetail.setId(alertBean.getId());
+        }
+
         if(StringUtils.isNotBlank(alertBean.getReason())){
             statusDetail.setStatusSummary(alertBean.getReason());
         }
         if(alertBean.getDescriptions() != null && alertBean.getDescriptions().size() > 0){
             statusDetail.setStatusDescription(alertBean.getDescriptions().get(0).getValue());
         }
+
         if(alertBean.getCreationTime() > 0){
             statusDetail.setCreationDate(new Date(alertBean.getCreationTime()));
         }

@@ -123,6 +123,7 @@ public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Ser
     private Set<StatusDetail> generateStatusDetails(Line line){
         Set<StatusDetail> statusDetails = new HashSet<>();
         StatusDetail statusDetail = new StatusDetail();
+        statusDetail.setId(line.getId());
         statusDetail.setStatusSummary(WordUtils.capitalize(line.getStatus()));
         statusDetail.setDirection(DEFAULT_DIRECTION);
         statusDetail.setStatusDescription(_htmlCleanupUtil.filterHtml(line.getText()));

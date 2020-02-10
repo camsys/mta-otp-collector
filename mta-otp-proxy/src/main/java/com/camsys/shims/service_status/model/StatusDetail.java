@@ -8,6 +8,8 @@ import java.util.Date;
 
 public class StatusDetail {
 
+    private String id;
+
     private String statusSummary;
 
     private String statusDescription;
@@ -21,6 +23,11 @@ public class StatusDetail {
     private Date startDate;
 
     private Date endDate;
+
+    @JsonProperty("id")
+    public String getId() { return id; }
+
+    public void setId(String id) { this.id = id; }
 
     @JsonProperty("statusSummary")
     public String getStatusSummary() {
