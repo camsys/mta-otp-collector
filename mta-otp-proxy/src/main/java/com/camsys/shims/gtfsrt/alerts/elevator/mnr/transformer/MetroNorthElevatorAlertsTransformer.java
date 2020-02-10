@@ -34,6 +34,8 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
 
     private static final String WORKING_STATUS = "1";
 
+    private static final String MNR_AGENCY = "MNR";
+
 
     @Override
     public FeedMessage transform(List<StatusResults> statusResultsList) {
@@ -60,7 +62,10 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
 
     private FeedEntity statusToEntity(Status status) {
         Alert.Builder alert = Alert.newBuilder();
-        alert.addInformedEntity(EntitySelector.newBuilder().setStopId(status.getStationID()));
+        EntitySelector.Builder informedEntity = EntitySelector.newBuilder();
+        informedEntity.setAgencyId(MNR_AGENCY);
+        informedEntity.setStopId(status.getStationID());
+        alert.addInformedEntity(informedEntity);
         String desc = status.getDescription() + OUT_OF_SERVICE;
         alert.setHeaderText(translatedString(desc ));
         alert.setDescriptionText(translatedString(desc ));

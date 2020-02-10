@@ -37,6 +37,8 @@ public class LirrElevatorAlertsTransformer implements GtfsRealtimeTransformer<Li
 
     private static final String OUT_OF_SERVICE = " is out of service.";
 
+    private static final String LIRR_AGENCY = "LI";
+
     @Override
     public FeedMessage transform(LirrStationsWrapper stationsWrapper) {
         FeedMessage.Builder message = FeedMessage.newBuilder();
@@ -68,7 +70,10 @@ public class LirrElevatorAlertsTransformer implements GtfsRealtimeTransformer<Li
 
     private FeedEntity statusToEntity(String stationId, Elevator elevator) {
         Alert.Builder alert = Alert.newBuilder();
-        alert.addInformedEntity(EntitySelector.newBuilder().setStopId(stationId));
+        EntitySelector.Builder informedEntity = EntitySelector.newBuilder();
+        informedEntity.setAgencyId(LIRR_AGENCY);
+        informedEntity.setStopId(stationId);
+        alert.addInformedEntity(informedEntity);
         String desc = ELEVATOR_AT + elevator.getLocation() + OUT_OF_SERVICE;
         alert.setHeaderText(translatedString(desc));
         alert.setDescriptionText(translatedString(desc));
