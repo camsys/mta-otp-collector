@@ -21,8 +21,12 @@ import com.google.transit.realtime.GtfsRealtimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Map;
 
 public class LirrElevatorAlertsTransformer implements GtfsRealtimeTransformer<LirrStationsWrapper> {
@@ -79,8 +83,28 @@ public class LirrElevatorAlertsTransformer implements GtfsRealtimeTransformer<Li
         alert.setDescriptionText(translatedString(desc));
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
-                .setId(stationId);
+                .setId(hashAlert(stationId, elevator));
         return builder.build();
+    }
+
+    private String hashAlert(String stationId, Elevator elevator) {
+        try {
+            MessageDigest hashFunction = null;
+            hashFunction = MessageDigest.getInstance("MD5");
+            StringBuilder input = new StringBuilder();
+            input.append(LIRR_AGENCY);
+            input.append(stationId);
+            input.append(elevator.getStatus());
+            input.append(elevator.getLocation());
+            byte[] hash = hashFunction.digest(input.toString().getBytes("UTF-8"));
+            return LIRR_AGENCY + "_" + Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            _log.error("MD5 not supported!");
+            return stationId;
+        } catch (UnsupportedEncodingException uee) {
+            _log.error("string conversion failed!");
+            return stationId;
+        }
     }
 
 
