@@ -105,25 +105,35 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         List<StatusDetail> statusDetails = new ArrayList<>();
 
         StatusDetail sd1 = new StatusDetail();
-        if (entity.hasId())
-            sd1.setId(entity.getId());
+        StatusDetail sd2 = new StatusDetail();
+
+        if (entity.hasId()) {
+            if (dateEncodedid(entity.getId())) {
+                // new convention to ids:  lmm:<epoch creation date in milliseconds>:<entity_id>
+                // confirm id is as expected
+                // if as expected parse creation date
+                sd1.setId(entity.getId());
+                sd1.setCreationDate(getDateFromId(entity.getId()));
+                sd2.setId(entity.getId());
+                sd2.setCreationDate(getDateFromId(entity.getId()));
+            } else {
+                // otherwise store the id as is, and set creation date to be now
+                sd1.setId(entity.getId());
+                sd1.setCreationDate(new Date());
+                sd2.setId(entity.getId());
+                sd2.setCreationDate(new Date());
+;            }
+
+        }
         statusDetails.add(sd1);
         sd1.setStatusSummary(alert.getHeaderText().getTranslation(0).getText());
         sd1.setStatusDescription(alert.getDescriptionText().getTranslation(0).getText());
         sd1.setDirection("0");
         sd1.setPriority(BigInteger.valueOf(6));
-        sd1.setCreationDate(new Date());
-        // TODO provide real dates
-//        sd1.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
-//        sd1.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
-        // TODO check feed for this info
-        StatusDetail sd2 = new StatusDetail();
-        if (entity.hasId())
-            sd2.setId(entity.getId());
+
+
         sd2.setPriority(BigInteger.valueOf(6));
-        sd2.setCreationDate(new Date());
-//        sd2.setStartDate(new Date(System.currentTimeMillis()-12*24*60*60*1000));
-//        sd2.setEndDate(new Date(System.currentTimeMillis()+12*24*60*60*1000));
+
         sd2.setDirection("1");
         statusDetails.add(sd2);
         sd2.setStatusSummary(sd1.getStatusSummary());
@@ -131,6 +141,25 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return statusDetails;
 
     }
+
+    private boolean dateEncodedid(String id) {
+        // TODO compile this expression
+        String regex = "lmm:\\d{13}:\\d*";
+        return id.matches(regex);
+    }
+
+    private Date getDateFromId(String id) {
+        int start = id.indexOf(':');
+        int end = id.indexOf(':', start+1);
+        try {
+            long millis = Long.parseLong(id.substring(start + 1, end));
+            return new Date(millis);
+        } catch (NumberFormatException nfe) {
+            _log.error("unexpected date epoch=" + id.substring(start + 1, end) + " from id=" + id);
+            return new Date();
+        }
+    }
+
     private boolean validAlert(GtfsRealtime.Alert alert) {
         if (alert.getInformedEntityList().isEmpty()) return false;
         if (!alert.getInformedEntity(0).hasRouteId()) return false;
