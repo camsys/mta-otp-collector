@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import java.util.regex.Pattern;
 /**
  * build service status from GTFS-RT.
  */
@@ -29,6 +29,9 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     private static final Logger _log = LoggerFactory.getLogger(ServiceStatusTransformer.class);
 
     private static final String DEFAULT_AGENCY = "MTASBWY";
+
+    private static final Pattern lmmRegex = Pattern.compile("lmm:\\d{13}:\\d*");
+
     @Override
     public List<RouteDetail> transform(GtfsRealtime.FeedMessage obj, String mode, GtfsDataService gtfsDataService,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
@@ -143,9 +146,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     }
 
     private boolean dateEncodedid(String id) {
-        // TODO compile this expression
-        String regex = "lmm:\\d{13}:\\d*";
-        return id.matches(regex);
+        return lmmRegex.matcher(id).matches();
     }
 
     private Date getDateFromId(String id) {
