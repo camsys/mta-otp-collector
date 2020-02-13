@@ -81,6 +81,10 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                 }
             }
             rd.getStatusDetails().addAll(getStatusDetailFromAlert(entity));
+            // set last updated so filtering works
+            if (!rd.getStatusDetails().isEmpty()) {
+                rd.setLastUpdated(rd.getStatusDetails().iterator().next().getCreationDate());
+            }
             rd.setMode(mode);
             Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
             if (route == null) {
