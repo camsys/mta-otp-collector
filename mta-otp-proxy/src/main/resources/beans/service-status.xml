@@ -109,6 +109,15 @@
                 <ref bean="njtRailServiceStatusTask" />
             </list>
         </constructor-arg>
+        <property name="subwayGtfsDataService" ref="subwayGtfsService"/>
+        <property name="busGtfsDataService" ref="busGtfsService" />
+        <property name="lirrGtfsDataService" ref="lirrGtfsService" />
+        <property name="mnrGtfsDataService" ref="mnrGtfsService" />
+        <property name="bannedRouteIds">
+            <array>
+                <value>MTASBWY_FS</value>
+            </array>
+        </property>
     </bean>
 
     <bean id="serviceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">
