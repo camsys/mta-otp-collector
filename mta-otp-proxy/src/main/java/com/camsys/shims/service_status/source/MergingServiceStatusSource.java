@@ -78,8 +78,16 @@ public class MergingServiceStatusSource implements ServiceStatusSource
                 continue;
             allRouteDetails.addAll(source.getStatus(null).getRouteDetails());
         }
-        _serviceStatus = new ServiceStatus(new Date(), filterHiddenRoutes(addGoodService(allRouteDetails)));
+        _serviceStatus = new ServiceStatus(new Date(), filterHiddenRoutes(ensureDates(addGoodService(allRouteDetails))));
 
+    }
+
+    private List<RouteDetail> ensureDates(List<RouteDetail> routeDetails) {
+        for (RouteDetail rd : routeDetails) {
+            if (rd.getLastUpdated() == null)
+                rd.setLastUpdated(new Date());
+        }
+        return routeDetails;
     }
 
     private List<RouteDetail> filterHiddenRoutes(List<RouteDetail> allService) {
