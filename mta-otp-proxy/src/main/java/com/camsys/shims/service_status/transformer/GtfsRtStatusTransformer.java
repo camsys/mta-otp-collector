@@ -5,6 +5,7 @@ import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.StatusDetail;
 
 import com.google.transit.realtime.GtfsRealtime;
+import com.google.transit.realtime.GtfsRealtimeServiceStatus;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.services.GtfsDataService;
@@ -41,8 +42,13 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         for (GtfsRealtime.FeedEntity feedEntity : obj.getEntityList()) {
             if (feedEntity.hasAlert()) {
                 GtfsRealtime.Alert alert = feedEntity.getAlert();
+                GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert =  null;
+                if (alert.hasExtension(GtfsRealtimeServiceStatus.mercuryAlert)) {
+                    mercuryAlert =
+                            alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
+                }
                 if (!validAlert(alert)) continue;
-                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, sortOrder));
+                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, mercuryAlert, sortOrder));
                 sortOrder++;
             }
         }
@@ -50,9 +56,13 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return routeDetails;
     }
 
-    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.FeedEntity entity, int sortOrder) {
+    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.FeedEntity entity,
+                                                GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert, int sortOrder) {
         RouteDetail rd = new RouteDetail();
-
+        if (mercuryAlert != null) {
+            if (mercuryAlert.hasUpdatedAt())
+                rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt()));
+        }
         rd.setRouteSortOrder(sortOrder);
         rd.setInService(true);
         rd.setStatusDetails(new HashSet<StatusDetail>());
@@ -80,9 +90,10 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                     }
                 }
             }
-            rd.getStatusDetails().addAll(getStatusDetailFromAlert(entity));
+            rd.getStatusDetails().addAll(getStatusDetailFromAlert(entity, mercuryAlert));
             // set last updated so filtering works
-            if (!rd.getStatusDetails().isEmpty()) {
+            if (!rd.getStatusDetails().isEmpty() && rd.getLastUpdated() == null) {
+                // make sure we have a last updated or filtering will fail
                 rd.setLastUpdated(rd.getStatusDetails().iterator().next().getCreationDate());
             }
             rd.setMode(mode);
@@ -107,45 +118,77 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return rd;
     }
 
-    private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.FeedEntity entity) {
+    private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.FeedEntity entity, GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert) {
         GtfsRealtime.Alert alert = entity.getAlert();
         List<StatusDetail> statusDetails = new ArrayList<>();
 
         StatusDetail sd1 = new StatusDetail();
         StatusDetail sd2 = new StatusDetail();
 
-        if (entity.hasId()) {
-            if (dateEncodedid(entity.getId())) {
-                // new convention to ids:  lmm:<epoch creation date in milliseconds>:<entity_id>
-                // confirm id is as expected
-                // if as expected parse creation date
-                sd1.setId(entity.getId());
-                sd1.setCreationDate(getDateFromId(entity.getId()));
-                sd2.setId(entity.getId());
-                sd2.setCreationDate(getDateFromId(entity.getId()));
-            } else {
-                // otherwise store the id as is, and set creation date to be now
-                sd1.setId(entity.getId());
-                sd1.setCreationDate(new Date());
-                sd2.setId(entity.getId());
-                sd2.setCreationDate(new Date());
-;            }
+        if (mercuryAlert != null && mercuryAlert.hasCreatedAt()) {
+            // if we have an explicit creation date prefer that
+            sd1.setCreationDate(new Date(mercuryAlert.getCreatedAt()));
+            sd2.setCreationDate(new Date(mercuryAlert.getCreatedAt()));
+        }
+        else if (entity.hasId()) {
+            sd1.setId(entity.getId());
+            sd2.setId(entity.getId());
 
+            if (sd1.getCreationDate() == null) {
+                if (dateEncodedid(entity.getId())) {
+                    // id has date epoch encoded in it per format:  lmm:<epoch creation date in milliseconds>:<entity_id>
+                    sd1.setCreationDate(getDateFromId(entity.getId()));
+                    sd2.setCreationDate(getDateFromId(entity.getId()));
+                } else {
+                // otherwise store the id as is, and set creation date to be now
+                    sd1.setCreationDate(new Date());
+                    sd2.setCreationDate(new Date());
+                }
+;            }
         }
         statusDetails.add(sd1);
-        sd1.setStatusSummary(alert.getHeaderText().getTranslation(0).getText());
+        if (mercuryAlert != null && mercuryAlert.hasAlertType())
+            sd1.setStatusSummary(mercuryAlert.getAlertType());
+        else
+            sd1.setStatusSummary(alert.getHeaderText().getTranslation(0).getText());
         sd1.setStatusDescription(alert.getDescriptionText().getTranslation(0).getText());
         sd1.setDirection("0");
-        sd1.setPriority(BigInteger.valueOf(6));
 
-
-        sd2.setPriority(BigInteger.valueOf(6));
-
+        for (GtfsRealtime.EntitySelector entitySelector : alert.getInformedEntityList()) {
+                if (entitySelector.hasExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector)) {
+                    GtfsRealtimeServiceStatus.MercuryEntitySelector mercuryEntitySelector =
+                    entitySelector.getExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector);
+                    if (mercuryEntitySelector.hasSortOrder()) {
+                        sd1.setPriority(parseSortOrder(mercuryEntitySelector.getSortOrder()));
+                        sd2.setPriority(sd1.getPriority());
+                    }
+                }
+        }
+        if (sd1.getPriority() == null) {
+            sd1.setPriority(BigInteger.valueOf(6));
+            sd2.setPriority(BigInteger.valueOf(6));
+        }
         sd2.setDirection("1");
         statusDetails.add(sd2);
         sd2.setStatusSummary(sd1.getStatusSummary());
         sd2.setStatusDescription(sd1.getStatusDescription());
         return statusDetails;
+
+    }
+
+    private BigInteger parseSortOrder(String sortOrder) {
+        // from GtfsRealtimeServiceStatus: expect format of  "GTFS-ID:Priority"
+        // Priority maps to GtfsRealtimeServiceStatus.Priority
+        int pos = sortOrder.indexOf(":");
+        if (pos > 0)
+            try {
+                return BigInteger.valueOf(Integer.parseInt(sortOrder.substring(pos + 1)));
+            } catch (NumberFormatException nfe) {
+                _log.error("invalid sortOrder |" + sortOrder + "|");
+                return BigInteger.valueOf(6);
+            }
+        _log.error("unexpected sortOrder |" + sortOrder + "|");
+        return BigInteger.valueOf(6);
 
     }
 
