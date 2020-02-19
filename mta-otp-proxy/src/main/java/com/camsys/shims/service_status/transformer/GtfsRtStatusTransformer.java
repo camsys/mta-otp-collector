@@ -179,7 +179,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     private BigInteger parseSortOrder(String sortOrder) {
         // from GtfsRealtimeServiceStatus: expect format of  "GTFS-ID:Priority"
         // Priority maps to GtfsRealtimeServiceStatus.Priority
-        int pos = sortOrder.indexOf(":");
+        int pos = sortOrder.lastIndexOf(":");
         if (pos > 0)
             try {
                 return BigInteger.valueOf(Integer.parseInt(sortOrder.substring(pos + 1)));
