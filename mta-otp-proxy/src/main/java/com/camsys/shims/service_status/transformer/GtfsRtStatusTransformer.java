@@ -60,7 +60,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         RouteDetail rd = new RouteDetail();
         if (mercuryAlert != null) {
             if (mercuryAlert.hasUpdatedAt())
-                rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt()));
+                rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt()*1000));
         }
         rd.setRouteSortOrder(sortOrder);
         rd.setInService(true);
@@ -141,7 +141,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
             if (mercuryAlert != null) {
                 if (mercuryAlert.hasCreatedAt()) {
                     // if we have an explicit creation date prefer that
-                    sdx.setCreationDate(new Date(mercuryAlert.getCreatedAt()));
+                    sdx.setCreationDate(new Date(mercuryAlert.getCreatedAt()*1000));
                 }
                 if (mercuryAlert.hasAlertType()) {
                     sdx.setStatusSummary(mercuryAlert.getAlertType());
