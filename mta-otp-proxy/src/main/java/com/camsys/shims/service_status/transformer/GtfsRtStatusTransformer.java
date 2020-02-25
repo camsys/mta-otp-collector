@@ -170,21 +170,15 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                 sdx.setDirection(getDirection(alert));
             }
 
-        } // end entity list loop
-
-        // if we have a single entry, reverse the direction to remain internally consistent
-        if (!foundDirection && statusDetails.size() == 1) {
-            StatusDetail sd1 = statusDetails.get(0);
-            StatusDetail sd2 = null;
-            if (getDirection(alert) == null) {
-                sd2 = createReverseDirection(sd1);
+            if (sdx.getDirection() == null) {
+                StatusDetail sd2 = createReverseDirection(sdx);
                 statusDetails.add(sd2);
                 sd2.setDirection("1");
-                sd1.setDirection("0");
-            } else {
-                sd1.setDirection(getDirection(alert));
+                sdx.setDirection("0");
+                statusDetails.add(sd2);
             }
-        }
+
+        } // end entity list loop
 
         return statusDetails;
 
