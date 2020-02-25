@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -121,59 +120,111 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.FeedEntity entity, GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert) {
         GtfsRealtime.Alert alert = entity.getAlert();
         List<StatusDetail> statusDetails = new ArrayList<>();
-
-        StatusDetail sd1 = new StatusDetail();
-        StatusDetail sd2 = new StatusDetail();
-
-        if (mercuryAlert != null && mercuryAlert.hasCreatedAt()) {
-            // if we have an explicit creation date prefer that
-            sd1.setCreationDate(new Date(mercuryAlert.getCreatedAt()));
-            sd2.setCreationDate(new Date(mercuryAlert.getCreatedAt()));
-        }
-        else if (entity.hasId()) {
-            sd1.setId(entity.getId());
-            sd2.setId(entity.getId());
-
-            if (sd1.getCreationDate() == null) {
-                if (dateEncodedid(entity.getId())) {
-                    // id has date epoch encoded in it per format:  lmm:<epoch creation date in milliseconds>:<entity_id>
-                    sd1.setCreationDate(getDateFromId(entity.getId()));
-                    sd2.setCreationDate(getDateFromId(entity.getId()));
-                } else {
-                // otherwise store the id as is, and set creation date to be now
-                    sd1.setCreationDate(new Date());
-                    sd2.setCreationDate(new Date());
-                }
-;            }
-        }
-        statusDetails.add(sd1);
-        if (mercuryAlert != null && mercuryAlert.hasAlertType())
-            sd1.setStatusSummary(mercuryAlert.getAlertType());
-        else
-            sd1.setStatusSummary(alert.getHeaderText().getTranslation(0).getText());
-        sd1.setStatusDescription(alert.getDescriptionText().getTranslation(0).getText());
-        sd1.setDirection("0");
+        boolean foundDirection = false;
 
         for (GtfsRealtime.EntitySelector entitySelector : alert.getInformedEntityList()) {
-                if (entitySelector.hasExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector)) {
-                    GtfsRealtimeServiceStatus.MercuryEntitySelector mercuryEntitySelector =
-                    entitySelector.getExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector);
-                    if (mercuryEntitySelector.hasSortOrder()) {
-                        sd1.setPriority(parseSortOrder(mercuryEntitySelector.getSortOrder()));
-                        sd2.setPriority(sd1.getPriority());
-                    }
+            StatusDetail sdx = new StatusDetail();
+            statusDetails.add(sdx);
+            sdx.setId(entity.getId());
+            sdx.setStatusDescription(getDescriptionTranslation(alert));
+
+            // consume the extension if present
+            if (entitySelector.hasExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector)) {
+                GtfsRealtimeServiceStatus.MercuryEntitySelector mercuryEntitySelector =
+                        entitySelector.getExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector);
+                if (mercuryEntitySelector.hasSortOrder()) {
+                    sdx.setPriority(parseSortOrder(mercuryEntitySelector.getSortOrder()));
                 }
+            }
+            // ensure all fields have some reasonable defaults
+
+            if (mercuryAlert != null) {
+                if (mercuryAlert.hasCreatedAt()) {
+                    // if we have an explicit creation date prefer that
+                    sdx.setCreationDate(new Date(mercuryAlert.getCreatedAt()));
+                }
+                if (mercuryAlert.hasAlertType()) {
+                    sdx.setStatusSummary(mercuryAlert.getAlertType());
+                }
+            }
+
+            if (sdx.getCreationDate() == null) {
+                if (dateEncodedid(entity.getId())) {
+                    // id has date epoch encoded in it per format:  lmm:<epoch creation date in milliseconds>:<entity_id>
+                    sdx.setCreationDate(getDateFromId(entity.getId()));
+                } else {
+                    sdx.setCreationDate(new Date());
+                }
+            }
+
+            if (sdx.getStatusSummary() == null) {
+                sdx.setStatusSummary(getHeaderTranslation(alert));
+            }
+
+            if (sdx.getPriority() == null) {
+                sdx.setPriority(BigInteger.valueOf(6));
+            }
+
+            if (getDirection(alert) != null) {
+                foundDirection = true;
+                sdx.setDirection(getDirection(alert));
+            }
+
+        } // end entity list loop
+
+        // if we have a single entry, reverse the direction to remain internally consistent
+        if (!foundDirection && statusDetails.size() == 1) {
+            StatusDetail sd1 = statusDetails.get(0);
+            StatusDetail sd2 = null;
+            if (getDirection(alert) == null) {
+                sd2 = createReverseDirection(sd1);
+                statusDetails.add(sd2);
+                sd2.setDirection("1");
+                sd1.setDirection("0");
+            } else {
+                sd1.setDirection(getDirection(alert));
+            }
         }
-        if (sd1.getPriority() == null) {
-            sd1.setPriority(BigInteger.valueOf(6));
-            sd2.setPriority(BigInteger.valueOf(6));
-        }
-        sd2.setDirection("1");
-        statusDetails.add(sd2);
-        sd2.setStatusSummary(sd1.getStatusSummary());
-        sd2.setStatusDescription(sd1.getStatusDescription());
+
         return statusDetails;
 
+    }
+
+    private String getDescriptionTranslation(GtfsRealtime.Alert alert) {
+        if (alert.hasDescriptionText()) {
+            if (alert.getDescriptionText().getTranslationList() != null
+                    && !alert.getDescriptionText().getTranslationList().isEmpty()) {
+                return alert.getDescriptionText().getTranslation(0).getText();
+            }
+        }
+        return "";
+    }
+    private String getHeaderTranslation(GtfsRealtime.Alert alert) {
+        if (alert.hasHeaderText()) {
+            if (alert.getHeaderText().getTranslationList() != null
+                    && !alert.getHeaderText().getTranslationList().isEmpty()) {
+                return alert.getHeaderText().getTranslation(0).getText();
+            }
+        }
+        return "";
+    }
+
+    private String getDirection(GtfsRealtime.Alert alert) {
+        if (alert.getInformedEntityList().isEmpty()) return null;
+        if (!alert.getInformedEntity(0).hasTrip()) return null;
+        if (alert.getInformedEntity(0).getTrip().hasDirectionId()) return null;
+        return String.valueOf(alert.getInformedEntity(0).getTrip().getDirectionId());
+    }
+
+    private StatusDetail createReverseDirection(StatusDetail sd1) {
+        StatusDetail sd2 = new StatusDetail();
+        sd2.setCreationDate(sd1.getCreationDate());
+        sd2.setId(sd1.getId());
+        sd2.setPriority(sd1.getPriority());
+        sd2.setStatusSummary(sd1.getStatusSummary());
+        sd2.setStatusDescription(sd1.getStatusDescription());
+
+        return sd2;
     }
 
     private BigInteger parseSortOrder(String sortOrder) {
