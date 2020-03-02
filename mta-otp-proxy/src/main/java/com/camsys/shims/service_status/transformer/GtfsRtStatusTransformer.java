@@ -230,7 +230,8 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         sd2.setPriority(sd1.getPriority());
         sd2.setStatusSummary(sd1.getStatusSummary());
         sd2.setStatusDescription(sd1.getStatusDescription());
-
+        sd2.setStartDate(sd1.getStartDate());
+        sd2.setEndDate(sd1.getEndDate());
         return sd2;
     }
 
