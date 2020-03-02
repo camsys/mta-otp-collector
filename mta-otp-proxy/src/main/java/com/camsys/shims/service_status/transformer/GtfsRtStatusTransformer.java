@@ -157,6 +157,19 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                 }
             }
 
+            // start - end date from active period
+            if (alert.getActivePeriodCount() > 0) {
+                // we assume first record only
+                GtfsRealtime.TimeRange activePeriod = alert.getActivePeriod(0);
+                if (activePeriod.hasStart())
+                    sdx.setStartDate(new Date(activePeriod.getStart()));
+                if (activePeriod.hasEnd())
+                    sdx.setEndDate(new Date(activePeriod.getEnd()));
+            } else {
+                // here we default the start date to the creation date so that its always present
+                sdx.setStartDate(sdx.getCreationDate());
+            }
+
             if (sdx.getStatusSummary() == null) {
                 sdx.setStatusSummary(getHeaderTranslation(alert));
             }
