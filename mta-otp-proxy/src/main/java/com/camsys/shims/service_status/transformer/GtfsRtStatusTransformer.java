@@ -162,9 +162,9 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                 // we assume first record only
                 GtfsRealtime.TimeRange activePeriod = alert.getActivePeriod(0);
                 if (activePeriod.hasStart())
-                    sdx.setStartDate(new Date(activePeriod.getStart()));
+                    sdx.setStartDate(new Date(activePeriod.getStart()*1000));
                 if (activePeriod.hasEnd())
-                    sdx.setEndDate(new Date(activePeriod.getEnd()));
+                    sdx.setEndDate(new Date(activePeriod.getEnd()*1000));
             } else {
                 // here we default the start date to the creation date so that its always present
                 sdx.setStartDate(sdx.getCreationDate());
