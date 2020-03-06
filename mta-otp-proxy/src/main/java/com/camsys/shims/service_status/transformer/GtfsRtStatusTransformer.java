@@ -47,7 +47,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                             alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
                 }
                 if (!validAlert(alert)) continue;
-                routeDetails.add(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, mercuryAlert, sortOrder));
+                routeDetails.addAll(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, mercuryAlert, sortOrder));
                 sortOrder++;
             }
         }
@@ -55,17 +55,22 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return routeDetails;
     }
 
-    private RouteDetail getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.FeedEntity entity,
+    private List<RouteDetail> getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.FeedEntity entity,
                                                 GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert, int sortOrder) {
-        RouteDetail rd = new RouteDetail();
-        if (mercuryAlert != null) {
-            if (mercuryAlert.hasUpdatedAt())
-                rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt()*1000));
-        }
-        rd.setRouteSortOrder(sortOrder);
-        rd.setInService(true);
-        rd.setStatusDetails(new HashSet<StatusDetail>());
+
+        List<RouteDetail> routeDetails = new ArrayList<RouteDetail>();
+
         for (GtfsRealtime.EntitySelector informedEntity : entity.getAlert().getInformedEntityList()) {
+            RouteDetail rd = new RouteDetail();
+            routeDetails.add(rd);
+            if (mercuryAlert != null) {
+                if (mercuryAlert.hasUpdatedAt())
+                    rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt()*1000));
+            }
+            rd.setRouteSortOrder(sortOrder);
+            rd.setInService(true);
+            rd.setStatusDetails(new HashSet<StatusDetail>());
+
             rd.setAgency(informedEntity.getAgencyId());
             if (informedEntity.getAgencyId() == null || informedEntity.getAgencyId().length() == 0) {
                 rd.setAgency("MTASBWY");
@@ -114,7 +119,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
             }
 
         }
-        return rd;
+        return routeDetails;
     }
 
     private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.FeedEntity entity, GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert) {

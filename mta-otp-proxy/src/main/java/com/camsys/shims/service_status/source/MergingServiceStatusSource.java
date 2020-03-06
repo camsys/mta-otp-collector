@@ -2,6 +2,7 @@ package com.camsys.shims.service_status.source;
 
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
+import com.camsys.shims.service_status.model.StatusDetail;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Trip;
@@ -76,10 +77,44 @@ public class MergingServiceStatusSource implements ServiceStatusSource
             source.update();
             if (source.getStatus(null) == null || source.getStatus(null).getRouteDetails() == null)
                 continue;
-            allRouteDetails.addAll(source.getStatus(null).getRouteDetails());
+            merge(allRouteDetails, source.getStatus(null).getRouteDetails());
         }
         _serviceStatus = new ServiceStatus(new Date(), filterHiddenRoutes(ensureDates(addGoodService(allRouteDetails))));
 
+    }
+
+    // we may already have an existing RouteDetail object.  If so merge carefully!
+    private void merge(List<RouteDetail> existingRouteDetails, List<RouteDetail> newRouteDetails) {
+        for (RouteDetail newRouteDetail : newRouteDetails) {
+            RouteDetail existingRouteDetail = find(existingRouteDetails, newRouteDetail);
+            if (existingRouteDetail == null) {
+                existingRouteDetails.add(newRouteDetail);
+            } else {
+                merge(existingRouteDetail, newRouteDetail);
+            }
+
+        }
+    }
+
+    private RouteDetail merge(RouteDetail existingRouteDetail, RouteDetail newRouteDetail) {
+        if (newRouteDetail.getStatusDetails().isEmpty()) return existingRouteDetail;
+            if (newRouteDetail.getStatusDetails() != null) {
+                if (existingRouteDetail.getStatusDetails() ==  null) {
+                    Set<StatusDetail> srd = new HashSet<>();
+                    existingRouteDetail.setStatusDetails(srd);
+                }
+                existingRouteDetail.getStatusDetails().addAll(newRouteDetail.getStatusDetails());
+            }
+        return existingRouteDetail;
+    }
+
+    private RouteDetail find(List<RouteDetail> existingRouteDetails, RouteDetail newRouteDetail) {
+        if (existingRouteDetails == null || newRouteDetail == null) return null;
+        for (RouteDetail rd : existingRouteDetails) {
+            if (rd.getRouteId().equals(newRouteDetail.getRouteId()))
+                return rd;
+        }
+        return null;
     }
 
     private List<RouteDetail> ensureDates(List<RouteDetail> routeDetails) {
