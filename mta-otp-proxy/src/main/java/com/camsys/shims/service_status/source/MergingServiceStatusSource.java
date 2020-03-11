@@ -74,7 +74,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
     public void update() {
         List<RouteDetail> allRouteDetails = new ArrayList<>();
         for (ServiceStatusSource source : _sources) {
-            source.update();
+            // the source update happens via spring scheduler "myScheduler"
             if (source.getStatus(null) == null || source.getStatus(null).getRouteDetails() == null)
                 continue;
             merge(allRouteDetails, source.getStatus(null).getRouteDetails());

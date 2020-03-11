@@ -104,12 +104,8 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
             Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
             if (route == null) {
                 for (Route aRoute : gtfsDataService.getAllRoutes()) {
-                    if (rd.getRouteId() != null) {
-                        if (rd.getRouteId().equals(aRoute.getId().getId())) {
-                            _log.error("route not found, but exists as " + aRoute.getId());
-                        }
-                    } else {
-                        _log.error("no route id for rd=" + rd);
+                    if (rd.getRouteId() != null && rd.getRouteId().equals(aRoute.getId().getId())) {
+                        _log.error("route not found, but exists as " + aRoute.getId());
                     }
                 }
                 rd.setColor("black");

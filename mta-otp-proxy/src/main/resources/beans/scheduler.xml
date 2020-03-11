@@ -20,6 +20,17 @@
         <task:scheduled ref="gmsServiceStatusTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="subwayFilterStrategy" method="update" fixed-delay="3600000" />
         <task:scheduled ref="gtfsDataServiceProvider" method="update" cron="${gtfs.reload.cron}" />
+        <!-- service status loads begin -->
+        <task:scheduled ref="busServiceStatusTask" method="update" fixed-delay="180000"/>
+        <task:scheduled ref="busLMMServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="subwayServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="subwayLMMServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="mnrServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="mnrLMMServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="lirrServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="lirrLMMServiceStatusTask" method="update" fixed-delay="30000"/>
+        <task:scheduled ref="njtRailServiceStatusTask" method="update" fixed-delay="30000"/>
+        <!-- service status loads end -->
     </task:scheduled-tasks>
 
     <task:scheduler id="myScheduler" pool-size="32"/>
