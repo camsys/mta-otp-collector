@@ -111,7 +111,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
     private RouteDetail find(List<RouteDetail> existingRouteDetails, RouteDetail newRouteDetail) {
         if (existingRouteDetails == null || newRouteDetail == null) return null;
         for (RouteDetail rd : existingRouteDetails) {
-            if (rd.getRouteId().equals(newRouteDetail.getRouteId()))
+            if (rd.getRouteId() != null && rd.getRouteId().equals(newRouteDetail.getRouteId()))
                 return rd;
         }
         return null;
