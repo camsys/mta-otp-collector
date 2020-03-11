@@ -16,6 +16,7 @@
         <task:scheduled ref="lirrAlertTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="busTask" method="update" fixed-delay="5000"/>
         <task:scheduled ref="busServiceAlertMergeTask" method="update" fixed-delay="180000" />
+        <task:scheduled ref="busAllSiriOutputAlerts" method="update" fixed-delay="180000" />
         <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="30000" />
         <task:scheduled ref="gmsServiceStatusTask" method="update" fixed-delay="180000" />
         <task:scheduled ref="subwayFilterStrategy" method="update" fixed-delay="3600000" />

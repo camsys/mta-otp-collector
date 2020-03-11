@@ -58,6 +58,24 @@
         <property name="transformer" ref="forwarderTransformer" />
     </bean>
 
+    <bean name="busLMMSiriOutputAlerts" class="com.camsys.shims.util.source.TransformingSiriSource">
+        <property name="input" ref="busLMMAlerts" />
+        <property name="transformer" ref="siriOutputTransformer" />
+    </bean>
+
+    <bean name="busGMSSiriOutputAlerts" class="com.camsys.shims.util.source.SiriForwarder">
+        <property name="feedManager" ref="busAlertManager" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+    </bean>
+
+    <bean name="busAllSiriOutputAlerts" class="com.camsys.shims.util.source.MergingSiriSource">
+        <constructor-arg>
+            <list>
+                <ref bean="busLMMSiriOutputAlerts" />
+                <ref bean="busGMSSiriOutputAlerts" />
+            </list>
+        </constructor-arg>
+    </bean>
 
     <bean id="busServiceAlertMergeTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
         <constructor-arg>
@@ -67,7 +85,20 @@
         </constructor-arg>
     </bean>
 
+
+    <!-- here we host SIRI output of the GTFS-RT for legacy GMS integrations -->
+    <bean id="siriOutputAlerts" class="com.camsys.shims.servlet.HttpRequestSiriSink">
+        <property name="source" ref="busAllSiriOutputAlerts" />
+    </bean>
+
+
     <bean id="busServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
         <property name="source" ref="busServiceAlertMergeTask" />
     </bean>
+
+    <bean name="siriOutputTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.GtfsrtToSiriTransformer" >
+        <property name="gtfsDataService" ref="busGtfsService" />
+    </bean>
+
+
 </beans>

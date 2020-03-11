@@ -97,6 +97,14 @@
     </servlet>
 
     <servlet>
+        <servlet-name>siriOutputAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+
+    <servlet>
         <servlet-name>serviceStatus</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -199,6 +207,11 @@
         <servlet-name>busServiceAlerts</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTABUS/alerts</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>siriOutputAlerts</servlet-name>
+        <url-pattern>/realtime/siri/MTABUS/alerts</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>busTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTABUS/tripUpdates</url-pattern>

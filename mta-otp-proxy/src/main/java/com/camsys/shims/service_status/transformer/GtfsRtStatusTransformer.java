@@ -241,19 +241,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     }
 
     private BigInteger parseSortOrder(String sortOrder) {
-        // from GtfsRealtimeServiceStatus: expect format of  "GTFS-ID:Priority"
-        // Priority maps to GtfsRealtimeServiceStatus.Priority
-        int pos = sortOrder.lastIndexOf(":");
-        if (pos > 0)
-            try {
-                return BigInteger.valueOf(Integer.parseInt(sortOrder.substring(pos + 1)));
-            } catch (NumberFormatException nfe) {
-                _log.error("invalid sortOrder |" + sortOrder + "|");
-                return BigInteger.valueOf(6);
-            }
-        _log.error("unexpected sortOrder |" + sortOrder + "|");
-        return BigInteger.valueOf(6);
-
+        return new MercuryUtils().parseSortOrder(sortOrder);
     }
 
     private boolean dateEncodedid(String id) {
