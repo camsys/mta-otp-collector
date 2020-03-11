@@ -57,15 +57,15 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
         Writer output = new StringWriter();
         marshaller.marshal(siri, output);
         String outputAsString = output.toString();
-        // here is our chance to do any nasty hacks to the XML
-//        outputAsString = outputAsString.replaceAll("<Siri>", "<Siri xmlns:ns2=\"http://www.ifopt.org.uk/acsb\" xmlns=\"http://www.siri.org.uk/siri\" xmlns:ns4=\"http://datex2.eu/schema/1_0/1_0\" xmlns:ns3=\"http://www.ifopt.org.uk/ifopt\">");
-//        outputAsString = outputAsString.replaceAll("<Summary>", "<Summary xml:lang=\"EN\">");
-//        outputAsString = outputAsString.replaceAll("<Description>", "<Description xml:lang=\"EN\">");
-//        .replace("<Description", "<LegacyDescription")
-//                .replace("</Description>", "</LegacyDescription>")
+
+        // the GMS feed deviates from SIRI in some cases.  Make those changes below
+        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "<TmpDescription>$2</TmpDescription>$1");
         outputAsString = outputAsString
+                .replace("<Description>", "<LongDescription>")
                 .replace("<Description xml:lang=\"EN\">", "<LongDescription>")
                 .replace("</Description>", "</LongDescription>")
+                .replace("<TmpDescription>", "<Description xml:lang=\"EN\">")
+                .replace("</TmpDescription>", "</Description>")
                 .replace("<Priority>", "<MessagePriority>")
                 .replace("</Priority>", "</MessagePriority>");
         return outputAsString;
