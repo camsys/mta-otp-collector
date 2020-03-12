@@ -13,6 +13,7 @@
 package com.camsys.shims.servlet;
 
 import com.google.protobuf.Message;
+import com.googlecode.protobuf.format.JsonFormat;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
 import org.springframework.web.HttpRequestHandler;
 
@@ -27,6 +28,8 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
 
     private static final String DEBUG_CONTENT_TYPE = "text/plain";
 
+    private static final String JSON_CONTENT_TYPE = "application/json";
+
     private GtfsRealtimeSource _source;
 
     public void setSource(GtfsRealtimeSource source) {
@@ -35,10 +38,15 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
 
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean debug = req.getParameter("debug") != null;
+        boolean json = "json".equals(req.getParameter("type"));
+
         Message message = _source.getFeed();
         if (debug) {
             resp.setContentType(DEBUG_CONTENT_TYPE);
             resp.getWriter().print(message);
+        } else if (json) {
+            resp.setContentType(JSON_CONTENT_TYPE);
+            resp.getWriter().print(JsonFormat.printToString(message));
         } else {
             resp.setContentType(CONTENT_TYPE);
             message.writeTo(resp.getOutputStream());
