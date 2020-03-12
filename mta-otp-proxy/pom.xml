@@ -64,6 +64,11 @@
             <version>1.2.12</version>
         </dependency>
         <dependency>
+            <groupId>com.googlecode.protobuf-java-format</groupId>
+            <artifactId>protobuf-java-format</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.camsys</groupId>
             <artifactId>mta-otp-elevators</artifactId>
             <version>0.0.64-SNAPSHOT</version>
