@@ -24,26 +24,37 @@ import java.io.Writer;
 public class HttpRequestSiriSink implements HttpRequestHandler {
 
     private static Logger _log = LoggerFactory.getLogger(HttpRequestSiriSink.class);
+    private static final String GMS_TYPE = "gms";
+    private static final String CIS_TYPE = "cis";
 
     private MergingSiriSource _siriSource;
     private JAXBContext _context = null;
+    private String _type = GMS_TYPE;
 
     public void setSource(MergingSiriSource siriSource) {
         _siriSource = siriSource;
     }
 
+    public void setType(String type) {
+        _type = type;
+    }
+
     @Override
     public void handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        if (_siriSource == null)
-            httpServletResponse.getWriter().print("");
+
+        if (_siriSource == null || _siriSource.getFeed() == null) {
+            httpServletResponse.getWriter().print("<Siri xmlns:ns2=\"http://www.ifopt.org.uk/acsb\" xmlns=\"http://www.siri.org.uk/siri\" xmlns:ns4=\"http://datex2.eu/schema/1_0/1_0\" xmlns:ns3=\"http://www.ifopt.org.uk/ifopt\"></Siri>");
+            return;
+        }
+
         try {
-            httpServletResponse.getWriter().print(getXml(_siriSource.getFeed()));
+            httpServletResponse.getWriter().print(getXml(_siriSource.getFeed(), CIS_TYPE.equals(_type)));
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
-    public String getXml(Siri siri) throws Exception {
+    public String getXml(Siri siri, boolean isBuscis) throws Exception {
         Marshaller marshaller = this.getContext().createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", false);
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -58,8 +69,13 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
         marshaller.marshal(siri, output);
         String outputAsString = output.toString();
 
+        if (isBuscis)
+            return formatForBusCIS(outputAsString);
+        return formatForGMS(outputAsString);
+    }
+    private String formatForGMS(String outputAsString) {
         // the GMS feed deviates from SIRI in some cases.  Make those changes below
-        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "<TmpDescription>$2</TmpDescription>$1");
+        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "$1<TmpDescription>$2</TmpDescription>");
         outputAsString = outputAsString
                 .replace("<Description>", "<LongDescription>")
                 .replace("<Description xml:lang=\"EN\">", "<LongDescription>")
@@ -68,6 +84,13 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
                 .replace("</TmpDescription>", "</Description>")
                 .replace("<Priority>", "<MessagePriority>")
                 .replace("</Priority>", "</MessagePriority>");
+        return outputAsString;
+
+    }
+
+    private String formatForBusCIS(String outputAsString) {
+        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "$1<Description xml:lang=\"EN\">$2</Description>");
+
         return outputAsString;
     }
 
