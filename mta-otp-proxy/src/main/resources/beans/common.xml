@@ -11,6 +11,10 @@
     <bean name="siriDeserializerWithModifications" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
         <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
     </bean>
+    <bean name="siriDeserializerWithoutHtml" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
+        <property name="htmlCleanupUtil" ref="noHtmlUtil" />
+    </bean>
+
     <!-- shared resources -->
     <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
     <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
@@ -55,7 +59,16 @@
             </array>
         </property>
     </bean>
-
+    <bean name="noHtmlUtil" class="com.camsys.shims.util.HtmlCleanupUtil" >
+        <property name="htmlTagWhiteList">
+            <array>
+            </array>
+        </property>
+        <property name="htmlAttributesWhiteList">
+            <array>
+            </array>
+        </property>
+    </bean>
     <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck" />
     <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
     <bean id="mtaApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
