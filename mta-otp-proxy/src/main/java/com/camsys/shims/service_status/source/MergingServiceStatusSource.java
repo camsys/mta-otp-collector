@@ -97,7 +97,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
     }
 
     private RouteDetail merge(RouteDetail existingRouteDetail, RouteDetail newRouteDetail) {
-        if (newRouteDetail.getStatusDetails().isEmpty()) return existingRouteDetail;
+        if (newRouteDetail.getStatusDetails() == null || newRouteDetail.getStatusDetails().isEmpty()) return existingRouteDetail;
             if (newRouteDetail.getStatusDetails() != null) {
                 if (existingRouteDetail.getStatusDetails() ==  null) {
                     Set<StatusDetail> srd = new HashSet<>();
