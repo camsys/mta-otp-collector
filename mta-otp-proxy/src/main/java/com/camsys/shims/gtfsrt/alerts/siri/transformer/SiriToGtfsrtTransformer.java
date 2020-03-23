@@ -63,7 +63,8 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
                 }
             }
             fe.setAlert(alert);
-            fe.setId(serviceAlert.getId());
+            if (serviceAlert != null)
+                fe.setId(serviceAlert.getId());
             message.addEntity(fe.build());
         }
 
