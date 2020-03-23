@@ -76,13 +76,13 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
                                 if (pt.getSummary() != null) {
                                     DefaultedTextStructure txt = pt.getSummary();
                                     String html = txt.getValue();
-                                    String cleanedHtml = _htmlCleanupUtil.filterHtml(html);
+                                    String cleanedHtml = _htmlCleanupUtil.filterAndBlacklist(html);
                                     txt.setValue(cleanedHtml);
                                 }
                                 if (pt.getDescription() != null) {
                                     DefaultedTextStructure txt = pt.getDescription();
                                     String html = txt.getValue();
-                                    String cleanedHtml = _htmlCleanupUtil.filterHtml(html);
+                                    String cleanedHtml = _htmlCleanupUtil.filterAndBlacklist(html);
                                     txt.setValue(cleanedHtml);
                                 }
                             }

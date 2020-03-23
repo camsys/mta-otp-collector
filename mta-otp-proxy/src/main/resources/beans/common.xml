@@ -68,6 +68,13 @@
             <array>
             </array>
         </property>
+        <property name="htmlCharacterBlackList">
+            <array>
+                <value>&amp;amp;</value>
+                <value>&amp;nbsp;</value>
+                <value>&amp;bull;</value>
+            </array>
+        </property>
     </bean>
     <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck" />
     <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
