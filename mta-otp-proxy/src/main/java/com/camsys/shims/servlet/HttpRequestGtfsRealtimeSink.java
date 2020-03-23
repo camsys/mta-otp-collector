@@ -28,7 +28,7 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
 
     private static final String DEBUG_CONTENT_TYPE = "text/plain";
 
-    private static final String JSON_CONTENT_TYPE = "application/json";
+    private static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
 
     private GtfsRealtimeSource _source;
 
