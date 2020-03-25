@@ -19,7 +19,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
-import uk.org.siri.siri.*;
+import uk.org.siri.siri.DefaultedTextStructure;
+import uk.org.siri.siri.PtSituationElementStructure;
+import uk.org.siri.siri.ServiceDelivery;
+import uk.org.siri.siri.Siri;
+import uk.org.siri.siri.SituationExchangeDeliveryStructure;
 import uk.org.siri.siri.SituationExchangeDeliveryStructure.Situations;
 
 
@@ -33,12 +37,12 @@ import java.util.List;
 public class SiriDeserializerWithModifications extends SiriDeserializer {
 
     private HtmlCleanupUtil _htmlCleanupUtil;
-    private String _filterLmm;
+    private boolean _filterLmm;
 
     public void setHtmlCleanupUtil(HtmlCleanupUtil htmlCleanupUtil) {
         _htmlCleanupUtil = htmlCleanupUtil;
     }
-    public void setFilterLmm(String filterLmm) {
+    public void setFilterLmm(boolean filterLmm) {
         _filterLmm = filterLmm;
     }
 
@@ -53,7 +57,7 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
             .replace("</MessagePriority>", "</Priority>");
         Siri siri = deserialize(xml);
         removeHtml(siri);
-        filterLmm(siri);
+        if (_filterLmm) {filterLmm(siri);}
         return siri;
     }
 
@@ -81,21 +85,18 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
     }
 
     private void filterLmm(Siri siri) {
-        //ServiceDelivery serviceDelivery = new ServiceDelivery();
-        //siri1.setServiceDelivery(serviceDelivery);
-        //siri1.setServiceDelivery(siri.getServiceDelivery());
-        Situations s1 = new Situations();
         if (siri.getServiceDelivery() != null) {
             ServiceDelivery sd = siri.getServiceDelivery();
             if (sd.getSituationExchangeDelivery() != null) {
                 for (SituationExchangeDeliveryStructure seds : sd.getSituationExchangeDelivery()) {
                     if (seds.getSituations() != null) {
                         Situations s = seds.getSituations();
+                        Situations filteredSituations = new Situations();
                         if (s.getPtSituationElement() != null) {
                             for (PtSituationElementStructure pt: s.getPtSituationElement()) {
-                                if (!pt.getSituationNumber().getValue().contains("lmm")) s1.getPtSituationElement().add(pt);
+                                if (!pt.getSituationNumber().getValue().startsWith("lmm")) filteredSituations.getPtSituationElement().add(pt);
                             }
-                            seds.setSituations(s1);
+                            seds.setSituations(filteredSituations);
                         }
                     }
                 }
