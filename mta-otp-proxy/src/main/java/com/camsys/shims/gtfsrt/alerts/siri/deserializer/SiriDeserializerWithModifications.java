@@ -94,7 +94,7 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                         Situations filteredSituations = new Situations();
                         if (s.getPtSituationElement() != null) {
                             for (PtSituationElementStructure pt: s.getPtSituationElement()) {
-                                if (!pt.getSituationNumber().getValue().startsWith("lmm")) filteredSituations.getPtSituationElement().add(pt);
+                                if (!pt.getSituationNumber().getValue().startsWith("lmm:")) filteredSituations.getPtSituationElement().add(pt);
                             }
                             seds.setSituations(filteredSituations);
                         }
