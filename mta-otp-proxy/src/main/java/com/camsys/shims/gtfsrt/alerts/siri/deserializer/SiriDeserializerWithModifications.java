@@ -37,9 +37,13 @@ import java.util.List;
 public class SiriDeserializerWithModifications extends SiriDeserializer {
 
     private HtmlCleanupUtil _htmlCleanupUtil;
+    private boolean _filterLmm;
 
     public void setHtmlCleanupUtil(HtmlCleanupUtil htmlCleanupUtil) {
         _htmlCleanupUtil = htmlCleanupUtil;
+    }
+    public void setFilterLmm(boolean filterLmm) {
+        _filterLmm = filterLmm;
     }
 
     @Override
@@ -53,6 +57,7 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
             .replace("</MessagePriority>", "</Priority>");
         Siri siri = deserialize(xml);
         removeHtml(siri);
+        if (_filterLmm) {filterLmm(siri);}
         return siri;
     }
 
@@ -72,6 +77,26 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                                     txt.setValue(cleanedHtml);
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void filterLmm(Siri siri) {
+        if (siri.getServiceDelivery() != null) {
+            ServiceDelivery sd = siri.getServiceDelivery();
+            if (sd.getSituationExchangeDelivery() != null) {
+                for (SituationExchangeDeliveryStructure seds : sd.getSituationExchangeDelivery()) {
+                    if (seds.getSituations() != null) {
+                        Situations s = seds.getSituations();
+                        Situations filteredSituations = new Situations();
+                        if (s.getPtSituationElement() != null) {
+                            for (PtSituationElementStructure pt: s.getPtSituationElement()) {
+                                if (!pt.getSituationNumber().getValue().startsWith("lmm:")) filteredSituations.getPtSituationElement().add(pt);
+                            }
+                            seds.setSituations(filteredSituations);
                         }
                     }
                 }

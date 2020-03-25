@@ -10,6 +10,7 @@
     <!-- can split off to separate beans if different alert feeds require different white lists -->
     <bean name="siriDeserializerWithModifications" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
         <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
+        <property name="filterLmm" value="true" />
     </bean>
     <bean name="siriDeserializerWithoutHtml" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
         <property name="htmlCleanupUtil" ref="noHtmlUtil" />
@@ -109,7 +110,6 @@
 
 
     <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
-
     <context:property-placeholder location="classpath:collector.properties" />
     <context:property-placeholder location="classpath:maven-version.properties" />
 
