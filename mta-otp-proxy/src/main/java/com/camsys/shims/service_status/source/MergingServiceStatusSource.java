@@ -92,7 +92,6 @@ public class MergingServiceStatusSource implements ServiceStatusSource
             } else {
                 merge(existingRouteDetail, newRouteDetail);
             }
-
         }
     }
 
@@ -103,9 +102,45 @@ public class MergingServiceStatusSource implements ServiceStatusSource
                     Set<StatusDetail> srd = new HashSet<>();
                     existingRouteDetail.setStatusDetails(srd);
                 }
-                existingRouteDetail.getStatusDetails().addAll(newRouteDetail.getStatusDetails());
+                merge(existingRouteDetail.getStatusDetails(), newRouteDetail.getStatusDetails());
             }
         return existingRouteDetail;
+    }
+
+
+    private void merge(Set<StatusDetail> existingDetails, Set<StatusDetail> newDetails) {
+        for (StatusDetail newDetail: newDetails) {
+            // carefully merge Status Details themselves
+            StatusDetail existingDetail = find(existingDetails, newDetail);
+            if (existingDetail == null) {
+                existingDetails.add(newDetail);
+            } else {
+                merge(existingDetail, newDetail);
+            }
+        }
+    }
+
+
+    public void merge(StatusDetail existingDetail, StatusDetail newDetail) {
+        // we have a conflict here, try and do something smart/deterministic here
+        if (existingDetail.getCreationDate() == null) existingDetail.setCreationDate(newDetail.getCreationDate());
+        if (existingDetail.getPriority() == null
+            || existingDetail.getPriority().intValue() == 6) existingDetail.setPriority(newDetail.getPriority());
+        if (existingDetail.getStartDate() == null) existingDetail.setStartDate(newDetail.getStartDate());
+        if (existingDetail.getEndDate() == null) existingDetail.setEndDate(newDetail.getEndDate());
+        if (existingDetail.getStatusSummary() == null) existingDetail.setStatusSummary(newDetail.getStatusSummary());
+        if (existingDetail.getStatusDescription() == null) existingDetail.setStatusDescription(newDetail.getStatusDescription());
+    }
+
+    private StatusDetail find(Set<StatusDetail> sds, StatusDetail sd) {
+        for (StatusDetail newSd : sds) {
+            if (newSd != null
+            && newSd.getId().equals(sd.getId())
+            && newSd.getDirection().equals(sd.getDirection())) {
+                return newSd;
+            }
+        }
+        return null;
     }
 
     private RouteDetail find(List<RouteDetail> existingRouteDetails, RouteDetail newRouteDetail) {

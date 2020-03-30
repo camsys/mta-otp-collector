@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRealtime.FeedMessage> {
 
-    private static final Logger _log = LoggerFactory.getLogger(ServiceStatusTransformer.class);
+    private static final Logger _log = LoggerFactory.getLogger(GtfsRtStatusTransformer.class);
 
     private static final String DEFAULT_AGENCY = "MTASBWY";
 
@@ -36,21 +36,21 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
     public List<RouteDetail> transform(GtfsRealtime.FeedMessage obj, String mode, GtfsDataService gtfsDataService,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
         ArrayList<RouteDetail> routeDetails = new ArrayList<>();
-        int sortOrder = 0;
-        if (obj == null) return routeDetails;
-        for (GtfsRealtime.FeedEntity feedEntity : obj.getEntityList()) {
-            if (feedEntity.hasAlert()) {
-                GtfsRealtime.Alert alert = feedEntity.getAlert();
-                GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert =  null;
-                if (alert.hasExtension(GtfsRealtimeServiceStatus.mercuryAlert)) {
-                    mercuryAlert =
-                            alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
+            int sortOrder = 0;
+            if (obj == null) return routeDetails;
+            for (GtfsRealtime.FeedEntity feedEntity : obj.getEntityList()) {
+                if (feedEntity.hasAlert()) {
+                    GtfsRealtime.Alert alert = feedEntity.getAlert();
+                    GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert = null;
+                    if (alert.hasExtension(GtfsRealtimeServiceStatus.mercuryAlert)) {
+                        mercuryAlert =
+                                alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
+                    }
+                    if (!validAlert(alert)) continue;
+                    routeDetails.addAll(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, mercuryAlert, sortOrder));
+                    sortOrder++;
                 }
-                if (!validAlert(alert)) continue;
-                routeDetails.addAll(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, mercuryAlert, sortOrder));
-                sortOrder++;
             }
-        }
         _log.info("returning " + routeDetails + " route detail objects");
         return routeDetails;
     }
@@ -60,63 +60,63 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
         List<RouteDetail> routeDetails = new ArrayList<RouteDetail>();
 
-        for (GtfsRealtime.EntitySelector informedEntity : entity.getAlert().getInformedEntityList()) {
-            RouteDetail rd = new RouteDetail();
-            routeDetails.add(rd);
-            if (mercuryAlert != null) {
-                if (mercuryAlert.hasUpdatedAt())
-                    rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt()*1000));
-            }
-            rd.setRouteSortOrder(sortOrder);
-            rd.setInService(true);
-            rd.setStatusDetails(new HashSet<StatusDetail>());
-
-            rd.setAgency(informedEntity.getAgencyId());
-            if (informedEntity.getAgencyId() == null || informedEntity.getAgencyId().length() == 0) {
-                rd.setAgency("MTASBWY");
-            }
-
-            if (informedEntity.hasRouteId()) {
-                if (informedEntity.hasAgencyId() && informedEntity.getRouteId().length() > 0) {
-                    rd.setRouteId(new AgencyAndId(informedEntity.getAgencyId(), informedEntity.getRouteId()).toString());
-                } else {
-                    rd.setRouteId(new AgencyAndId(DEFAULT_AGENCY, informedEntity.getRouteId()).toString());
+            for (GtfsRealtime.EntitySelector informedEntity : entity.getAlert().getInformedEntityList()) {
+                RouteDetail rd = new RouteDetail();
+                routeDetails.add(rd);
+                if (mercuryAlert != null) {
+                    if (mercuryAlert.hasUpdatedAt())
+                        rd.setLastUpdated(new Date(mercuryAlert.getUpdatedAt() * 1000));
                 }
-            }
+                rd.setRouteSortOrder(sortOrder);
+                rd.setInService(true);
+                rd.setStatusDetails(new HashSet<StatusDetail>());
 
-            if (informedEntity.hasTrip()) {
-                GtfsRealtime.TripDescriptor tripDescriptor = informedEntity.getTrip();
-                if (tripDescriptor.hasRouteId()) {
+                rd.setAgency(informedEntity.getAgencyId());
+                if (informedEntity.getAgencyId() == null || informedEntity.getAgencyId().length() == 0) {
+                    rd.setAgency("MTASBWY");
+                }
+
+                if (informedEntity.hasRouteId()) {
                     if (informedEntity.hasAgencyId() && informedEntity.getRouteId().length() > 0) {
-                        rd.setRouteId(new AgencyAndId(informedEntity.getAgencyId(), tripDescriptor.getRouteId()).toString());
+                        rd.setRouteId(new AgencyAndId(informedEntity.getAgencyId(), informedEntity.getRouteId()).toString());
                     } else {
-                        rd.setRouteId(new AgencyAndId(DEFAULT_AGENCY, tripDescriptor.getRouteId()).toString());
+                        rd.setRouteId(new AgencyAndId(DEFAULT_AGENCY, informedEntity.getRouteId()).toString());
                     }
                 }
-            }
-            rd.getStatusDetails().addAll(getStatusDetailFromAlert(entity, mercuryAlert));
-            // set last updated so filtering works
-            if (!rd.getStatusDetails().isEmpty() && rd.getLastUpdated() == null) {
-                // make sure we have a last updated or filtering will fail
-                rd.setLastUpdated(rd.getStatusDetails().iterator().next().getCreationDate());
-            }
-            rd.setMode(mode);
-            Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
-            if (route == null) {
-                for (Route aRoute : gtfsDataService.getAllRoutes()) {
-                    if (rd.getRouteId() != null && rd.getRouteId().equals(aRoute.getId().getId())) {
-                        _log.error("route not found, but exists as " + aRoute.getId());
+
+                if (informedEntity.hasTrip()) {
+                    GtfsRealtime.TripDescriptor tripDescriptor = informedEntity.getTrip();
+                    if (tripDescriptor.hasRouteId()) {
+                        if (informedEntity.hasAgencyId() && informedEntity.getRouteId().length() > 0) {
+                            rd.setRouteId(new AgencyAndId(informedEntity.getAgencyId(), tripDescriptor.getRouteId()).toString());
+                        } else {
+                            rd.setRouteId(new AgencyAndId(DEFAULT_AGENCY, tripDescriptor.getRouteId()).toString());
+                        }
                     }
                 }
-                rd.setColor("black");
-                rd.setRouteName(rd.getRouteId());
-                rd.setRouteType(1);
+                rd.getStatusDetails().addAll(getStatusDetailFromAlert(entity, mercuryAlert));
+                // set last updated so filtering works
+                if (!rd.getStatusDetails().isEmpty() && rd.getLastUpdated() == null) {
+                    // make sure we have a last updated or filtering will fail
+                    rd.setLastUpdated(rd.getStatusDetails().iterator().next().getCreationDate());
+                }
+                rd.setMode(mode);
+                Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
+                if (route == null) {
+                    for (Route aRoute : gtfsDataService.getAllRoutes()) {
+                        if (rd.getRouteId() != null && rd.getRouteId().equals(aRoute.getId().getId())) {
+                            _log.error("route not found, but exists as " + aRoute.getId());
+                        }
+                    }
+                    rd.setColor("black");
+                    rd.setRouteName(rd.getRouteId());
+                    rd.setRouteType(1);
                 _log.warn("could not find route = " + new AgencyAndId("MTASBWY", rd.getRouteId()));
-            } else {
-                rd.setColor(route.getColor());
-                rd.setRouteType(route.getType());
-                rd.setRouteName(route.getShortName());
-            }
+                } else {
+                    rd.setColor(route.getColor());
+                    rd.setRouteType(route.getType());
+                    rd.setRouteName(route.getShortName());
+                }
 
         }
         return routeDetails;
