@@ -167,6 +167,8 @@ public class MergingServiceStatusSource implements ServiceStatusSource
         for (RouteDetail rd : allService) {
             if (bannedSet.contains(rd.getRouteId())) {
                 _log.debug("banning route " + rd.getRouteId());
+            } else if (rd.getRouteId() == null || "".equals(rd.getRouteId())) {
+                _log.error("illegal route " + rd.getRouteName());
             } else {
                filtered.add(rd);
             }
