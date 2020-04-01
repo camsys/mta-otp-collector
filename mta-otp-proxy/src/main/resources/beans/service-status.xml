@@ -114,9 +114,7 @@
         <property name="lirrGtfsDataService" ref="lirrGtfsService" />
         <property name="mnrGtfsDataService" ref="mnrGtfsService" />
         <property name="bannedRouteIds">
-            <array>
-                <value>MTASBWY_FS</value>
-            </array>
+            <array></array>
         </property>
     </bean>
 
