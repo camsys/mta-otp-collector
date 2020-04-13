@@ -49,7 +49,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                     sortOrder++;
                 }
             }
-        _log.info("returning " + routeDetails + " route detail objects");
+        _log.debug("returning " + routeDetails + " route detail objects");
         return routeDetails;
     }
 

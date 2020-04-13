@@ -29,7 +29,8 @@ public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfs
     }
 
     @Override
-    public void update() {
+    // this method occasionally backs up -- make sure it doesn't run concurrently
+    public synchronized void update() {
         try {
             List<StatusResults> statusResultsList = new ArrayList<>();
             StationResults stationResults = (StationResults) getMessage(_feedManager.getBaseUrl(), _deserializer);

@@ -14,7 +14,9 @@ package com.camsys.shims.util.source;
 
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
+import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
+import com.google.transit.realtime.GtfsRealtimeConstants;
 import com.kurtraschke.nyctrtproxy.FeedManager;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.slf4j.Logger;
@@ -71,6 +73,9 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
             if (message != null) {
                 _feedMessage = _transformer.transform(message);
+            } else {
+                // clear out cached message
+                _feedMessage = createEmptyFeedMessage();
             }
         } catch (Throwable t) {
             _log.error("update failed:", t);
@@ -121,6 +126,16 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     public void removeIncrementalListener(GtfsRealtimeIncrementalListener listener) {
         throw new NotImplementedException();
+    }
+
+    private FeedMessage createEmptyFeedMessage() {
+        FeedMessage.Builder message = FeedMessage.newBuilder();
+        GtfsRealtime.FeedHeader.Builder header = GtfsRealtime.FeedHeader.newBuilder();
+        header.setIncrementality(GtfsRealtime.FeedHeader.Incrementality.FULL_DATASET);
+        header.setTimestamp(System.currentTimeMillis() / 1000);
+        header.setGtfsRealtimeVersion(GtfsRealtimeConstants.VERSION);
+        message.setHeader(header);
+        return message.build();
     }
 
 }

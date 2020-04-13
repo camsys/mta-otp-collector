@@ -31,9 +31,7 @@ public class FeedMessageDeserializer implements Deserializer<FeedMessage> {
     @Override
     public FeedMessage deserialize(InputStream inputStream) throws IOException {
         FeedMessage message = FeedMessage.parseFrom(inputStream, _extensionRegistry);
-        if (!message.getEntityList().isEmpty())
-            return message;
-        return null;
+        return message; // an empty message is not an error
     }
 
     @Override

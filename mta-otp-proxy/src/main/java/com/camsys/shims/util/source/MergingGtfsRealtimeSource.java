@@ -12,8 +12,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.util.source;
 
+import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
+import com.google.transit.realtime.GtfsRealtimeConstants;
 import org.apache.commons.lang.NotImplementedException;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
@@ -21,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -44,45 +47,65 @@ public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
 
     @Override
     public void update() {
-        List<GtfsRealtimeSource> successfulSources = new ArrayList<GtfsRealtimeSource>();
-        for (GtfsRealtimeSource source : sources) {
-            if (source instanceof UpdatingGtfsRealtimeSource) {
-                try {
-                    ((UpdatingGtfsRealtimeSource) source).update();
-                    successfulSources.add(source);
-                } catch (Throwable t) {
-                    _log.error("update failed for source " + source, t);
+        try {
+            FeedMessage.Builder message = FeedMessage.newBuilder();
+            List<GtfsRealtimeSource> successfulSources = new ArrayList<GtfsRealtimeSource>();
+            if (sources != null) {
+                for (GtfsRealtimeSource source : sources) {
+                    if (source != null) {
+                        if (source instanceof UpdatingGtfsRealtimeSource) {
+                            try {
+                                ((UpdatingGtfsRealtimeSource) source).update();
+                                successfulSources.add(source);
+                            } catch (Throwable t) {
+                                _log.error("update failed for source " + source, t);
+                            }
+                        }
+                    }
                 }
             }
-        }
-        FeedMessage.Builder message = FeedMessage.newBuilder();
-        Set<String> ids = new HashSet<>();
-        for (GtfsRealtimeSource source : successfulSources) {
-            try {
-                FeedMessage feed = source.getFeed();
-                if (feed == null) {
-                    continue;
-                }
-                if (!message.hasHeader()) {
-                    message.setHeader(feed.getHeader());
-                }
-                if (feed.getEntityList() == null) {
-                    continue;
-                }
-                for (FeedEntity entity : feed.getEntityList()) {
-                    String id = entity.getId();
-                    if (ids.contains(id)) {
-                        id = id + " " + new Random().nextInt();
-                        ids.add(id);
-                        entity = entity.toBuilder().setId(id).build();
+            Set<String> ids = new HashSet<>();
+            for (GtfsRealtimeSource source : successfulSources) {
+                try {
+                    FeedMessage feed = source.getFeed();
+                    if (feed == null) {
+                        continue;
                     }
-                    message.addEntity(entity);
+                    if (!message.hasHeader()) {
+                        message.setHeader(feed.getHeader());
+                    }
+                    if (feed.getEntityList() == null) {
+                        continue;
+                    }
+                    for (FeedEntity entity : feed.getEntityList()) {
+                        String id = entity.getId();
+                        if (ids.contains(id)) {
+                            id = id + " " + new Random().nextInt();
+                            ids.add(id);
+                            entity = entity.toBuilder().setId(id).build();
+                        }
+                        message.addEntity(entity);
+                    }
+                } catch (Throwable tt) {
+                    _log.error("Exception:", tt);
                 }
-            } catch (Throwable tt) {
-                _log.error("Exception:", tt);
+            }
+            try {
+                if (!message.hasHeader() || !message.getHeader().hasTimestamp()) {
+                    _log.error("missing header, adding new one");
+                    GtfsRealtime.FeedHeader.Builder header = GtfsRealtime.FeedHeader.newBuilder();
+                    header.setIncrementality(GtfsRealtime.FeedHeader.Incrementality.FULL_DATASET);
+                    header.setTimestamp(System.currentTimeMillis() / 1000);
+                    header.setGtfsRealtimeVersion(GtfsRealtimeConstants.VERSION);
+                    message.setHeader(header);
+                }
+                this.message = message.build();
+            } catch (Throwable e) {
+                _log.error("exception building message:", e);
+            }
+        } catch (Throwable ttt) {
+            _log.error("general fault:", ttt);
         }
-    }
-        this.message = message.build();
     }
 
     @Override
