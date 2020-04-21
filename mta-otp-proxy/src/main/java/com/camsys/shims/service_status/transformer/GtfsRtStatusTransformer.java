@@ -30,6 +30,18 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
     private static final Pattern lmmRegex = Pattern.compile("lmm:\\d{13}:\\d*");
 
+    private String preferredTranslation = "en-html";
+    private String fallbackTranslation = "en";
+
+    public void setPreferredTranslation(String tr) {
+        this.preferredTranslation = tr;
+    }
+
+    public void setFallbackTranslation(String tr) {
+        this.fallbackTranslation = tr;
+    }
+
+
     @Override
     public List<RouteDetail> transform(GtfsRealtime.FeedMessage obj, String mode, GtfsDataService gtfsDataService,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
@@ -192,7 +204,12 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         if (alert.hasDescriptionText()) {
             if (alert.getDescriptionText().getTranslationList() != null
                     && !alert.getDescriptionText().getTranslationList().isEmpty()) {
-                return alert.getDescriptionText().getTranslation(0).getText();
+                if (alert.getDescriptionText().getTranslationList().size() == 1) {
+                    return alert.getDescriptionText().getTranslation(0).getText();
+                } else {
+                    // we have multiple elements, select the most appropriate
+                    return findHtmlTranslation(alert.getDescriptionText().getTranslationList());
+                }
             }
         }
         return "";
@@ -201,10 +218,34 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         if (alert.hasHeaderText()) {
             if (alert.getHeaderText().getTranslationList() != null
                     && !alert.getHeaderText().getTranslationList().isEmpty()) {
-                return alert.getHeaderText().getTranslation(0).getText();
+
+                if (alert.getHeaderText().getTranslationList().size() == 1) {
+                    return alert.getHeaderText().getTranslation(0).getText();
+                } else {
+                    return findHtmlTranslation(alert.getHeaderText().getTranslationList());
+                }
             }
         }
         return "";
+    }
+
+    private String findHtmlTranslation(List<GtfsRealtime.TranslatedString.Translation> translationList) {
+        // look for the html variant first
+        for (GtfsRealtime.TranslatedString.Translation t : translationList) {
+            if (preferredTranslation.equalsIgnoreCase(t.getLanguage())) {
+                return t.getText();
+            }
+        }
+        // failing an html variant, look for english
+        for (GtfsRealtime.TranslatedString.Translation t : translationList) {
+            if (fallbackTranslation.equalsIgnoreCase(t.getLanguage())) {
+                return t.getText();
+            }
+        }
+
+        // use the first thing we find
+        _log.info("unmatched translation type, using " + translationList.get(0).getLanguage());
+        return translationList.get(0).getText();
     }
 
     private String getDirection(GtfsRealtime.Alert alert) {
