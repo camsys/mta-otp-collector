@@ -60,6 +60,11 @@
                 <ref bean="subwayElevatorAlerts" />
             </list>
         </constructor-arg>
+        <property name="legacyAgencyIdMap">
+            <map>
+                <entry key="MTASBWY" value="MTA NYCT" />
+            </map>
+        </property>
     </bean>
 
     <bean id="subwayServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">

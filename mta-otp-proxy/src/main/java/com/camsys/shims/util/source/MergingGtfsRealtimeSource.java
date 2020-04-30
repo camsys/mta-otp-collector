@@ -16,6 +16,7 @@ import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.FeedMessage;
 import com.google.transit.realtime.GtfsRealtimeConstants;
+import com.google.transit.realtime.GtfsRealtimeServiceStatus;
 import org.apache.commons.lang.NotImplementedException;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeIncrementalListener;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
@@ -23,9 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -33,11 +34,16 @@ public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
 
     private static final Logger _log = LoggerFactory.getLogger(MergingGtfsRealtimeSource.class);
     private List<GtfsRealtimeSource> sources;
+    private Map<String, String> legacyAgencyIdMap = null;
 
     private FeedMessage message;
 
     public MergingGtfsRealtimeSource(List<GtfsRealtimeSource> sources) {
         this.sources = sources;
+    }
+
+    public void setLegacyAgencyIdMap(Map<String, String> map) {
+        this.legacyAgencyIdMap = map;
     }
 
     @Override
@@ -84,6 +90,8 @@ public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
                             ids.add(id);
                             entity = entity.toBuilder().setId(id).build();
                         }
+                        // as we merge entities now is our chance to cleanup any legacy values
+                        entity = cleanupEntity(entity);
                         message.addEntity(entity);
                     }
                 } catch (Throwable tt) {
@@ -106,6 +114,91 @@ public class MergingGtfsRealtimeSource implements UpdatingGtfsRealtimeSource {
         } catch (Throwable ttt) {
             _log.error("general fault:", ttt);
         }
+    }
+
+    // mutate legacy values to something more public facing
+    private FeedEntity cleanupEntity(FeedEntity entity) {
+        // make sure we actually have work to do
+        if (legacyAgencyIdMap == null) return entity;
+        if (entity == null) return entity;
+        if (!entity.hasAlert()) return entity;
+        if (entity.getAlert().getInformedEntityList().isEmpty()) return entity;
+        boolean modified = false;
+
+        // iterate over the list of informed entities making a copy of each one as we go
+        List<GtfsRealtime.EntitySelector> newElements = new ArrayList<>();
+        for (GtfsRealtime.EntitySelector informedEntity : entity.getAlert().getInformedEntityList()) {
+            if (informedEntity.hasAgencyId()) {
+                if (legacyAgencyIdMap.containsKey(informedEntity.getAgencyId())) {
+                    // mutate the copy to clean up legacy information
+                    newElements.add(fixInformedEntity(informedEntity));
+                    modified = true;
+                } else {
+                    // nothing to do in this case, just copy
+                    newElements.add(informedEntity);
+                }
+
+            }
+        }
+        if (modified) {
+            /*
+             * if we are here, we successfully mutated an object and now need to
+             * rebuild the alert and the entity list
+             */
+            GtfsRealtime.Alert.Builder newAlert = entity.getAlert().toBuilder();
+
+            for (int i = newAlert.getInformedEntityCount()-1; i>=0; i--) {
+                newAlert.removeInformedEntity(i);
+            }
+
+            for (GtfsRealtime.EntitySelector modifiedElements : newElements) {
+                newAlert.addInformedEntity(modifiedElements);
+            }
+            return entity.toBuilder().setAlert(newAlert.build()).build();
+        }
+        return entity;
+    }
+
+    private GtfsRealtime.EntitySelector fixInformedEntity(GtfsRealtime.EntitySelector informedEntity) {
+        String legacyAgencyId = informedEntity.getAgencyId();
+        GtfsRealtime.EntitySelector.Builder builder = informedEntity.toBuilder();
+
+        // first filter the agency
+        builder.setAgencyId(fixAgency(legacyAgencyId));
+
+        // next if the sort order references the legacy agency fix that as well
+        if (builder.hasExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector)) {
+            GtfsRealtimeServiceStatus.MercuryEntitySelector mercuryEntitySelector =
+                    builder.getExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector);
+            if (mercuryEntitySelector.hasSortOrder()) {
+                builder.setExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector,
+                        fixSortOrder(mercuryEntitySelector));
+            }
+        }
+        return builder.build();
+    }
+
+    private GtfsRealtimeServiceStatus.MercuryEntitySelector fixSortOrder(GtfsRealtimeServiceStatus.MercuryEntitySelector selector) {
+        GtfsRealtimeServiceStatus.MercuryEntitySelector.Builder builder = selector.toBuilder();
+        builder.setSortOrder(fixSortOrderString(builder.getSortOrder()));
+        return builder.build();
+    }
+
+    private String fixSortOrderString(String order) {
+        if (legacyAgencyIdMap == null) return order;
+        if (order == null) return order;
+        for (String searchString : legacyAgencyIdMap.keySet()) {
+            if (order.contains(searchString)) {
+                return order.replaceAll(searchString, legacyAgencyIdMap.get(searchString));
+            }
+        }
+        return order;
+    }
+
+    private String fixAgency(String agencyId) {
+        if (legacyAgencyIdMap == null) return agencyId;
+        if (!legacyAgencyIdMap.containsKey(agencyId)) return agencyId;
+        return legacyAgencyIdMap.get(agencyId);
     }
 
     @Override
