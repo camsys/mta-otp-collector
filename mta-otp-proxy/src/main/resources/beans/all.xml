@@ -26,11 +26,6 @@
                 <ref bean="lirrEleTask" />
             </list>
         </constructor-arg>
-        <property name="legacyAgencyIdMap">
-            <map>
-                <entry key="MTASBWY" value="MTA NYCT" />
-            </map>
-        </property>
     </bean>
 
 </beans>
