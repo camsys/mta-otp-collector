@@ -29,6 +29,11 @@ public abstract class AbstractS3CsvProvider {
     // null is default
     private String _profile;
 
+    private String file;
+    private String targetUrl;
+    private String localPath;
+
+
     public void init() {
         _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
 
@@ -51,6 +56,8 @@ public abstract class AbstractS3CsvProvider {
                 reader.close();
             }
         }, _profile);
+
+
     }
 
     public abstract void processRecord(CsvReader reader) throws IOException;
@@ -58,8 +65,23 @@ public abstract class AbstractS3CsvProvider {
     public void setUrl(String url) {
         this.url = url;
     }
-
     public void setProfile(String profile) {
         _profile = profile;
     }
+    public void setFile(String file) {
+        this.file = file;
+    }
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
+    }
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
+    }
+
+
+    public String getUrl() { return url; }
+    public String getProfile() { return _profile; }
+    public String getFile() { return file; }
+    public String getTargetUrl() { return targetUrl; }
+    public String getLocalPath() { return localPath; }
 }
