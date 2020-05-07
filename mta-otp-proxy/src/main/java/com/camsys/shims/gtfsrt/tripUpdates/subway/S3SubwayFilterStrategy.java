@@ -20,12 +20,17 @@ import com.csvreader.CsvReader;
 import com.kurtraschke.nyctrtproxy.transform.StopFilterStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.onebusaway.gtfs.model.AgencyAndId;
+import org.onebusaway.cloud.aws.S3Services;
+import org.onebusaway.cloud.aws.CredentialContainer;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+
 // Use the SubwayTime replacement spreadsheet on S3 to filter stops.
+
 public class S3SubwayFilterStrategy extends AbstractS3CsvProvider implements StopFilterStrategy  {
 
     private static final String ROUTE_ID_HEADER = "route_id";
@@ -67,7 +72,10 @@ public class S3SubwayFilterStrategy extends AbstractS3CsvProvider implements Sto
 
     @Override
     public void update() {
+        S3Services s3Services = new S3Services();
         clearClosedStops();
+        s3Services.fetch(getUrl(), getFile(), getLocalPath(), new CredentialContainer(getProfile()));
+        s3Services.put(getTargetUrl() + "/vc." + ZonedDateTime.now().toInstant().toEpochMilli() + "/" + getFile(), getLocalPath() + "/" + getFile());
         super.update();
     }
 

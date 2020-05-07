@@ -31,6 +31,9 @@
     <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3SubwayFilterStrategy" id="subwayFilterStrategy" init-method="init">
         <property name="url" value="${subway.route_stops.csv}" />
         <property name="profile" value="${subway.route_stops.profile}" />
+        <property name="file" value="${subway.route_stops.file}" />
+        <property name="targetUrl" value="${subway.route_stops.targeturl}" />
+        <property name="localPath" value="${subway.route_stops.localpath}" />
     </bean>
 
     <bean class="com.kurtraschke.nyctrtproxy.services.TripUpdateProcessor" autowire="byType">
