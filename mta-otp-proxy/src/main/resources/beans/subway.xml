@@ -125,27 +125,26 @@
         <!-- for DEV testing only -->
         <property name="feedToUrlOverride">
             <map>
-                <entry key="1" value="s3://gtfs-rt/nyct/gtfs" />
-                <entry key="2" value="s3://gtfs-rt/nyct/gtfs-l" />
+                <entry key="1" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs" />
+                <entry key="2" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-l" />
                 <entry key="11" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si" />
-                <entry key="16" value="s3://gtfs-rt/nyct/gtfs-nqrw" />
+                <entry key="16" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw" />
                 <entry key="21" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm" />
-                <entry key="26" value="s3://gtfs-rt/nyct/gtfs-ace" />
+                <entry key="26" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace" />
                 <entry key="31" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g" />
-                <entry key="31" value="s3://gtfs-rt/nyct/gtfs-g" />
                 <entry key="36" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz" />
                 <entry key="51" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7" />
             </map>
         </property>
         <property name="feedToCredentialOverride">
             <map>
-                <entry key="1" value-ref="mtaqaApiCredential" />
-                <entry key="2" value-ref="mtaqaApiCredential" />
+                <entry key="1" value-ref="mtaApiCredential" />
+                <entry key="2" value-ref="mtaApiCredential" />
                 <entry key="11" value-ref="mtaApiCredential" />
-                <entry key="16" value-ref="mtaqaApiCredential" />
+                <entry key="16" value-ref="mtaApiCredential" />
                 <entry key="21" value-ref="mtaApiCredential" />
-                <entry key="26" value-ref="mtaqaApiCredential" />
-                <entry key="31" value-ref="mtaqaApiCredential" />
+                <entry key="26" value-ref="mtaApiCredential" />
+                <entry key="31" value-ref="mtaApiCredential" />
                 <entry key="36" value-ref="mtaApiCredential" />
                 <entry key="51" value-ref="mtaApiCredential" />
             </map>
