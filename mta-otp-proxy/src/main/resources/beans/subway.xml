@@ -6,7 +6,7 @@
     <!-- subway - this is essentially equivalent to Kurt's ProxyModule class  -->
     <bean class="org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeExporterImpl" id="subwayTuExporter" />
 
-    <<bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" />
+    <bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" />
 
     <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType" name="lazyTripMatcher">
         <property name="gtfsDataService" ref="subwayGtfsService"/>
@@ -131,7 +131,6 @@
                 <entry key="16" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw" />
                 <entry key="21" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm" />
                 <entry key="26" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace" />
-                <entry key="31" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g" />
                 <entry key="31" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g" />
                 <entry key="36" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz" />
                 <entry key="51" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7" />
