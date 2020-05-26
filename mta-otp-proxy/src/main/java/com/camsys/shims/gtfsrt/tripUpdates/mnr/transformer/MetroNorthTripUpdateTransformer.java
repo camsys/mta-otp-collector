@@ -173,7 +173,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 .stream().filter(FeedEntity::hasTripUpdate).count();
         publishMetric("TripsInService", nService);
         publishMetric("TripsInServiceRealtime", nRtInService);
-        publishMetric("TripsInServiceRtPct", (double) nRtInService / (double) nService);
+        if (nService != 0) publishMetric("TripsInServiceRtPct", (double) nRtInService / (double) nService);
         publishMetric("ExtraRtTrips", totalRtTrips - nRtInService);
     }
 
