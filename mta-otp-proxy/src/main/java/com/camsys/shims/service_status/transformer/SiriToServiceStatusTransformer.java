@@ -27,19 +27,25 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     private static final Logger _log = LoggerFactory.getLogger(SiriToServiceStatusTransformer.class);
 
     @Override
-    public List<RouteDetail> transform(Siri siri, String mode, GtfsDataService gtfsDataService,
+    public List<RouteDetail> transform(Siri siri, String mode, List<GtfsDataService> gtfsDataServices,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> routeDetailsMap) {
         List<ExtendedServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsExtendedServiceAlertBeans(siri);
 
-        return  getRouteDetails(serviceAlerts, mode, gtfsDataService, gtfsAdapter, routeDetailsMap);
+        return  getRouteDetails(serviceAlerts, mode, gtfsDataServices, gtfsAdapter, routeDetailsMap);
     }
 
     protected List<RouteDetail> getRouteDetails(List<ExtendedServiceAlertBean> serviceAlerts, String mode,
-                                                GtfsDataService gtfsDataService, GtfsRouteAdapter gtfsAdapter,
+                                                List<GtfsDataService> gtfsDataServices, GtfsRouteAdapter gtfsAdapter,
                                                 Map<String, RouteDetail> routeDetailsMap){
 
         Map<String, RouteDetail> tempRouteDetailsMap = new HashMap<String, RouteDetail>(400);
         Date lastUpdated = new Date();
+
+        GtfsDataService gtfsDataService = null;
+        if (gtfsDataServices != null && !gtfsDataServices.isEmpty()) {
+            gtfsDataService = gtfsDataServices.get(0);
+        }
+
 
         generateRouteDetailsForAlerts(tempRouteDetailsMap, serviceAlerts, mode, gtfsDataService, gtfsAdapter, lastUpdated);
         generateRouteDetailsForAllRoutes(tempRouteDetailsMap, mode, gtfsDataService, gtfsAdapter, lastUpdated);
@@ -83,6 +89,7 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
                                                     String mode, GtfsDataService gtfsDataService,
                                                     GtfsRouteAdapter gtfsRouteAdapter,
                                                     Date lastUpdated){
+
 
         for (Route route : gtfsDataService.getAllRoutes()) {
             if (gtfsRouteAdapter.shouldIncludeRoute(route)) {

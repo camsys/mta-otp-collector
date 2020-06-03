@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
 
     protected String _mode;
 
-    protected GtfsDataService _gtfsDataService;
+    protected List<GtfsDataService> _gtfsDataServices = new ArrayList<GtfsDataService>();
 
     private Map<String, RouteDetail> _routeDetailsMap = new HashMap<>();
 
@@ -50,7 +51,9 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
     }
 
     public void setGtfsDataService(GtfsDataService gtfsDataService) {
-        _gtfsDataService = gtfsDataService;
+        if (gtfsDataService != null) {
+            _gtfsDataServices.add(gtfsDataService);
+        }
     }
 
     public void setRouteDetailsMap(Map<String, RouteDetail> _routeDetailsMap) {
@@ -70,7 +73,7 @@ public class LocalServiceStatusSource<T> implements ServiceStatusSource {
         T sourceData = getSourceData(_sourceUrl, _deserializer);
         if (sourceData != null) {
             List<RouteDetail> routeDetails = _transformer
-                    .transform(sourceData, _mode, _gtfsDataService, _gtfsAdapter, _routeDetailsMap);
+                    .transform(sourceData, _mode, _gtfsDataServices, _gtfsAdapter, _routeDetailsMap);
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
     }

@@ -6,10 +6,11 @@ import com.camsys.shims.service_status.model.StatusDetail;
 
 import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtimeServiceStatus;
+import org.onebusaway.gtfs.model.Agency;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.services.GtfsDataService;
-import org.onebusaway.transit_data_federation.services.AgencyAndIdLibrary;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +33,30 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
     private String preferredTranslation = "en-html";
     private String fallbackTranslation = "en";
+    private Map<String, String> legacyAgencyIdMap = null;
+    // special cases for treatment of owning agency
+    private List<String> rebrandedService = null;
 
     public void setPreferredTranslation(String tr) {
         this.preferredTranslation = tr;
+    }
+
+    public void setLegacyAgencyIdMap(Map<String, String> map) {
+        this.legacyAgencyIdMap = map;
     }
 
     public void setFallbackTranslation(String tr) {
         this.fallbackTranslation = tr;
     }
 
+    public void setRebrandedService(List<String> service) {
+        if (service != null) {
+            rebrandedService = service;
+        }
+    }
 
     @Override
-    public List<RouteDetail> transform(GtfsRealtime.FeedMessage obj, String mode, GtfsDataService gtfsDataService,
+    public List<RouteDetail> transform(GtfsRealtime.FeedMessage obj, String mode, List<GtfsDataService> gtfsDataServices,
                                        GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
         ArrayList<RouteDetail> routeDetails = new ArrayList<>();
             int sortOrder = 0;
@@ -57,7 +70,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                                 alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
                     }
                     if (!validAlert(alert)) continue;
-                    routeDetails.addAll(getRouteDetailFromAlert(gtfsDataService, mode, feedEntity, mercuryAlert, sortOrder));
+                    routeDetails.addAll(getRouteDetailFromAlert(gtfsDataServices, mode, feedEntity, mercuryAlert, sortOrder));
                     sortOrder++;
                 }
             }
@@ -65,7 +78,7 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         return routeDetails;
     }
 
-    private List<RouteDetail> getRouteDetailFromAlert(GtfsDataService gtfsDataService, String mode, GtfsRealtime.FeedEntity entity,
+    private List<RouteDetail> getRouteDetailFromAlert(List<GtfsDataService> gtfsDataServices, String mode, GtfsRealtime.FeedEntity entity,
                                                 GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert, int sortOrder) {
 
         List<RouteDetail> routeDetails = new ArrayList<RouteDetail>();
@@ -73,12 +86,21 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
         for (GtfsRealtime.EntitySelector informedEntity : entity.getAlert().getInformedEntityList()) {
             RouteDetail rd = new RouteDetail();
             if (informedEntity.hasAgencyId() && informedEntity.getRouteId().length() > 0) {
-                rd.setRouteId(new AgencyAndId(informedEntity.getAgencyId(), informedEntity.getRouteId()).toString());
+                int delimiter = informedEntity.getRouteId().indexOf(":");
+                if (isRebrandedService(informedEntity.getRouteId()) && delimiter > 0) {
+                    rd.setRouteId(informedEntity.getRouteId().substring(0, delimiter)
+                                    + "_"
+                                    +  informedEntity.getRouteId().substring(delimiter+1, informedEntity.getRouteId().length()));
+                    _log.info("remapped routeId " + informedEntity.getRouteId() + " to " + rd.getRouteId());
+                } else {
+                    rd.setRouteId(new AgencyAndId(filterAgency(informedEntity.getAgencyId()), informedEntity.getRouteId()).toString());
+                }
             } else {
                 _log.debug("discarding non-service status alert for " + informedEntity.toString());
                 continue;
             }
-            Route route = gtfsDataService.getRouteForId(AgencyAndIdLibrary.convertFromString(rd.getRouteId()));
+
+            Route route = getRouteForId(gtfsDataServices, informedEntity);
             if (route == null) {
                 _log.error("illegal route for entity " + entity.getAlert());
                 continue;
@@ -87,7 +109,12 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
                 routeDetails.add(rd);
                 rd.setColor(route.getColor());
                 rd.setRouteType(route.getType());
-                rd.setRouteName(route.getShortName());
+                if (isRebrandedService(informedEntity.getRouteId())) {
+                    rd.setRouteName(route.getLongName());
+                    _log.info("rebranding " + rd.getRouteId() + " as " + rd.getRouteName());
+                } else {
+                    rd.setRouteName(route.getShortName());
+                }
             }
 
             if (mercuryAlert != null) {
@@ -98,13 +125,13 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
             rd.setInService(true);
             rd.setStatusDetails(new HashSet<StatusDetail>());
 
-            rd.setAgency(informedEntity.getAgencyId());
+            rd.setAgency(filterAgency(informedEntity.getAgencyId()));
 
             if (informedEntity.hasTrip()) {
                 GtfsRealtime.TripDescriptor tripDescriptor = informedEntity.getTrip();
                 if (tripDescriptor.hasRouteId()) {
                     if (informedEntity.hasAgencyId() && informedEntity.getRouteId().length() > 0) {
-                        rd.setRouteId(new AgencyAndId(informedEntity.getAgencyId(), tripDescriptor.getRouteId()).toString());
+                        rd.setRouteId(new AgencyAndId(filterAgency(informedEntity.getAgencyId()), tripDescriptor.getRouteId()).toString());
                     }
                 }
             }
@@ -118,6 +145,49 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
         }
         return routeDetails;
+    }
+
+    private boolean isRebrandedService(String routeId) {
+        if (rebrandedService == null || rebrandedService.isEmpty()) return false;
+        for (String s : rebrandedService) {
+            if (s != null && s.equals(routeId)) return true;
+        }
+        return false;
+    }
+
+    private Route getRouteForId(List<GtfsDataService> gtfsDataServices, GtfsRealtime.EntitySelector informedEntity) {
+        for (GtfsDataService gtfsDataService : gtfsDataServices) {
+            Route route = gtfsDataService.getRouteForId(new AgencyAndId(informedEntity.getAgencyId(), informedEntity.getRouteId()));
+            if (route != null) return route;
+            // try non-legacy agency id
+            route = gtfsDataService.getRouteForId(new AgencyAndId(filterAgency(informedEntity.getAgencyId()), informedEntity.getRouteId()));
+            if (route != null) return route;
+            // try embedded agency:route_id as with MNR -> NJT:6 and MNR -> NJT:13
+            int delimiter = informedEntity.getRouteId().indexOf(":");
+            if (isRebrandedService(informedEntity.getRouteId()) && delimiter > 0) {
+                String agencyId = informedEntity.getRouteId().substring(0, delimiter);
+                String routeId = informedEntity.getRouteId().substring(delimiter+1, informedEntity.getRouteId().length());
+                AgencyAndId routeAndId = new AgencyAndId(agencyId, routeId);
+                route = gtfsDataService.getRouteForId(routeAndId);
+
+                if (route != null) {
+                    // we need to cleanup the route for this special case
+                    Agency a = new Agency();
+                    a.setId(agencyId);
+                    route.setAgency(a);
+                    route.setId(routeAndId);
+                    return route;
+                }
+            }
+        }
+        _log.info("route not found " + informedEntity.getAgencyId() + ":" + informedEntity.getRouteId());
+        return null;
+    }
+
+    private String filterAgency(String agencyId) {
+        if (legacyAgencyIdMap == null) return agencyId;
+        if (!legacyAgencyIdMap.containsKey(agencyId)) return agencyId;
+        return legacyAgencyIdMap.get(agencyId);
     }
 
     private List<StatusDetail> getStatusDetailFromAlert(GtfsRealtime.FeedEntity entity, GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert) {

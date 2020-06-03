@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface ServiceStatusTransformer<T> {
-    List<RouteDetail> transform(T obj, String mode, GtfsDataService gtfsDataService, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap);
+    List<RouteDetail> transform(T obj, String mode, List<GtfsDataService> gtfsDataService, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap);
 }

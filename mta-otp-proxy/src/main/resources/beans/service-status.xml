@@ -9,7 +9,10 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mtabus.gms.url}" />
         <property name="mode" value="bus" />
-        <property name="gtfsDataService" ref="busGtfsService" />
+        <property name="gtfsDataServices" >
+                <list><ref bean="busGtfsService" /></list>
+        </property>
+
         <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
     <!-- GtfsRtStatusTransformer -->
@@ -18,7 +21,10 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${bus.lmm.url}" />
         <property name="mode" value="bus" />
-        <property name="gtfsDataService" ref="busGtfsService" />
+        <property name="gtfsDataServices" >
+            <list><ref bean="busGtfsService" /></list>
+        </property>
+
         <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
 
@@ -27,7 +33,10 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${subway.gms.url}" />
         <property name="mode" value="subway" />
-        <property name="gtfsDataService" ref="subwayGtfsService" />
+        <property name="gtfsDataServices" >
+            <list><ref bean="subwayGtfsService" /></list>
+        </property>
+
         <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
     </bean>
     <!-- GtfsRtStatusTransformer -->
@@ -36,7 +45,9 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${subway.lmm.url}" />
         <property name="mode" value="subway" />
-        <property name="gtfsDataService" ref="subwayGtfsService" />
+        <property name="gtfsDataServices" >
+            <list><ref bean="subwayGtfsService" /></list>
+        </property>
         <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
     </bean>
 
@@ -45,7 +56,9 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mnr.gms.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsDataService" ref="mnrGtfsService" />
+        <property name="gtfsDataServices" >
+            <list><ref bean="mnrGtfsService" /></list>
+        </property>
         <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
         <property name="inServiceTrueRoutes" value="MNR_wassaic" />
     </bean>
@@ -55,7 +68,12 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${mnr.lmm.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsDataService" ref="mnrGtfsService" />
+        <property name="gtfsDataServices">
+            <list>
+                <ref bean="mnrGtfsService" />
+                <ref bean="njtGtfsService" />
+            </list>
+        </property>
         <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
     </bean>
 
@@ -64,7 +82,11 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${lirr.gms.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsDataService" ref="lirrGtfsService" />
+        <property name="gtfsDataServices">
+        <list>
+            <ref bean="lirrGtfsService" />
+        </list>
+        </property>
         <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
     </bean>
     <!-- GtfsRtStatusTransformer -->
@@ -73,7 +95,11 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${lirr.lmm.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsDataService" ref="lirrGtfsService" />
+        <property name="gtfsDataServices">
+            <list>
+                <ref bean="lirrGtfsService" />
+            </list>
+        </property>
         <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
     </bean>
 
@@ -83,7 +109,11 @@
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mnr.gms.url}" />
         <property name="mode" value="rail" />
-        <property name="gtfsDataService" ref="njtGtfsService" />
+        <property name="gtfsDataServices">
+            <list>
+                <ref bean="njtGtfsService" />
+            </list>
+        </property>
         <property name="gtfsRouteAdapter" ref="njtRailGtfsRouteAdapter" />
     </bean>
 
@@ -91,7 +121,7 @@
         <property name="transformer" ref="gmsServiceStatusTransformer" />
         <property name="deserializer" ref="gmsServiceStatusDeserializer" />
         <property name="sourceUrl" value="${all.gms.url}" />
-        <property name="gtfsDataService"><null /></property>
+        <property name="gtfsDataServices"><null /></property>
         <property name="gtfsRouteAdapter"><null /></property>
     </bean>
 
@@ -128,6 +158,13 @@
 
     <!-- service status -->
     <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
-    <bean name="gtfsServiceStatusTransformer" class="com.camsys.shims.service_status.transformer.GtfsRtStatusTransformer" />
+    <bean name="gtfsServiceStatusTransformer" class="com.camsys.shims.service_status.transformer.GtfsRtStatusTransformer" >
+        <property name="rebrandedService">
+            <list>
+                <value>${mnr.njt_port_jervis.route_id}</value>
+                <value>${mnr.njt_pascack_valley.route_id}</value>
+            </list>
+        </property>
+    </bean>
 
 </beans>

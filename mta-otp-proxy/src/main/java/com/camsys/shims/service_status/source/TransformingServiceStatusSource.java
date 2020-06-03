@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected String _mode;
 
-    protected GtfsDataService _gtfsDataService;
+    protected List<GtfsDataService> _gtfsDataServices = new ArrayList<GtfsDataService>();
 
     protected List<String> _excludeRoutes;
 
@@ -79,8 +80,9 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         _deserializer = deserializer;
     }
 
-    public void setGtfsDataService(GtfsDataService gtfsDataService) {
-        _gtfsDataService = gtfsDataService;
+    public void setGtfsDataServices(List<GtfsDataService> gtfsDataServices) {
+        if (gtfsDataServices != null)
+            _gtfsDataServices = gtfsDataServices;
     }
 
     @Override
@@ -88,7 +90,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         T sourceData = getSourceData(_sourceUrl, _deserializer);
         if (sourceData != null) {
             List<RouteDetail>  routeDetails = _transformer
-                    .transform(sourceData, _mode, _gtfsDataService, _gtfsAdapter, _routeDetailsMap);
+                    .transform(sourceData, _mode, _gtfsDataServices, _gtfsAdapter, _routeDetailsMap);
             if (_excludeRoutes != null && !_excludeRoutes.isEmpty()) {
                 routeDetails = routeDetails.stream()
                         .filter(r -> !_excludeRoutes.contains(r.getRouteId()))
@@ -152,4 +154,5 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     public void setInServiceTrueRoutes(String inServiceTrueRoutes) {
         _inServiceTrueRoutes = Arrays.asList(inServiceTrueRoutes.split(","));
     }
+
 }

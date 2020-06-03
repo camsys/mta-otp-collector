@@ -37,7 +37,13 @@ public class GmsServiceStatusTransformer implements ServiceStatusTransformer<Ser
     }
 
     @Override
-    public List<RouteDetail> transform(Service service, String mode, GtfsDataService gtfsDataService, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
+    public List<RouteDetail> transform(Service service, String mode, List<GtfsDataService> gtfsDataServices, GtfsRouteAdapter gtfsAdapter, Map<String, RouteDetail> _routeDetailsMap) {
+
+        GtfsDataService gtfsDataService = null;
+        if (gtfsDataServices != null && !gtfsDataServices.isEmpty()) {
+            gtfsDataService = gtfsDataServices.get(0);
+        }
+
         List<RouteDetail> routeDetails = new ArrayList<>();
         for(Line subwayLine : service.getSubway().getLine()){
             if(!subwayLine.getStatus().equalsIgnoreCase(STATUS_GOOD_SERVICE)){
