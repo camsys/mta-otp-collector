@@ -74,7 +74,6 @@ public class GtfsrtToSiriTransformer {
         for (GtfsRealtime.FeedEntity entity : feedMessage.getEntityList()) {
 
             if (entity.hasAlert()) {
-
                 PtSituationElementStructure pt = new PtSituationElementStructure();
                 if (entity.hasId())
                     pt.setSituationNumber(createSituationNumber(entity.getId()));
@@ -100,22 +99,8 @@ public class GtfsrtToSiriTransformer {
         // custom long description
         pt.setDescription(getTranslation(alert.getDescriptionText()));
 
-        for (GtfsRealtime.EntitySelector entitySelector : alert.getInformedEntityList()) {
-
-            if (entitySelector.hasExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector)) {
-                GtfsRealtimeServiceStatus.MercuryEntitySelector mercuryEntitySelector =
-                        entitySelector.getExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector);
-                // message priority
-                if (mercuryEntitySelector.hasSortOrder())
-                    pt.setPriority(parseSortOrder(mercuryEntitySelector.getSortOrder()));
-            }
-
-
-            break;  // only grab the first element
-        }
-
         for (GtfsRealtime.TimeRange timeRange : alert.getActivePeriodList()) {
-            HalfOpenTimestampRangeStructure window = new HalfOpenTimestampRangeStructure();
+                HalfOpenTimestampRangeStructure window = new HalfOpenTimestampRangeStructure();
             pt.setPublicationWindow(window);
             if (timeRange.hasStart()) {
                 window.setStartTime(toDate(timeRange.getStart()));
@@ -132,7 +117,7 @@ public class GtfsrtToSiriTransformer {
                     alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
             // creationDate
             if (mercuryAlert.hasCreatedAt())
-                pt.setCreationTime(toDate(mercuryAlert.getCreatedAt()));
+            pt.setCreationTime(toDate(mercuryAlert.getCreatedAt()));
             // reasonName
             if (mercuryAlert.hasAlertType()) {
                 pt.setReasonName(toNL(mercuryAlert.getAlertType()));
@@ -153,12 +138,23 @@ public class GtfsrtToSiriTransformer {
         // affects -> vehicleJourneys -> AffectedVehicleJourney
         for (GtfsRealtime.EntitySelector informedEntity : alert.getInformedEntityList()) {
 
-            AffectsScopeStructure affects = new AffectsScopeStructure();
-            pt.setAffects(affects);
-            AffectsScopeStructure.VehicleJourneys vj = new AffectsScopeStructure.VehicleJourneys();
-            affects.setVehicleJourneys(vj);
+            if (informedEntity.hasExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector)) {
+                GtfsRealtimeServiceStatus.MercuryEntitySelector mercuryEntitySelector =
+                        informedEntity.getExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector);
+                // message priority
+                if (mercuryEntitySelector.hasSortOrder())
+                    pt.setPriority(parseSortOrder(mercuryEntitySelector.getSortOrder()));
+            }
+
+            if (pt.getAffects() == null) {
+                AffectsScopeStructure affects = new AffectsScopeStructure();
+                pt.setAffects(affects);
+                AffectsScopeStructure.VehicleJourneys vj = new AffectsScopeStructure.VehicleJourneys();
+                affects.setVehicleJourneys(vj);
+            }
             AffectedVehicleJourneyStructure avj = new AffectedVehicleJourneyStructure();
-            vj.getAffectedVehicleJourney().add(avj);
+            // carefully add a new avj per informed entity!
+            pt.getAffects().getVehicleJourneys().getAffectedVehicleJourney().add(avj);
             // lineRef
             if (informedEntity.hasRouteId())
                 avj.setLineRef(withRouteAgency(informedEntity.getRouteId()));
