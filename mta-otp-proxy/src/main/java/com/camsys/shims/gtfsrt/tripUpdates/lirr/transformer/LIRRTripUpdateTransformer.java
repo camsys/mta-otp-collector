@@ -16,13 +16,17 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
     public TripUpdate.Builder transformTripUpdate(FeedEntity fe) {
         if (fe.hasTripUpdate()) {
             int delay = 0;
-            TripUpdate.Builder tripUpdate = fe.getTripUpdate().toBuilder();
-            for (StopTimeUpdate.Builder stub : tripUpdate.getStopTimeUpdateBuilderList()) {
+            TripUpdate tu = fe.getTripUpdate();
+            TripUpdate.Builder tub = TripUpdate.newBuilder();
+            tub.getTripBuilder().setScheduleRelationship(tu.getTrip().getScheduleRelationship());
+
+            for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
+                StopTimeUpdate.Builder stub = stu.toBuilder();
                 GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaStopTimeUpdate);
                 if (ext.hasTrack()) {
-                    GtfsRealtimeNYCT.NyctStopTimeUpdate.Builder nycExt = GtfsRealtimeNYCT.NyctStopTimeUpdate.newBuilder();
-                    nycExt.setActualTrack(ext.getTrack());
-                    stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nycExt.build());
+                    GtfsRealtimeNYCT.NyctStopTimeUpdate.Builder nyctExt = GtfsRealtimeNYCT.NyctStopTimeUpdate.newBuilder();
+                    nyctExt.setActualTrack(ext.getTrack());
+                    stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
                 }
                 if (_stopIdTransformStrategy != null) {
                     String stopId = _stopIdTransformStrategy.transform(null, null, stub.getStopId());
@@ -31,12 +35,13 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
                 if (stub.hasDeparture() && !stub.hasArrival()) {
                     stub.setArrival(stub.getDeparture());
                 }
-                tripUpdate.addStopTimeUpdate(stub);
+                tub.addStopTimeUpdate(stub);
                 if (stub.hasDeparture() && stub.getDeparture().hasDelay())
                     delay = stub.getDeparture().getDelay();
+
             }
-            tripUpdate.setDelay(delay);
-            return tripUpdate;
+            tub.setDelay(delay);
+            return tub;
         }
         return null;
     }
