@@ -15,7 +15,7 @@ package com.camsys.shims.gtfsrt.tripUpdates.lirr.deserializer;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.google.protobuf.ExtensionRegistry;
 import com.google.transit.realtime.GtfsRealtime;
-import com.google.transit.realtime.GtfsRealtimeLIRR;
+import com.google.transit.realtime.GtfsRealtimeMTARR;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class LIRRFeedMessageDeserializer implements Deserializer<GtfsRealtime.Fe
     static {
         _extensionRegistry = ExtensionRegistry.newInstance();
         GtfsRealtimeNYCT.registerAllExtensions(_extensionRegistry);
-        GtfsRealtimeLIRR.registerAllExtensions(_extensionRegistry);
+        GtfsRealtimeMTARR.registerAllExtensions(_extensionRegistry);
     }
 
     @Override

@@ -20,8 +20,7 @@ import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripDescriptor.ScheduleRelationship;
-import com.google.transit.realtime.GtfsRealtimeMNR;
-import com.google.transit.realtime.GtfsRealtimeMNR.MnrStopTimeUpdate;
+import com.google.transit.realtime.GtfsRealtimeMTARR;
 import com.google.transit.realtime.GtfsRealtimeNYCT;
 import com.google.transit.realtime.GtfsRealtimeNYCT.NyctStopTimeUpdate;
 import org.onebusaway.gtfs.model.AgencyAndId;
@@ -120,7 +119,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 continue;
             }
             StopTimeUpdate.Builder stub = stu.toBuilder();
-            MnrStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMNR.mnrStopTimeUpdate);
+            GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaStopTimeUpdate);
             if (ext.hasTrack()) {
                 NyctStopTimeUpdate.Builder nyctExt = NyctStopTimeUpdate.newBuilder();
                 nyctExt.setActualTrack(ext.getTrack());
