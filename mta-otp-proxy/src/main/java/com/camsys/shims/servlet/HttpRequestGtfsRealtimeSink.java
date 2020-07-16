@@ -46,8 +46,9 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
             resp.getWriter().print(message);
         } else if (json) {
             if (message != null) {
+                JsonFormat jf = new JsonFormat();
                 resp.setContentType(JSON_CONTENT_TYPE);
-                resp.getWriter().print(JsonFormat.printToString(message));
+                resp.getWriter().print(jf.printToString(message));
             } else {
                 resp.setContentType(DEBUG_CONTENT_TYPE);
                 resp.getWriter().print(message);
