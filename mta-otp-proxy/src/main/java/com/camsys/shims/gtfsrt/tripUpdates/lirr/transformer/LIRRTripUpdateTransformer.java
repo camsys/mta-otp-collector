@@ -22,7 +22,7 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
 
             for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
                 StopTimeUpdate.Builder stub = stu.toBuilder();
-                GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaStopTimeUpdate);
+                GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaRailroadStopTimeUpdate);
                 if (ext.hasTrack()) {
                     GtfsRealtimeNYCT.NyctStopTimeUpdate.Builder nyctExt = GtfsRealtimeNYCT.NyctStopTimeUpdate.newBuilder();
                     nyctExt.setActualTrack(ext.getTrack());

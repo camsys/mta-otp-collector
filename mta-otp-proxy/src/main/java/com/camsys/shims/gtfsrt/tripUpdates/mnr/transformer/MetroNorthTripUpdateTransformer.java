@@ -119,7 +119,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 continue;
             }
             StopTimeUpdate.Builder stub = stu.toBuilder();
-            GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaStopTimeUpdate);
+            GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaRailroadStopTimeUpdate);
             if (ext.hasTrack()) {
                 NyctStopTimeUpdate.Builder nyctExt = NyctStopTimeUpdate.newBuilder();
                 nyctExt.setActualTrack(ext.getTrack());
