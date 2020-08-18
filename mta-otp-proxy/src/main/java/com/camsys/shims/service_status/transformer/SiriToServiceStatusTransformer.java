@@ -154,7 +154,23 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
     private Route getRoute(String routeId, GtfsDataService gtfsDataService){
         try {
             AgencyAndId agencyAndRouteId = AgencyAndId.convertFromString(routeId);
-            return gtfsDataService.getRouteForId(agencyAndRouteId);
+            Route route = gtfsDataService.getRouteForId(agencyAndRouteId);
+            if (route == null) {
+                // we were not able to find a route in the GTFS that matched
+                // try some of our known exception patterns
+                if (agencyAndRouteId.getId().matches("^Q.$")) {
+                    route = gtfsDataService.getRouteForId(new AgencyAndId(agencyAndRouteId.getAgencyId(),
+                            agencyAndRouteId.getId().replaceAll("Q(.)", "Q0$1")));
+                } else if (agencyAndRouteId.getId().endsWith("-LTD")) {
+                    route = gtfsDataService.getRouteForId(new AgencyAndId(agencyAndRouteId.getAgencyId(),
+                            agencyAndRouteId.getId().replace("-LTD","")));
+                } else {
+                    // log our failure, perhaps another exception needs to added above
+                    _log.error("encountered unexpected routeId " + routeId + " that could not be found in GTFS");
+                }
+                return route;
+
+            }
         } catch (IllegalArgumentException iae) {
             _log.error("Unable to get agencyAndId from route {}", routeId, iae);
         }
