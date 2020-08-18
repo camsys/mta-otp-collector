@@ -14,11 +14,6 @@ package com.camsys.shims.gtfsrt.alerts.siri.deserializer;
 
 import com.amazonaws.util.IOUtils;
 import com.camsys.shims.util.HtmlCleanupUtil;
-import jdk.nashorn.internal.ir.WhileNode;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
 import uk.org.siri.siri.DefaultedTextStructure;
 import uk.org.siri.siri.PtSituationElementStructure;
 import uk.org.siri.siri.ServiceDelivery;
@@ -27,14 +22,17 @@ import uk.org.siri.siri.SituationExchangeDeliveryStructure;
 import uk.org.siri.siri.SituationExchangeDeliveryStructure.Situations;
 
 
-import javax.swing.text.html.parser.ParserDelegator;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
-// deserialize SIRI and modify LongDescription
+/**
+ * deserialize SIRI and make some modifications to
+ * coerce into SIRI compliant data model.
+ * This includes modifications to LongDescription and MessagePriority.
+ */
 public class SiriDeserializerWithModifications extends SiriDeserializer {
+
+    private static final String LMM_PREFIX = "lmm:";
 
     private HtmlCleanupUtil _htmlCleanupUtil;
     private boolean _filterLmm;
@@ -49,6 +47,10 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
+        // here we undo some of the "liberties" that GMS has taken with the SIRI feed
+        // Description -> LegacyDescription (which means its lost)
+        // LongDescription -> Description
+        // MessagePriority -> Priority
         xml = xml.replace("<Description", "<LegacyDescription")
             .replace("</Description>", "</LegacyDescription>")
             .replace("<LongDescription>", "<Description>")
@@ -61,6 +63,10 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
         return siri;
     }
 
+    /**
+     * filter out HTML tags assuming downstream clients don't support them
+     * @param siri compliant data feed
+     */
     private void removeHtml(Siri siri) {
         if (siri.getServiceDelivery() != null) {
             ServiceDelivery sd = siri.getServiceDelivery();
@@ -97,7 +103,7 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                         Situations filteredSituations = new Situations();
                         if (s.getPtSituationElement() != null) {
                             for (PtSituationElementStructure pt: s.getPtSituationElement()) {
-                                if (!pt.getSituationNumber().getValue().startsWith("lmm:")) filteredSituations.getPtSituationElement().add(pt);
+                                if (!pt.getSituationNumber().getValue().startsWith(LMM_PREFIX)) filteredSituations.getPtSituationElement().add(pt);
                             }
                             seds.setSituations(filteredSituations);
                         }
