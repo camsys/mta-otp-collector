@@ -84,6 +84,9 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
         }
     }
 
+    // LMM data should come from GTFS-RT, not SIRI
+    // if its in the SIRI feed, another system (GMS) is echoing it to us
+    // and it should be disregarded
     private void filterLmm(Siri siri) {
         if (siri.getServiceDelivery() != null) {
             ServiceDelivery sd = siri.getServiceDelivery();
