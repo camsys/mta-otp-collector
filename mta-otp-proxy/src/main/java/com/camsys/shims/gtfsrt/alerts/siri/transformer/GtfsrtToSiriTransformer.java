@@ -45,6 +45,8 @@ public class GtfsrtToSiriTransformer {
 
     private static String DEFAULT_LANG = "EN";
 
+    private static String PLANNED_WORK = "Planned Work";
+
     public void setGtfsDataService(GtfsDataService gtfsDataService) {
         _gtfsDataService = gtfsDataService;
     }
@@ -111,7 +113,7 @@ public class GtfsrtToSiriTransformer {
 
         }
 
-        GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert;
+        GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert = null;
         if (alert.hasExtension(GtfsRealtimeServiceStatus.mercuryAlert)) {
             mercuryAlert =
                     alert.getExtension(GtfsRealtimeServiceStatus.mercuryAlert);
@@ -128,8 +130,12 @@ public class GtfsrtToSiriTransformer {
             pt.setCreationTime(pt.getPublicationWindow().getStartTime());
         }
 
-        // planned -- not supported
-        pt.setPlanned(false);
+        // planned work
+        if (mercuryAlert != null && mercuryAlert.hasAlertType()) {
+            pt.setPlanned(PLANNED_WORK.equals(mercuryAlert.getAlertType()));
+        } else {
+            pt.setPlanned(false);
+        }
 
         // source -> sourceType
         SituationSourceStructure source = new SituationSourceStructure();
