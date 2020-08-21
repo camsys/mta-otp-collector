@@ -129,8 +129,8 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
     }
 
     private String formatForBusCIS(String outputAsString) {
-        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "$1<Description xml:lang=\"EN\">$2</Description>");
-
+        // description is now populated -- no need to copy!
+        //outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "$1<Description xml:lang=\"EN\">$2</Description>");
         return outputAsString;
     }
 

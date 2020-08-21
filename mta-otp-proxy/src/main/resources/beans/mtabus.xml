@@ -72,7 +72,7 @@
 
     <bean name="busGMSSiriOutputAlerts" class="com.camsys.shims.util.source.SiriForwarder">
         <property name="feedManager" ref="busAlertManager" />
-        <property name="deserializer" ref="siriDeserializerWithoutHtml" />
+        <property name="deserializer" ref="siriDeserializerWithoutHtmlWithLongDescription" />
     </bean>
     <bean name="busCISSiriOutputAlerts" class="com.camsys.shims.util.source.SiriForwarder">
         <property name="feedManager" ref="busCISAlertManager" />
@@ -106,11 +106,13 @@
 
 
     <!-- here we host SIRI output of the GTFS-RT for legacy GMS integrations -->
+    <!-- Bus Time's version of SIRI feed -->
     <bean id="siriBusCISOutputAlerts" class="com.camsys.shims.servlet.HttpRequestSiriSink">
         <property name="source" ref="busAllCISSiriOutputAlerts" />
         <property name="htmlCleanupUtil" ref="noHtmlUtil" />
         <property name="type" value="cis" />
     </bean>
+    <!-- GMS version of SIRI feed -->
     <bean id="siriGMSOutputAlerts" class="com.camsys.shims.servlet.HttpRequestSiriSink">
         <property name="source" ref="busAllGMSSiriOutputAlerts" />
         <property name="htmlCleanupUtil" ref="noHtmlUtil" />

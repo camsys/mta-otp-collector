@@ -36,12 +36,16 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
 
     private HtmlCleanupUtil _htmlCleanupUtil;
     private boolean _filterLmm;
+    private boolean _swapLongDescription = true;
 
     public void setHtmlCleanupUtil(HtmlCleanupUtil htmlCleanupUtil) {
         _htmlCleanupUtil = htmlCleanupUtil;
     }
     public void setFilterLmm(boolean filterLmm) {
         _filterLmm = filterLmm;
+    }
+    public void setSwapLongDescription(boolean flag) {
+        _swapLongDescription = flag;
     }
 
     @Override
@@ -51,12 +55,16 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
         // Description -> LegacyDescription (which means its lost)
         // LongDescription -> Description
         // MessagePriority -> Priority
-        xml = xml.replace("<Description", "<LegacyDescription")
-            .replace("</Description>", "</LegacyDescription>")
-            .replace("<LongDescription>", "<Description>")
-            .replace("</LongDescription>", "</Description>")
-            .replace("<MessagePriority>", "<Priority>")
-            .replace("</MessagePriority>", "</Priority>");
+        if (_swapLongDescription) {
+            xml = xml.replace("<Description", "<LegacyDescription")
+                    .replace("</Description>", "</LegacyDescription>")
+                    .replace("<LongDescription>", "<Description>")
+                    .replace("</LongDescription>", "</Description>");
+
+        }
+
+        xml = xml.replace("<MessagePriority>", "<Priority>")
+        .replace("</MessagePriority>", "</Priority>");
         Siri siri = deserialize(xml);
         removeHtml(siri);
         if (_filterLmm) {filterLmm(siri);}
