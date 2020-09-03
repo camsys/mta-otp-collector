@@ -83,7 +83,13 @@
             </array>
         </property>
     </bean>
-    <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck" />
+    <!-- monitoring object for healthcheck -->
+    <bean id="serviceStatusMonitor" class="com.camsys.shims.service_status.source.ServiceStatusMonitor" autowire="byType">
+    </bean>
+
+    <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck">
+        <property name="monitor" ref="serviceStatusMonitor" />
+    </bean>
     <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
     <bean id="mtaApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
         <property name="type" value="api_key_header" />

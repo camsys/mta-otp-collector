@@ -5,6 +5,7 @@
 
     <!-- tasks -->
     <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="bus"/>
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mtabus.gms.url}" />
@@ -17,6 +18,7 @@
     </bean>
     <!-- GtfsRtStatusTransformer -->
     <bean id="busLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="busLMM"/>
         <property name="transformer" ref="gtfsServiceStatusTransformer" />
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${bus.lmm.url}" />
@@ -29,6 +31,7 @@
     </bean>
 
     <bean id="subwayServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="subway"/>
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${subway.gms.url}" />
@@ -41,6 +44,7 @@
     </bean>
     <!-- GtfsRtStatusTransformer -->
     <bean id="subwayLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="subwayLMM"/>
         <property name="transformer" ref="gtfsServiceStatusTransformer" />
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${subway.lmm.url}" />
@@ -52,6 +56,7 @@
     </bean>
 
     <bean id="mnrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="mnr"/>
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mnr.gms.url}" />
@@ -64,6 +69,7 @@
     </bean>
     <!-- GtfsRtStatusTransformer -->
     <bean id="mnrLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="mnrLMM"/>
         <property name="transformer" ref="gtfsServiceStatusTransformer" />
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${mnr.lmm.url}" />
@@ -78,6 +84,7 @@
     </bean>
 
     <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="lirr"/>
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${lirr.gms.url}" />
@@ -91,6 +98,7 @@
     </bean>
     <!-- GtfsRtStatusTransformer -->
     <bean id="lirrLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="lirrLMM"/>
         <property name="transformer" ref="gtfsServiceStatusTransformer" />
         <property name="deserializer" ref="gtfsrt" />
         <property name="sourceUrl" value="${lirr.lmm.url}" />
@@ -105,6 +113,7 @@
 
 
     <bean id="njtRailServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="njt"/>
         <property name="transformer" ref="serviceStatusTransformer" />
         <property name="deserializer" ref="siriDeserializerWithModifications" />
         <property name="sourceUrl" value="${mnr.gms.url}" />
@@ -118,6 +127,7 @@
     </bean>
 
     <bean id="gmsServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
+        <property name="id" value="gms"/>
         <property name="transformer" ref="gmsServiceStatusTransformer" />
         <property name="deserializer" ref="gmsServiceStatusDeserializer" />
         <property name="sourceUrl" value="${all.gms.url}" />
@@ -146,6 +156,7 @@
         <property name="bannedRouteIds">
             <array></array>
         </property>
+        <property name="serviceStatusMonitor" ref="serviceStatusMonitor" />
     </bean>
 
     <bean id="serviceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">

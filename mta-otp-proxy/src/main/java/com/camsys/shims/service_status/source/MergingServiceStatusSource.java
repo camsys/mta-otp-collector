@@ -32,6 +32,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
     private static final String LIRR_AGENCY = "LI";
     private static final String MNR_AGENCY = "MNR";
 
+    private ServiceStatusMonitor _monitor;
 
     private List<ServiceStatusSource> _sources;
 
@@ -66,6 +67,8 @@ public class MergingServiceStatusSource implements ServiceStatusSource
          _bannedRouteIds = banned;
     };
 
+    public void setServiceStatusMonitor(ServiceStatusMonitor monitor) { _monitor = monitor; }
+
     public MergingServiceStatusSource(List<ServiceStatusSource> sources) {
         _sources = sources;
     }
@@ -80,7 +83,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
             merge(allRouteDetails, source.getStatus(null).getRouteDetails());
         }
         _serviceStatus = new ServiceStatus(new Date(), filterHiddenRoutes(ensureDates(addGoodService(allRouteDetails))));
-
+        if (_monitor != null) _monitor.ping(this.getClass().getSimpleName());
     }
 
     // we may already have an existing RouteDetail object.  If so merge carefully!

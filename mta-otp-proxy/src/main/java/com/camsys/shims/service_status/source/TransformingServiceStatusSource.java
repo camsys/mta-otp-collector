@@ -50,6 +50,11 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     protected String _mode;
 
+    // debug name of feed
+    protected String _id;
+
+    protected ServiceStatusMonitor _monitor;
+
     protected List<GtfsDataService> _gtfsDataServices = new ArrayList<GtfsDataService>();
 
     protected List<String> _excludeRoutes;
@@ -66,6 +71,12 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     public void setMode(String mode) {
         _mode = mode;
+    }
+
+    public void setId(String id) { _id = id; }
+
+    public void setMonitor(ServiceStatusMonitor monitor) {
+        _monitor = monitor;
     }
 
     public void setTransformer(ServiceStatusTransformer transformer) {
@@ -87,6 +98,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     @Override
     public void update() {
+
         T sourceData = getSourceData(_sourceUrl, _deserializer);
         if (sourceData != null) {
             List<RouteDetail>  routeDetails = _transformer
@@ -112,6 +124,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
             }
             _serviceStatus = new ServiceStatus(new Date(), routeDetails);
         }
+        if (_monitor != null) _monitor.ping(_id);
     }
 
     protected T getSourceData(String sourceUrl, Deserializer<T> deserializer){

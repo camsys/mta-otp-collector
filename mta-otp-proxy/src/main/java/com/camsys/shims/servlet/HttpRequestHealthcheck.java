@@ -2,6 +2,7 @@ package com.camsys.shims.servlet;
 
 import com.camsys.shims.healthcheck.HealthcheckModel;
 import com.camsys.shims.service_status.model.ServiceStatus;
+import com.camsys.shims.service_status.source.ServiceStatusMonitor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
 
     private static ObjectMapper _mapper = new ObjectMapper();
 
+    private ServiceStatusMonitor _monitor;
+
     private String _hostname = "localhost";
 
     private int _port = 8080;
@@ -33,11 +36,15 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
 
     private int _minStopsForRoute = 10;
 
+    public void setMonitor(ServiceStatusMonitor monitor) {
+        _monitor = monitor;
+    }
+
     public void handleRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType(CONTENT_TYPE);
         HealthcheckModel status = getHealthcheck();
         ObjectWriter writer = _mapper.writerWithDefaultPrettyPrinter();
-        writer.writeValue(resp.getWriter(), status);
+            writer.writeValue(resp.getWriter(), status);
     }
 
     private HealthcheckModel getHealthcheck() throws IOException {
@@ -62,7 +69,7 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
             throw new RuntimeException("no stops for route in data!");
         }
 
-        return new HealthcheckModel(status.getLastUpdated(), stopsForRoute.size());
+        return new HealthcheckModel(status.getLastUpdated(), stopsForRoute.size(), _monitor);
     }
 
     public void setHostname(String hostname) {
