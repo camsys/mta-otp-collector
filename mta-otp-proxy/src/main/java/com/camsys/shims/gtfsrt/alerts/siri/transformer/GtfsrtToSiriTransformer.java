@@ -122,6 +122,9 @@ public class GtfsrtToSiriTransformer {
             if (mercuryAlert.hasAlertType()) {
                 pt.setReasonName(toNL(mercuryAlert.getAlertType()));
             }
+            if (mercuryAlert.hasScreensSummary()) {
+                pt.setSummary(getTranslation(mercuryAlert.getScreensSummary()));
+            }
         }
 
         if (pt.getCreationTime() == null && pt.getPublicationWindow() != null) {
