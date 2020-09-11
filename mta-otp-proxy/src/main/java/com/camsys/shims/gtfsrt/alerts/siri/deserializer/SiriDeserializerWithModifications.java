@@ -87,7 +87,7 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
                                 if (pt.getDescription() != null) {
                                     DefaultedTextStructure txt = pt.getDescription();
                                     String html = txt.getValue();
-                                    String cleanedHtml = _htmlCleanupUtil.filterHtml(html);
+                                    String cleanedHtml = _htmlCleanupUtil.filterAndSpaceHtml(html);
                                     txt.setValue(cleanedHtml);
                                 }
                             }

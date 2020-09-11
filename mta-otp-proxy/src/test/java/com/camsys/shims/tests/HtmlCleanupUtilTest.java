@@ -104,4 +104,13 @@ public class HtmlCleanupUtilTest {
         expected = "<span class=\"TitlePlannedWork\">Planned Work —</span>";
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void testEnsureSpacedContent() {
+        String html = "<a class=\"plannedWorkDetailLink\" onclick=ShowHide(261842);><b>Until further notice<br clear=left>Eastbound B25 stop on Water St at Main St is closed due to road work</a><br/><br/><div id= 261842 class=\"plannedWorkDetail\" ><br></b>Please use the nearby stop <b>on</b> <b>Front St </b>at York St.<br><b><br></div></b><br/>";
+        String actual = htmlCleanupUtil.ensureSpacedContent(html);
+        String expected = "<a class=\"plannedWorkDetailLink\" onclick=ShowHide(261842);><b>Until further notice<br clear=left> Eastbound B25 stop on Water St at Main St is closed due to road work</a><br/> <br/> <div id= 261842 class=\"plannedWorkDetail\" ><br> </b>Please use the nearby stop <b>on</b> <b>Front St </b>at York St.<br> <b><br> </div></b><br/> ";
+        assertEquals(expected, actual);
+
+    }
 }

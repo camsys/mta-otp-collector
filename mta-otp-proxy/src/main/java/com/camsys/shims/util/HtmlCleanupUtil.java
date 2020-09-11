@@ -5,8 +5,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.safety.Cleaner;
 import org.jsoup.safety.Whitelist;
 
-import javax.annotation.PostConstruct;
-
 /**
  * Created by lcaraballo on 4/6/18.
  */
@@ -38,6 +36,11 @@ public class HtmlCleanupUtil {
         return doc.body().html();
     }
 
+    public String filterAndSpaceHtml(final String html) {
+        String spacedHtml = ensureSpacedContent(html);
+        return filterHtml(spacedHtml);
+    }
+
     public String filterCharsFromHtml(final String html) {
         if (html == null) return html;
         if (_htmlCharacterBlackList == null) return html;
@@ -49,9 +52,18 @@ public class HtmlCleanupUtil {
     }
 
     public String filterAndBlacklist(final String html) {
-        String whiteList = filterHtml(html);
+        String spacedHtml = ensureSpacedContent(html);
+        String whiteList = filterHtml(spacedHtml);
         String blackList = filterCharsFromHtml(whiteList);
         return blackList;
+    }
+
+
+    public String ensureSpacedContent(String html) {
+        // certain content should be replaced with whitespace so that
+        // it can be easily read
+        String spacedContent = html.replaceAll("(<br>|<br/>|<br clear=left>)", "$1 ");
+        return spacedContent;
     }
 
     private void addAttributesToAllTags(Whitelist wl){
