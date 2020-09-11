@@ -14,7 +14,7 @@
     </bean>
     <bean name="siriDeserializerWithoutHtmlWithLongDescription" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
         <property name="htmlCleanupUtil" ref="noHtmlUtil" />
-        <property name="swapLongDescription" value="false"/>
+        <property name="swapLongDescription" value="true"/>
     </bean>
 
     <bean name="siriDeserializerWithoutHtml" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
