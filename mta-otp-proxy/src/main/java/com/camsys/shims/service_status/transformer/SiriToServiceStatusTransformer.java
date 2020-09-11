@@ -168,9 +168,8 @@ public class SiriToServiceStatusTransformer implements ServiceStatusTransformer<
                     // log our failure, perhaps another exception needs to added above
                     _log.error("encountered unexpected routeId " + routeId + " that could not be found in GTFS");
                 }
-                return route;
-
             }
+            return route;
         } catch (IllegalArgumentException iae) {
             _log.error("Unable to get agencyAndId from route {}", routeId, iae);
         }
