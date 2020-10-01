@@ -7,7 +7,7 @@
         <property name="baseUrl">
             <value>${lirr.gtfsrt.url}</value>
         </property>
-        <property name="defaultCredential" ref="mtaApiCredential" />
+        <property name="defaultCredential" ref="${lirr.gtfsrt.credential.key}" />
     </bean>
 
     <!-- LIRR trip updates -->
