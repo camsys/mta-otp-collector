@@ -19,6 +19,14 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
             TripUpdate tu = fe.getTripUpdate();
             TripUpdate.Builder tub = TripUpdate.newBuilder();
             tub.getTripBuilder().setScheduleRelationship(tu.getTrip().getScheduleRelationship());
+            String routeId = null, startDate = null;
+            if (tu.hasTrip() && tu.getTrip().hasRouteId()) {
+                routeId = tu.getTrip().getRouteId();
+            }
+            if (tu.hasTrip() && tu.getTrip().hasStartDate()) {
+                startDate = tu.getTrip().getStartDate();
+            }
+
 
             for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
                 StopTimeUpdate.Builder stub = stu.toBuilder();
@@ -40,6 +48,9 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
                     delay = stub.getDeparture().getDelay();
 
             }
+
+            tub.getTripBuilder().setStartDate(startDate);
+            tub.getTripBuilder().setRouteId(routeId);
             tub.setDelay(delay);
             return tub;
         }
