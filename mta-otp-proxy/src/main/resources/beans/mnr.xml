@@ -11,9 +11,8 @@
     </bean>
 
     <!-- Metro North Trip Updates -->
-    <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.RailRoadTripUpdateTransformer">
+    <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
         <property name="gtfsDataService" ref="mnrGtfsService" />
-        <property name="agencyId" value="MNR" />
         <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${mnr.feedid}" />
         <property name="startDateIsServiceDate" value="${mnr.use_service_date}" />

@@ -10,7 +10,7 @@
 
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
-package com.camsys.shims.gtfsrt.tripUpdates;
+package com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer;
 
 import com.camsys.shims.util.transformer.TripUpdateTransformer;
 import com.google.common.collect.ArrayListMultimap;
@@ -43,17 +43,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class RailRoadTripUpdateTransformer extends TripUpdateTransformer {
+public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
 
     private GtfsDataService _gtfsDataService;
 
-    private String _agencyId = null;
+    private String _agencyId = "MNR";
 
     private boolean _startDateIsServiceDate = true;
 
-    private static final Logger _log = LoggerFactory.getLogger(RailRoadTripUpdateTransformer.class);
+    private static final Logger _log = LoggerFactory.getLogger(MetroNorthTripUpdateTransformer.class);
 
     public void setGtfsDataService(GtfsDataService gtfsDataService) {
         _gtfsDataService = gtfsDataService;
