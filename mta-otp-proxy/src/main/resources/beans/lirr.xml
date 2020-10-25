@@ -12,11 +12,14 @@
 
     <!-- LIRR trip updates -->
     <bean name="lirrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.deserializer.LIRRFeedMessageDeserializer" />
-    <bean id="lirrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LIRRTripUpdateTransformer">
+    <bean id="lirrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.RailRoadTripUpdateTransformer">
+        <property name="gtfsDataService" ref="lirrGtfsService" />
+        <property name="agencyId" value="LIRR" />
         <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${lirr.feedid}" />
-        <property name="stopIdTransformStrategy" ref="lirrStopIdTransformStrategy" />
+        <property name="startDateIsServiceDate" value="${lirr.use_service_date}" />
     </bean>
+
     <bean id="lirrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
         <property name="feedManager" ref="lirrTUFeedManager"/>
         <property name="transformer" ref="lirrTransformer" />
