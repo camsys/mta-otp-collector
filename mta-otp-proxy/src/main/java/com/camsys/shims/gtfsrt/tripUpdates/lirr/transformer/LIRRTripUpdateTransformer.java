@@ -49,8 +49,10 @@ public class LIRRTripUpdateTransformer extends TripUpdateTransformer {
 
             }
 
-            tub.getTripBuilder().setStartDate(startDate);
-            tub.getTripBuilder().setRouteId(routeId);
+            if (startDate != null)
+                tub.getTripBuilder().setStartDate(startDate);
+            if (routeId != null)
+                tub.getTripBuilder().setRouteId(routeId);
             tub.setDelay(delay);
             return tub;
         }
