@@ -115,7 +115,8 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
     }
     private String formatForGMS(String outputAsString) {
         // the GMS feed deviates from SIRI in some cases.  Make those changes below
-        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "$1<TmpDescription>$2</TmpDescription>");
+        outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)",
+                "$1\012                    <TmpDescription>$2</TmpDescription>");  // make it look like it belongs
         outputAsString = outputAsString
                 .replace("<Description>", "<LongDescription>")
                 .replace("<Description xml:lang=\"EN\">", "<LongDescription>")
