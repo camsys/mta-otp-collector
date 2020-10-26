@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpRequestHandler;
 import uk.org.siri.siri.DefaultedTextStructure;
+import uk.org.siri.siri.PtConsequenceStructure;
 import uk.org.siri.siri.PtSituationElementStructure;
+import uk.org.siri.siri.ServiceConditionEnumeration;
 import uk.org.siri.siri.ServiceDelivery;
 import uk.org.siri.siri.Siri;
 import uk.org.siri.siri.SituationExchangeDeliveryStructure;
@@ -85,6 +87,20 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
                                     String cleanedHtml = _htmlCleanupUtil.filterAndBlacklist(html);
                                     txt.setValue(cleanedHtml);
                                 }
+                                if (pt.getConsequences() != null) {
+                                    if (pt.getConsequences().getConsequence() != null) {
+                                        for (PtConsequenceStructure consequence : pt.getConsequences().getConsequence()) {
+                                            if (consequence.getCondition() == null) {
+                                                /*
+                                                 * in an effort to make output as similar as possible we output a sentinel
+                                                 * that will later be replaced with <Condition/>
+                                                 */
+                                                consequence.setCondition(ServiceConditionEnumeration.PTI_13_255);
+                                            }
+                                        }
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -124,14 +140,15 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
                 .replace("<TmpDescription>", "<Description xml:lang=\"EN\">")
                 .replace("</TmpDescription>", "</Description>")
                 .replace("<Priority>", "<MessagePriority>")
-                .replace("</Priority>", "</MessagePriority>");
+                .replace("</Priority>", "</MessagePriority>")
+                /* make it look exactly like GMS */
+                .replace("<Condition>pti13_255</Condition>", "<Condition/>");
         return outputAsString;
 
     }
 
     private String formatForBusCIS(String outputAsString) {
-        // description is now populated -- no need to copy!
-        //outputAsString = outputAsString.replaceAll("(<Summary xml:lang=\"EN\">(.*)</Summary>)", "$1<Description xml:lang=\"EN\">$2</Description>");
+        outputAsString = outputAsString.replace("<Condition>pti13_255</Condition>", "<Condition/>");
         return outputAsString;
     }
 
