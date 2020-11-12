@@ -105,7 +105,7 @@
         <property name="baseUrl">
             <value>${subway.elev.url}</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredential" ref="mtaApiCredential" />
     </bean>
 
     <bean id="subwayElevatorAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
