@@ -40,7 +40,8 @@ public class HttpRequestGtfsRealtimeSink implements HttpRequestHandler {
         boolean debug = req.getParameter("debug") != null;
         boolean json = "json".equals(req.getParameter("type"));
 
-        Message message = _source.getFeed();
+        GtfsRealtimeFilter filter = new GtfsRealtimeFilter(req);
+        Message message = filter.applyFilter(_source);
         if (debug) {
             resp.setContentType(DEBUG_CONTENT_TYPE);
             resp.getWriter().print(message);
