@@ -72,6 +72,9 @@
             <value>${lirr.lmm.url}</value>
         </property>
         <property name="defaultCredential" ref="lmmCredential" />
+        <property name="timeout">
+            <value>10000</value>
+        </property>
     </bean>
 
     <bean name="lirrSirFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">

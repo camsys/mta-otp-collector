@@ -73,6 +73,9 @@
             <value>${mnr.lmm.url}</value>
         </property>
         <property name="defaultCredential" ref="lmmCredential" />
+        <property name="timeout">
+            <value>10000</value>
+        </property>
     </bean>
 
     <bean name="mnrSiriFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
