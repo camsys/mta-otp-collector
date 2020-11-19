@@ -18,6 +18,9 @@
             <value>${bus.lmm.url}</value>
         </property>
         <property name="defaultCredential" ref="lmmCredential" />
+        <property name="timeout">
+            <value>10000</value>
+        </property>
     </bean>
 
     <bean id="busTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">

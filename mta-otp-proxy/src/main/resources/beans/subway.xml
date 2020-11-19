@@ -79,6 +79,9 @@
         <property name="baseUrl">
             <value>${subway.lmm.url}</value>
         </property>
+        <property name="timeout">
+            <value>10000</value>
+        </property>
         <property name="defaultCredential" ref="lmmCredential" />
     </bean>
 
