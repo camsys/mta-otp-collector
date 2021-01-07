@@ -110,7 +110,7 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
                 }
             } catch (Exception e) {
                 _log.error("Error parsing protocol feed: {}", feedUrl);
-                e.printStackTrace();
+//                e.printStackTrace();
             }
         }
         return null;

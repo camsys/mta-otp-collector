@@ -34,10 +34,10 @@ public class StatusResultsDeserializer implements Deserializer<StatusResults> {
             StatusResults results = _mapper.readValue(inputStream,StatusResults.class);
             return results;
         } catch(JsonMappingException jme){
-            jme.printStackTrace();
+//            jme.printStackTrace();
             throw new IOException(jme);
         } catch(IOException jpe) {
-            jpe.printStackTrace();
+//            jpe.printStackTrace();
             throw new IOException(jpe);
         }
     }
