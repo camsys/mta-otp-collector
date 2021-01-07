@@ -12,6 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer;
 
+import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.Station;
 import com.camsys.shims.gtfsrt.alerts.elevator.mnr.model.StationResults;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -31,7 +32,9 @@ public class StationResultsDeserializer implements Deserializer<StationResults> 
     @Override
     public StationResults deserialize(InputStream inputStream) throws IOException {
         try {
-            StationResults results = _mapper.readValue(inputStream,StationResults.class);
+            Station[] stations = _mapper.readValue(inputStream,Station[].class);
+            StationResults results = new StationResults();
+            results.setGetStationsJsonResult(stations);
             return results;
         } catch(JsonMappingException jme){
             jme.printStackTrace();

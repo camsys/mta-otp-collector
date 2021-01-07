@@ -36,7 +36,7 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
 
     private static final String OUT_OF_SERVICE = " Elevator is out of service.";
 
-    private static final String WORKING_STATUS = "1";
+    private static final String WORKING_STATUS = "working";
 
     private static final String MNR_AGENCY = "MNR";
 
@@ -52,11 +52,13 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
         message.setHeader(header);
 
         for(StatusResults statusResults : statusResultsList){
-            Status[] statuses = statusResults.getGetElevatorJsonResult();
-            for (Status status : statuses) {
-                if (status != null && !status.getStatusID().equals(WORKING_STATUS)) {
-                    FeedEntity fe = statusToEntity(status);
-                    message.addEntity(fe);
+            Status[] statuses = statusResults.getGetLiftJsonResult();
+            if (statuses != null) {
+                for (Status status : statuses) {
+                    if (status != null && !status.getStatus().equals(WORKING_STATUS)) {
+                        FeedEntity fe = statusToEntity(status, statusResults.getStationID());
+                        message.addEntity(fe);
+                    }
                 }
             }
         }
@@ -64,38 +66,38 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
         return message.build();
     }
 
-    private FeedEntity statusToEntity(Status status) {
+    private FeedEntity statusToEntity(Status status, String stationID) {
         Alert.Builder alert = Alert.newBuilder();
         EntitySelector.Builder informedEntity = EntitySelector.newBuilder();
         informedEntity.setAgencyId(MNR_AGENCY);
-        informedEntity.setStopId(status.getStationID());
+        informedEntity.setStopId(stationID);
         alert.addInformedEntity(informedEntity);
         String desc = status.getDescription() + OUT_OF_SERVICE;
         alert.setHeaderText(translatedString(desc ));
         alert.setDescriptionText(translatedString(desc ));
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
-                .setId(hashAlert(status));
+                .setId(hashAlert(status, stationID));
         return builder.build();
     }
 
-    private String hashAlert(Status status) {
+    private String hashAlert(Status status, String stationID) {
         try {
         MessageDigest hashFunction = null;
             hashFunction = MessageDigest.getInstance("MD5");
         StringBuilder input = new StringBuilder();
         input.append(MNR_AGENCY);
-        input.append(status.getStationID());
-        input.append(status.getStatusID());
+        input.append(stationID);
+        input.append(status.getStatus());
         input.append(status.getDescription());
         byte[] hash = hashFunction.digest(input.toString().getBytes("UTF-8"));
         return MNR_AGENCY + "_" + Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
             _log.error("MD5 not supported!");
-            return status.getStationID();
+            return stationID;
         } catch (UnsupportedEncodingException uee) {
             _log.error("string conversion failed!");
-            return status.getStationID();
+            return stationID;
         }
     }
 
