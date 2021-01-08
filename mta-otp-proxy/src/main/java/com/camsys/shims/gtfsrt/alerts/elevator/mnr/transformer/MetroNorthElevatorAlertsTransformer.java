@@ -34,7 +34,7 @@ public class MetroNorthElevatorAlertsTransformer implements GtfsRealtimeTransfor
 
     private static final SimpleDateFormat _dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 
-    private static final String OUT_OF_SERVICE = " Elevator is out of service.";
+    private static final String OUT_OF_SERVICE = " Out of service.";
 
     private static final String WORKING_STATUS = "working";
 
