@@ -188,6 +188,11 @@ public class GtfsrtToSiriTransformer {
                 if (informedEntity.getTrip().hasDirectionId()) {
                     // directionRef
                     avj.setDirectionRef(toDirectionRef(informedEntity.getTrip().getDirectionId()));
+                } else {
+                    AffectedVehicleJourneyStructure avjClone = cloneJourney(avj);
+                    avj.setDirectionRef(toDirectionRef(0));
+                    avjClone.setDirectionRef(toDirectionRef(1));
+                    pt.getAffects().getVehicleJourneys().getAffectedVehicleJourney().add(avjClone);
                 }
             }
         }
@@ -196,6 +201,12 @@ public class GtfsrtToSiriTransformer {
         pt.setConsequences(new PtConsequencesStructure());
         pt.getConsequences().getConsequence().add(consequence);
 
+    }
+
+    private AffectedVehicleJourneyStructure cloneJourney(AffectedVehicleJourneyStructure avj) {
+        AffectedVehicleJourneyStructure clone = new AffectedVehicleJourneyStructure();
+        clone.setLineRef(toLineRef(avj.getLineRef().getValue()));
+        return clone;
     }
 
     private DirectionRefStructure toDirectionRef(int directionId) {
