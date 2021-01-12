@@ -30,6 +30,7 @@ import uk.org.siri.siri.SituationSourceTypeEnumeration;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Convert Mercury GTFS-RT to SIRI and provide as a legacy integration strategy
@@ -78,7 +79,7 @@ public class GtfsrtToSiriTransformer {
             if (entity.hasAlert()) {
                 PtSituationElementStructure pt = new PtSituationElementStructure();
                 if (entity.hasId())
-                    pt.setSituationNumber(createSituationNumber(entity.getId()));
+                    pt.setSituationNumber(createSituationNumber(entity));
                 fillPtSituationElement(pt, entity.getAlert());
                 s.getPtSituationElement().add(pt);
             }
@@ -87,10 +88,25 @@ public class GtfsrtToSiriTransformer {
         return siri;
     }
 
-    private EntryQualifierStructure createSituationNumber(String id) {
+    private EntryQualifierStructure createSituationNumber(GtfsRealtime.FeedEntity entity) {
+        String id = entity.getId();
+        String agencyId = getAgencyFromInformedEntity(entity.getAlert().getInformedEntityList());
         EntryQualifierStructure s = new EntryQualifierStructure();
-        s.setValue(id);
+        if (agencyId == null) {
+            s.setValue(id);
+        } else {
+            s.setValue(new AgencyAndId(agencyId, id).toString());
+        }
         return s;
+    }
+
+    private String getAgencyFromInformedEntity(List<GtfsRealtime.EntitySelector> informedEntityList) {
+        if (informedEntityList == null || informedEntityList.isEmpty()) return null;
+        for (GtfsRealtime.EntitySelector selector : informedEntityList) {
+            if (selector.hasAgencyId())
+                return selector.getAgencyId();
+        }
+        return null;
     }
 
     private void fillPtSituationElement(PtSituationElementStructure pt, GtfsRealtime.Alert alert) {
