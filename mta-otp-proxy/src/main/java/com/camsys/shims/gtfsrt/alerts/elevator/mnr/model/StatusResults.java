@@ -1,19 +1,21 @@
 package com.camsys.shims.gtfsrt.alerts.elevator.mnr.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by lcaraballo on 2/1/18.
  */
 public class StatusResults {
-    @JsonProperty("GetElevatorJsonResult")
-    Status[] getElevatorJsonResult;
+    Status[] getLiftJsonResult;
+    String stationID;
 
-    public Status[] getGetElevatorJsonResult() {
-        return getElevatorJsonResult;
+    public Status[] getGetLiftJsonResult() {
+        return getLiftJsonResult;
     }
 
-    public void setGetElevatorJsonResult(Status[] getElevatorJsonResult) {
-        this.getElevatorJsonResult = getElevatorJsonResult;
+    public void setGetLiftJsonResult(Status[] getLiftJsonResult) {
+        this.getLiftJsonResult = getLiftJsonResult;
     }
+
+    public String getStationID() { return stationID; }
+    public void setStationID(String stationID) { this.stationID = stationID; }
 }

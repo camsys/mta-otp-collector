@@ -9,14 +9,20 @@ public class Station {
     @JsonProperty("BranchID")
     private Integer branchID;
 
+    @JsonProperty("BranchName")
+    private String branchName;
+
     @JsonProperty("StationName")
     private String stationName;
 
     @JsonProperty("StationID")
     private String stationID;
 
-    @JsonProperty("ZoneStationID")
-    private Integer zoneStationID;
+    @JsonProperty("Elevators")
+    private Status[] elevators;
+
+    @JsonProperty("Escalators")
+    private Status[] escalators;
 
     public Integer getBranchID() {
         return branchID;
@@ -24,6 +30,14 @@ public class Station {
 
     public void setBranchID(Integer branchID) {
         this.branchID = branchID;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 
     public String getStationName() {
@@ -42,11 +56,11 @@ public class Station {
         this.stationID = stationID;
     }
 
-    public Integer getZoneStationID() {
-        return zoneStationID;
-    }
+    public Status[] getElevators() { return elevators; }
 
-    public void setZoneStationID(Integer zoneStationID) {
-        this.zoneStationID = zoneStationID;
-    }
+    public void setElevators(Status[] elevators) { this.elevators = elevators; }
+
+    public Status[] getEscalators() { return escalators; }
+
+    public void setEscalators(Status[] escalators) { this.escalators = escalators; }
 }
