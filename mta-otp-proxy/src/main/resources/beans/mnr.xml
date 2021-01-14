@@ -44,7 +44,6 @@
 
     <!-- Metro North Elevators -->
     <bean name="mnrStationResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StationResultsDeserializer" />
-    <bean name="mnrStatusResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StatusResultsDeserializer" />
     <bean name="mnrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer.MetroNorthElevatorAlertsTransformer" />
 
     <bean name="mnrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
@@ -59,7 +58,6 @@
         <property name="transformer" ref="mnrElevatorsTransformer" />
         <property name="deserializer" ref="mnrStationResultsDeserializer" />
         <property name="statusSourceUrl" value="${mnr.traintime.elev}" />
-        <property name="statusDeserializer" ref="mnrStatusResultsDeserializer" />
     </bean>
 
     <!-- Metro North alerts -->

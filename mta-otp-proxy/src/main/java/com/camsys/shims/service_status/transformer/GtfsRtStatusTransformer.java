@@ -102,7 +102,11 @@ public class GtfsRtStatusTransformer implements ServiceStatusTransformer<GtfsRea
 
             Route route = getRouteForId(gtfsDataServices, informedEntity);
             if (route == null) {
-                _log.error("illegal route for entity " + entity.getAlert());
+                if (entity.getAlert() != null && informedEntity.getRouteId() != null) {
+                    _log.error("illegal route for entity " + informedEntity.getRouteId());
+                } else {
+                    _log.error("illegal route, skipping...");
+                }
                 continue;
             } else {
                 // only continue if we've matched to a GTFS route

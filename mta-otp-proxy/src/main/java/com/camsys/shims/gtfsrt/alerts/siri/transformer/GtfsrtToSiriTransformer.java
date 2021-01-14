@@ -30,6 +30,7 @@ import uk.org.siri.siri.SituationSourceTypeEnumeration;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Convert Mercury GTFS-RT to SIRI and provide as a legacy integration strategy
@@ -78,7 +79,7 @@ public class GtfsrtToSiriTransformer {
             if (entity.hasAlert()) {
                 PtSituationElementStructure pt = new PtSituationElementStructure();
                 if (entity.hasId())
-                    pt.setSituationNumber(createSituationNumber(entity.getId()));
+                    pt.setSituationNumber(createSituationNumber(entity));
                 fillPtSituationElement(pt, entity.getAlert());
                 s.getPtSituationElement().add(pt);
             }
@@ -87,10 +88,25 @@ public class GtfsrtToSiriTransformer {
         return siri;
     }
 
-    private EntryQualifierStructure createSituationNumber(String id) {
+    private EntryQualifierStructure createSituationNumber(GtfsRealtime.FeedEntity entity) {
+        String id = entity.getId();
+        String agencyId = getAgencyFromInformedEntity(entity.getAlert().getInformedEntityList());
         EntryQualifierStructure s = new EntryQualifierStructure();
-        s.setValue(id);
+        if (agencyId == null) {
+            s.setValue(id);
+        } else {
+            s.setValue(new AgencyAndId(agencyId, id).toString());
+        }
         return s;
+    }
+
+    private String getAgencyFromInformedEntity(List<GtfsRealtime.EntitySelector> informedEntityList) {
+        if (informedEntityList == null || informedEntityList.isEmpty()) return null;
+        for (GtfsRealtime.EntitySelector selector : informedEntityList) {
+            if (selector.hasAgencyId())
+                return selector.getAgencyId();
+        }
+        return null;
     }
 
     private void fillPtSituationElement(PtSituationElementStructure pt, GtfsRealtime.Alert alert) {
@@ -172,6 +188,11 @@ public class GtfsrtToSiriTransformer {
                 if (informedEntity.getTrip().hasDirectionId()) {
                     // directionRef
                     avj.setDirectionRef(toDirectionRef(informedEntity.getTrip().getDirectionId()));
+                } else {
+                    AffectedVehicleJourneyStructure avjClone = cloneJourney(avj);
+                    avj.setDirectionRef(toDirectionRef(0));
+                    avjClone.setDirectionRef(toDirectionRef(1));
+                    pt.getAffects().getVehicleJourneys().getAffectedVehicleJourney().add(avjClone);
                 }
             }
         }
@@ -180,6 +201,12 @@ public class GtfsrtToSiriTransformer {
         pt.setConsequences(new PtConsequencesStructure());
         pt.getConsequences().getConsequence().add(consequence);
 
+    }
+
+    private AffectedVehicleJourneyStructure cloneJourney(AffectedVehicleJourneyStructure avj) {
+        AffectedVehicleJourneyStructure clone = new AffectedVehicleJourneyStructure();
+        clone.setLineRef(toLineRef(avj.getLineRef().getValue()));
+        return clone;
     }
 
     private DirectionRefStructure toDirectionRef(int directionId) {

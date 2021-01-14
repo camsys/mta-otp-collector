@@ -20,28 +20,30 @@ public class MetroNorthStationsToGtfsRealtimeSources<T> extends TransformingGtfs
     private final Logger _log = LoggerFactory.getLogger(MetroNorthStationsToGtfsRealtimeSources.class);
     private String _statusSourceUrl;
 
-    private Deserializer<T> _statusDeserializer;
-
     public void setStatusSourceUrl(String statusSourceUrl) {_statusSourceUrl = statusSourceUrl;}
-
-    public void setStatusDeserializer(Deserializer<T> deserializer) {
-        _statusDeserializer = deserializer;
-    }
 
     @Override
     // this method occasionally backs up -- make sure it doesn't run concurrently
     public synchronized void update() {
         try {
             List<StatusResults> statusResultsList = new ArrayList<>();
-            StationResults stationResults = (StationResults) getMessage(_feedManager.getBaseUrl(), _deserializer);
+            StationResults stationResults = (StationResults) getMessage(_statusSourceUrl, _deserializer);
 
             if (stationResults != null) {
-                Station[] stations = stationResults.getGetStationsJsonResult();
-                for (Station station : stations) {
+                for (Station station : stationResults.getGetStationsJsonResult()) {
                     if (station.getStationID() != null) {
-                        StatusResults statusResults = (StatusResults) getMessage(getStatusSourceUrlWithStation(station.getStationID()), _statusDeserializer);
-                        if (statusResults != null) {
-                            statusResultsList.add(statusResults);
+                        StatusResults elevatorResults = new StatusResults();
+                        elevatorResults.setStationID(station.getStationID());
+                        elevatorResults.setGetLiftJsonResult(station.getElevators());
+                        if (station.getElevators() != null) {
+                            statusResultsList.add(elevatorResults);
+                        }
+
+                        StatusResults escalatorResults = new StatusResults();
+                        escalatorResults.setStationID(station.getStationID());
+                        escalatorResults.setGetLiftJsonResult(station.getEscalators());
+                        if (station.getEscalators() != null) {
+                            statusResultsList.add(escalatorResults);
                         }
                     }
                 }

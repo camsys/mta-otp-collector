@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOutagesType> {
@@ -97,11 +98,18 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
 
     private long stringToDate(String s) {
         try {
-            return _dateFormat.parse(s).getTime() / 1000;
+            Date potentialDate = _dateFormat.parse(s);
+            if (potentialDate == null)
+                return 0;
+            return potentialDate.getTime() / 1000;
         } catch(ParseException ex) {
-            ex.printStackTrace();
+            _log.error("invalid date value " + s);
+            return 0;
+        } catch (NumberFormatException nfe) {
+            _log.error("illegal date value " + s);
             return 0;
         } catch (NullPointerException npe) {
+            _log.error("exception parsing date " + s, npe);
             return 0;
         }
     }
