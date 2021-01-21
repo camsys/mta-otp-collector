@@ -128,17 +128,15 @@
         <!-- for DEV testing only -->
         <property name="feedToUrlOverride">
             <map>
-                <entry key="1" value="${subway.gtfsrt.url}" />
-                <entry key="2" value="${subway.gtfsrt.url}-l" />
-                <entry key="26" value="${subway.gtfsrt.url}-ace" />
-                <entry key="31" value="${subway.gtfsrt.url}-g" />
-                <entry key="16" value="${subway.gtfsrt.url}-nqrw" />
-<!--
-                <entry key="11" value="${subway.gtfsrt.url}-si" />
-                <entry key="36" value="${subway.gtfsrt.url}-jz" />
-                <entry key="21" value="${subway.gtfsrt.url}-bdfm" />
-                <entry key="51" value="${subway.gtfsrt.url}-7" />
--->
+                <entry key="1" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs" />
+                <entry key="2" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-l" />
+                <entry key="11" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si" />
+                <entry key="16" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw" />
+                <entry key="21" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm" />
+                <entry key="26" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace" />
+                <entry key="31" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g" />
+                <entry key="36" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz" />
+                <entry key="51" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7" />
             </map>
         </property>
         <property name="feedToCredentialOverride">
