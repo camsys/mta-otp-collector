@@ -6,6 +6,9 @@
     <bean name="gtfsDataServiceProvider" class="com.camsys.shims.util.gtfs_provider.GtfsDataServiceProviderImpl" />
 
     <!-- gtfs services -->
+    <bean id="amkGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${amk.gtfs.path}" />
+    </bean>
 
     <bean id="mnrGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
         <property name="gtfsPath" value="${mnr.gtfs.path}" />
