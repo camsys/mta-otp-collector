@@ -25,6 +25,7 @@ import com.google.transit.realtime.GtfsRealtimeServiceStatus.MercuryAlert;
 import com.google.transit.realtime.GtfsRealtimeServiceStatus.MercuryAlert.Builder;
 
 import org.onebusaway.nyc.gtfsrt.util.GtfsRealtimeLibrary;
+import org.onebusaway.nyc.transit_data_manager.model.ExtendedServiceAlertBean;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
 import org.onebusaway.transit_data.model.service_alerts.SituationAffectsBean;
@@ -44,7 +45,7 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
 
     @Override
     public FeedMessage transform(Siri siri) {
-        List<ServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsServiceAlertBeans(siri);
+        List<ExtendedServiceAlertBean> serviceAlerts = NycSiriUtil.getSiriAsExtendedServiceAlertBeans(siri);
 
         FeedMessage.Builder message = FeedMessage.newBuilder();
         FeedHeader.Builder header = FeedHeader.newBuilder();
