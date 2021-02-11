@@ -192,14 +192,20 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
         if (bean.getStopId() != null)
             builder.setStopId(id(bean.getStopId()));
 
-    	GtfsRealtimeServiceStatus.MercuryEntitySelector.Builder mercurySelectorBuilder = 
-        		GtfsRealtimeServiceStatus.MercuryEntitySelector.newBuilder();
+    	String routeId = builder.getRouteId();
+    	if(builder.getTrip() != null) 
+    		routeId = builder.getTrip().getRouteId();
 
-    	mercurySelectorBuilder.setSortOrder(builder.getAgencyId() + ":" + 
-    			builder.getRouteId() + ":" + alert.getMessagePriority());
+    	if(builder.getAgencyId() != null && routeId != null && alert.getMessagePriority() != null) {
+        	GtfsRealtimeServiceStatus.MercuryEntitySelector.Builder mercurySelectorBuilder = 
+            		GtfsRealtimeServiceStatus.MercuryEntitySelector.newBuilder();
+
+    		mercurySelectorBuilder.setSortOrder(builder.getAgencyId() + ":" + 
+    			routeId + ":" + alert.getMessagePriority());
     	
-        builder.setExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector, mercurySelectorBuilder.build());
-                
+    		builder.setExtension(GtfsRealtimeServiceStatus.mercuryEntitySelector, mercurySelectorBuilder.build());
+    	}
+    	
         return builder;
     }
     
