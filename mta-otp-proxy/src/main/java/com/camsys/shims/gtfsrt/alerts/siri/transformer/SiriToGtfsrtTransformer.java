@@ -72,8 +72,8 @@ public class SiriToGtfsrtTransformer implements GtfsRealtimeTransformer<Siri> {
             	GtfsRealtimeServiceStatus.MercuryAlert.Builder mercuryBuilder = 
             		GtfsRealtimeServiceStatus.MercuryAlert.newBuilder();
 
-            	mercuryBuilder.setCreatedAt(serviceAlert.getCreationTime());
-            	mercuryBuilder.setUpdatedAt(serviceAlert.getCreationTime());
+            	mercuryBuilder.setCreatedAt(serviceAlert.getCreationTime()/1000);
+            	mercuryBuilder.setUpdatedAt(serviceAlert.getCreationTime()/1000);
             	mercuryBuilder.setDisplayBeforeActive(0);
             	mercuryBuilder.setAlertType(serviceAlert.getReason());
             	
