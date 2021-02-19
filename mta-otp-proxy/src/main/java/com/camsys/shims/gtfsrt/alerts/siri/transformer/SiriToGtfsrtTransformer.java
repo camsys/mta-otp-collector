@@ -24,11 +24,7 @@ import com.google.transit.realtime.GtfsRealtime.TranslatedString;
 import com.google.transit.realtime.GtfsRealtime.TripDescriptor;
 import com.google.transit.realtime.GtfsRealtimeConstants;
 import com.google.transit.realtime.GtfsRealtimeServiceStatus;
-import com.google.transit.realtime.GtfsRealtimeServiceStatus.MercuryAlert;
-import com.google.transit.realtime.GtfsRealtimeServiceStatus.MercuryAlert.Builder;
-
 import org.onebusaway.gtfs.model.AgencyAndId;
-import org.onebusaway.nyc.gtfsrt.util.GtfsRealtimeLibrary;
 import org.onebusaway.nyc.transit_data_manager.model.ExtendedServiceAlertBean;
 import org.onebusaway.nyc.transit_data_manager.util.NycSiriUtil;
 import org.onebusaway.transit_data.model.service_alerts.NaturalLanguageStringBean;
