@@ -47,6 +47,13 @@
     </servlet>
 
     <servlet>
+        <servlet-name>amkVehiclePositions</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>mnrTripUpdates</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
@@ -189,6 +196,10 @@
     <servlet-mapping>
         <servlet-name>subwayServiceAlerts</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTASBWY/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>amkVehiclePositions</servlet-name>
+        <url-pattern>/realtime/gtfsrt/AMK/vehiclePositions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>mnrTripUpdates</servlet-name>
