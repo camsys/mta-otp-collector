@@ -6,6 +6,7 @@ import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.kurtraschke.nyctrtproxy.FeedManager;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -37,6 +38,12 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     protected HttpClientConnectionManager _connectionManager;
 
     protected CloseableHttpClient _httpClient;
+    private int DEFAULT_TIME_OUT = 5000;
+    private int _timeout = DEFAULT_TIME_OUT;
+    public void setTimeout(int timeout) {
+        _timeout = timeout;
+    }
+
 
     protected Deserializer<T> _deserializer;
 
@@ -128,9 +135,18 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     }
 
     protected T getSourceData(String sourceUrl, Deserializer<T> deserializer){
-        if (_httpClient == null)
-            _httpClient = HttpClientBuilder.create().setConnectionManager(_connectionManager).build();
-
+        if (_httpClient == null) {
+            // avoid stuck connections
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setSocketTimeout(_timeout)
+                    .setConnectTimeout(_timeout)
+                    .setConnectionRequestTimeout(_timeout)
+                    .setStaleConnectionCheckEnabled(true).build();
+            _httpClient = HttpClientBuilder.create()
+                    .setConnectionManager(_connectionManager)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build();
+        }
         HttpGet get = new HttpGet(sourceUrl);
         get.setHeader("accept", deserializer.getMimeType());
 
