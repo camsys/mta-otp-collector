@@ -9,6 +9,7 @@ import com.kurtraschke.nyctrtproxy.FeedManager;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -142,9 +143,11 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
                     .setConnectTimeout(_timeout)
                     .setConnectionRequestTimeout(_timeout)
                     .setStaleConnectionCheckEnabled(true).build();
+            SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(_timeout).build();
             _httpClient = HttpClientBuilder.create()
                     .setConnectionManager(_connectionManager)
                     .setDefaultRequestConfig(requestConfig)
+                    .setDefaultSocketConfig(socketConfig)
                     .build();
         }
         HttpGet get = new HttpGet(sourceUrl);
