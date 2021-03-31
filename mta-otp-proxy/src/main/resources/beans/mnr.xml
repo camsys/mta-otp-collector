@@ -11,6 +11,7 @@
     </bean>
 
     <!-- Metro North Trip Updates -->
+    <bean name="mnrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.deserializer.MNRFeedMessageDeserializer" />
     <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
         <property name="gtfsDataService" ref="mnrGtfsService" />
         <property name="namespace" value="${cloudwatch.namespace}" />
@@ -20,7 +21,8 @@
     <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
         <property name="feedManager" ref="mnrFeedManager"/>
         <property name="transformer" ref="mnrTransformer" />
-        <property name="deserializer" ref="gtfsrt" />
+        <property name="deserializer" ref="mnrDeserializer" />
+
 <!--        <property name="overrideMimeType" value="application/pb" />-->
     </bean>
     <bean id="mnrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">

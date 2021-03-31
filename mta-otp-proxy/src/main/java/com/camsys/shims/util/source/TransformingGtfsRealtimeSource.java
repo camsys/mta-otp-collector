@@ -102,7 +102,7 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
                     try {
                         message = deserializer.deserialize(streamContent);
                     } catch (Throwable t) {
-                        _log.error("fail for " + feedUrl);
+                        _log.error("fail for " + feedUrl + " message=" + t.getMessage());
                     }
                     if (message != null)
                         return message;
