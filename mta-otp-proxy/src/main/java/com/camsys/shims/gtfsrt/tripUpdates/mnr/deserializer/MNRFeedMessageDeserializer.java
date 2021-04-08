@@ -27,10 +27,15 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MNRFeedMessageDeserializer implements Deserializer<GtfsRealtime.FeedMessage> {
     private static final ExtensionRegistry _extensionRegistry;
+
+    private static final Logger _log = LoggerFactory.getLogger(MNRFeedMessageDeserializer.class);
 
     static {
         _extensionRegistry = ExtensionRegistry.newInstance();
@@ -70,7 +75,10 @@ public class MNRFeedMessageDeserializer implements Deserializer<GtfsRealtime.Fee
 	            return message;    		
     	} else {
 	    	GtfsRealtime.FeedMessage message = GtfsRealtime.FeedMessage.parseFrom(inputStream, _extensionRegistry);
-	        if (!message.getEntityList().isEmpty())
+
+	    	_log.info("Feed timestamp = " + new DateTime(message.getHeader().getTimestamp() * 1000));
+
+	    	if (!message.getEntityList().isEmpty())
 	            return message;
     	}
         return null;
@@ -78,6 +86,6 @@ public class MNRFeedMessageDeserializer implements Deserializer<GtfsRealtime.Fee
 
     @Override
     public String getMimeType() {
-        return "application/json";
+        return "application/x-protobuf";
     }
 }
