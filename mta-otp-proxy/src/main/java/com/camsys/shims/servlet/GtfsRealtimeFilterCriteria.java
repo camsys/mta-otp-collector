@@ -26,16 +26,22 @@ public class GtfsRealtimeFilterCriteria {
   public static final String ROUTE_ID = "routeId";
   public static final String AGENCY_ID = "agencyId";
   public static final String XML_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
+  public static final String START_DATE = "startDate";
+  public static final String END_DATE = "endDate";
 
   private String agencyId;
   private String routeId;
   private Date updatesSince;
+  private Date start;
+  private Date end;
 
   // test if the criteria is populated
   public boolean isEmpty() {
     return agencyId == null 
             && routeId == null
-            && updatesSince == null;
+            && updatesSince == null
+            && start == null
+            && end == null;
   }
 
   public void setAgencyId(String agencyId) {
@@ -57,6 +63,26 @@ public class GtfsRealtimeFilterCriteria {
 
   }
 
+  public void setStartDate(String startDate) {
+    if (startDate == null) return;
+    SimpleDateFormat sdf = new SimpleDateFormat(XML_DATE_PATTERN);
+    try {
+      this.start = sdf.parse(startDate);
+    } catch (ParseException e) {
+      this.start = null;
+    }
+  }
+
+  public void setEndDate(String endDate) {
+    if (endDate == null) return;
+    SimpleDateFormat sdf = new SimpleDateFormat(XML_DATE_PATTERN);
+    try {
+      this.end = sdf.parse(endDate);
+    } catch (ParseException e) {
+      this.end = null;
+    }
+  }
+
   public void populateFromRequestMap(Map<String, String[]> parameterMap) {
     if (parameterMap == null) return;
     if (parameterMap.containsKey(AGENCY_ID))
@@ -65,6 +91,10 @@ public class GtfsRealtimeFilterCriteria {
       setRouteId(getFirstParam(parameterMap, ROUTE_ID));
     if (parameterMap.containsKey(UPDATES_SINCE))
       setUpdatesSinceStr(getFirstParam(parameterMap, UPDATES_SINCE));
+    if (parameterMap.containsKey(START_DATE))
+      setStartDate(getFirstParam(parameterMap, START_DATE));
+    if (parameterMap.containsKey(END_DATE))
+      setEndDate(getFirstParam(parameterMap, END_DATE));
 
   }
 
@@ -97,5 +127,20 @@ public class GtfsRealtimeFilterCriteria {
 
   public Date getUpdatesSince() {
     return updatesSince;
+  }
+
+  public boolean hasStartDate() {
+    return start != null;
+  }
+  public boolean hasEndDate() {
+    return end != null;
+  }
+
+  public Date getStartDate() {
+    return start;
+  }
+
+  public Date getEndDate() {
+    return end;
   }
 }

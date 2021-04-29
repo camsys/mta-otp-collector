@@ -18,6 +18,7 @@ import com.google.transit.realtime.GtfsRealtimeServiceStatus;
 import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * Filter (exclude elements of) a GtfsRealtime feed based on GtfsRealtimeCriteria.
@@ -69,13 +70,52 @@ public class GtfsRealtimeFilter {
     for (GtfsRealtime.EntitySelector entitySelector : alert.getInformedEntityList()) {
       if (agencyIdMatch(criteria, entitySelector)
               && routeIdMatch(criteria, entitySelector)
-              && updatesSinceMatch(criteria, alert)) {
+              && updatesSinceMatch(criteria, alert)
+              && inRange(criteria, alert)) {
         return true;
       }
 
     }
 
     return false;
+  }
+
+  // test if alert falls withing the specified range criteria
+  private boolean inRange(GtfsRealtimeFilterCriteria criteria, GtfsRealtime.Alert alert) {
+    // no range specified, short circuit evaluation
+    if (!criteria.hasStartDate() && !criteria.hasEndDate()) return true;
+    Date startDate = new Date(0);
+    if (criteria.hasStartDate())
+      startDate = criteria.getStartDate();
+    Date endDate = new Date(Long.MAX_VALUE);
+    if (criteria.hasEndDate())
+      endDate = criteria.getEndDate();
+
+    return inRange(alert, startDate, endDate);
+
+  }
+
+  // test if alert falls between startDate and endDate
+  private boolean inRange(GtfsRealtime.Alert alert, Date startDate, Date endDate) {
+    if (alert == null || alert.getActivePeriodList() == null) return true;
+    boolean foundMatchingRange = false;
+    for (GtfsRealtime.TimeRange activePeriod : alert.getActivePeriodList()) {
+      Date periodStart = new Date(0);
+      if (activePeriod.hasStart())
+        periodStart = new Date(activePeriod.getStart() * 1000);
+      Date periodEnd = new Date(Long.MAX_VALUE);
+      if (activePeriod.hasEnd())
+        periodEnd = new Date(activePeriod.getEnd() * 1000);
+      foundMatchingRange = inRange(startDate, endDate, periodStart, periodEnd);
+      if (foundMatchingRange) return true;
+      // else keep looking
+    }
+    return false;
+  }
+
+  // do the actual date intersection check
+  private boolean inRange(Date start1, Date end1, Date start2, Date end2) {
+    return Math.max(start1.getTime(), start2.getTime()) < Math.min(end1.getTime(), end2.getTime());
   }
 
   private boolean updatesSinceMatch(GtfsRealtimeFilterCriteria criteria, GtfsRealtime.Alert alert) {
