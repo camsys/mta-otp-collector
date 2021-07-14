@@ -17,7 +17,11 @@ import org.onebusaway.gtfs.services.GtfsDataService;
 
 import javax.servlet.ServletException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * get RouteInfo - shapes and points for a route
@@ -81,10 +85,19 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
         List<ExtendedRouteBranchStop> stops = new ArrayList<>();
         String agency = routeId.split(":")[0];
         GtfsDataService gtfs = _provider.getGtfsDataService(agency);
+        
+        Map<String, GtfsDataService> dataServiceForAgency = new HashMap<>();        
         for (RouteBranchStop s : stopsNoLocation) {
-            ExtendedRouteBranchStop stop = new ExtendedRouteBranchStop(s);
-            if (gtfs != null) {
-                Stop gtfsStop = gtfs.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
+        	String stopAgency = AgencyAndId.convertFromString(s.getId(), ':').getAgencyId();
+        	GtfsDataService stopGtfs = dataServiceForAgency.get(stopAgency);
+        	if(stopGtfs == null) {
+        		stopGtfs = _provider.getGtfsDataService(stopAgency);
+                dataServiceForAgency.put(stopAgency, stopGtfs);
+        	}
+        	
+        	ExtendedRouteBranchStop stop = new ExtendedRouteBranchStop(s);
+            if (stopGtfs != null) {
+                Stop gtfsStop = stopGtfs.getStopForId(AgencyAndId.convertFromString(stop.getId(), ':'));
                 if (gtfsStop != null) {
                     stop.setLat(gtfsStop.getLat());
                     stop.setLon(gtfsStop.getLon());
