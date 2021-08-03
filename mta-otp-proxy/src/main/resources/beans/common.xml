@@ -121,7 +121,12 @@
         <property name="key" value="${mnr.staging.api.key}" />
         <property name="keyName" value="x-api-key" />
     </bean>
-
+    <bean id="mtaInternalDataApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="${mta.internaldata.key}" />
+        <property name="keyName" value="x-api-key" />
+    </bean>
+    
     <bean id="NoOpCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
         <property name="type" value="no_op" />
     </bean>
