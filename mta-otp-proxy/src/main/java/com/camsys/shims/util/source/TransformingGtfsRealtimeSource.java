@@ -12,6 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.util.source;
 
+import com.amazonaws.util.IOUtils;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.camsys.shims.util.transformer.GtfsRealtimeTransformer;
 import com.google.transit.realtime.GtfsRealtime;
@@ -103,6 +104,7 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
                         message = deserializer.deserialize(streamContent);
                     } catch (Throwable t) {
                         _log.error("fail for " + feedUrl + " message=" + t.getMessage());
+                        _log.info("Stream contents=" + IOUtils.toString(streamContent));
                     }
                     if (message != null)
                         return message;

@@ -71,7 +71,7 @@ public class S3SubwayFilterStrategy extends AbstractS3CsvProvider implements Sto
     }
 
     @Override
-    public void update() {
+    public void update() throws Exception {
         S3Services s3Services = new S3Services();
         clearClosedStops();
         s3Services.fetch(getUrl(), getFile(), getLocalPath(), new CredentialContainer(getProfile()));

@@ -92,7 +92,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         }
         ServiceDate sd = parseDate(startDate);
         Route route = _gtfsDataService.getRouteForId(new AgencyAndId(_agencyId, routeId));
-        if (route == null) {
+        if (route == null || sd == null) {
             return null;
         }
         ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, sd);

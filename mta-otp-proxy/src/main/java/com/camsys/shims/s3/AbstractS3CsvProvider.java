@@ -13,13 +13,19 @@
 package com.camsys.shims.s3;
 
 import com.csvreader.CsvReader;
+
+import org.onebusaway.cloud.api.ExternalResult;
 import org.onebusaway.cloud.api.ExternalServices;
 import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 import org.onebusaway.cloud.api.InputStreamConsumer;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 public abstract class AbstractS3CsvProvider {
     private String url;
@@ -34,18 +40,29 @@ public abstract class AbstractS3CsvProvider {
     private String localPath;
 
 
-    public void init() {
+    public void init() throws Exception {
         _externalServices = new ExternalServicesBridgeFactory().getExternalServices();
 
-        if (!url.startsWith("s3://")) {
+        // for testing/debugging
+        if (url.startsWith("file://")) {
+        
+        	InputStream stream = new FileInputStream(url.substring("file://".length()));
+            CsvReader reader = new CsvReader(new InputStreamReader(stream));
+            reader.readHeaders();
+            while (reader.readRecord()) {
+                processRecord(reader);
+            }
+            reader.close();
+
+        } else if (!url.startsWith("s3://")) {
             throw new UnsupportedOperationException("protocol in url " + url + " no supported!");
         }
 
         update();
     }
 
-    public void update() {
-        _externalServices.getFileAsStream(url, new InputStreamConsumer() {
+    public void update() throws Exception {
+        ExternalResult r = _externalServices.getFileAsStream(url, new InputStreamConsumer() {
             @Override
             public void accept(InputStream stream) throws IOException {
                 CsvReader reader = new CsvReader(new InputStreamReader(stream));
@@ -56,8 +73,10 @@ public abstract class AbstractS3CsvProvider {
                 reader.close();
             }
         }, _profile);
-
-
+        
+        if(!r.getSuccess()) {
+        	throw new Exception(r.getErrorMessage());
+        }
     }
 
     public abstract void processRecord(CsvReader reader) throws IOException;
