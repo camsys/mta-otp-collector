@@ -76,7 +76,7 @@ public class GtfsrtToSiriTransformer {
 
         for (GtfsRealtime.FeedEntity entity : feedMessage.getEntityList()) {
 
-            if (entity.hasAlert()) {
+            if (isActive(entity)) {
                 PtSituationElementStructure pt = new PtSituationElementStructure();
                 if (entity.hasId())
                     pt.setSituationNumber(createSituationNumber(entity));
@@ -86,6 +86,44 @@ public class GtfsrtToSiriTransformer {
         }
         _siri = siri;
         return siri;
+    }
+
+    // test if date range of alert covers now
+    private boolean isActive(GtfsRealtime.FeedEntity entity) {
+        if (!entity.hasAlert()) return false; // not an alert
+        GtfsRealtime.Alert alert = entity.getAlert();
+        return isActive(alert);
+    }
+
+    private boolean isActive(GtfsRealtime.Alert alert) {
+        boolean foundMatchingRange = false;
+        boolean noRanges = true;
+
+        Date pointInTime = new Date();
+        for (GtfsRealtime.TimeRange activePeriod : alert.getActivePeriodList()) {
+            noRanges = false;
+            Date periodStart = new Date(0);
+            if (activePeriod.hasStart())
+                periodStart = new Date(activePeriod.getStart() * 1000);
+            Date periodEnd = new Date(Long.MAX_VALUE);
+            if (activePeriod.hasEnd())
+                periodEnd = new Date(activePeriod.getEnd() * 1000);
+
+            foundMatchingRange = inRange(pointInTime, periodStart, periodEnd);
+            if (foundMatchingRange) return true;
+            // else keep looking
+        }
+        if (noRanges) {
+            // no specified active period implies its active NOW
+            return true;
+        }
+        return false;
+    }
+
+
+    private boolean inRange(Date pointInTime, Date start, Date end) {
+        return pointInTime.getTime() >= start.getTime()
+                && pointInTime.getTime() <= end.getTime();
     }
 
     private EntryQualifierStructure createSituationNumber(GtfsRealtime.FeedEntity entity) {
@@ -116,15 +154,18 @@ public class GtfsrtToSiriTransformer {
         pt.setDescription(getTranslation(alert.getDescriptionText()));
 
         for (GtfsRealtime.TimeRange timeRange : alert.getActivePeriodList()) {
+            // we only support one window -- make sure it's the active one
+            // we know there is at least on active window as a precondition to this method
+            if (isActive(alert)) {
                 HalfOpenTimestampRangeStructure window = new HalfOpenTimestampRangeStructure();
-            pt.setPublicationWindow(window);
-            if (timeRange.hasStart()) {
-                window.setStartTime(toDate(timeRange.getStart()));
+                pt.setPublicationWindow(window);
+                if (timeRange.hasStart()) {
+                    window.setStartTime(toDate(timeRange.getStart()));
+                }
+                if (timeRange.hasEnd()) {
+                    window.setEndTime(toDate(timeRange.getEnd()));
+                }
             }
-            if (timeRange.hasEnd()) {
-                window.setEndTime(toDate(timeRange.getEnd()));
-            }
-
         }
 
         GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert = null;
