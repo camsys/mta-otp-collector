@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.camsys</groupId>
 	<artifactId>mta-otp-collector</artifactId>
-	<version>0.0.92.3</version>
+	<version>0.0.92.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>mta-otp-collector</name>
 	<description>realtime collector/aggregator for NYC MTA</description>
