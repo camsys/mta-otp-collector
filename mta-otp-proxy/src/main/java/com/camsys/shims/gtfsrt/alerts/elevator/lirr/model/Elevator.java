@@ -1,10 +1,13 @@
 package com.camsys.shims.gtfsrt.alerts.elevator.lirr.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by lcaraballo on 2/8/18.
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Elevator {
     @JsonProperty("LOC")
     private String location;
