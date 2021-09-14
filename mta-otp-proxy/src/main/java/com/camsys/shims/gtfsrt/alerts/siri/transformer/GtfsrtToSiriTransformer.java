@@ -102,14 +102,7 @@ public class GtfsrtToSiriTransformer {
         Date pointInTime = new Date();
         for (GtfsRealtime.TimeRange activePeriod : alert.getActivePeriodList()) {
             noRanges = false;
-            Date periodStart = new Date(0);
-            if (activePeriod.hasStart())
-                periodStart = new Date(activePeriod.getStart() * 1000);
-            Date periodEnd = new Date(Long.MAX_VALUE);
-            if (activePeriod.hasEnd())
-                periodEnd = new Date(activePeriod.getEnd() * 1000);
-
-            foundMatchingRange = inRange(pointInTime, periodStart, periodEnd);
+            foundMatchingRange = isActive(pointInTime, activePeriod);
             if (foundMatchingRange) return true;
             // else keep looking
         }
@@ -118,6 +111,17 @@ public class GtfsrtToSiriTransformer {
             return true;
         }
         return false;
+    }
+
+    private boolean isActive(Date pointInTime, GtfsRealtime.TimeRange timeRange) {
+        Date periodStart = new Date(0);
+        if (timeRange.hasStart())
+            periodStart = new Date(timeRange.getStart() * 1000);
+        Date periodEnd = new Date(Long.MAX_VALUE);
+        if (timeRange.hasEnd())
+            periodEnd = new Date(timeRange.getEnd() * 1000);
+
+        return inRange(pointInTime, periodStart, periodEnd);
     }
 
 
@@ -153,10 +157,11 @@ public class GtfsrtToSiriTransformer {
         // custom description or long description (based on siri or cis output)
         pt.setDescription(getTranslation(alert.getDescriptionText()));
 
+        Date now = new Date();
         for (GtfsRealtime.TimeRange timeRange : alert.getActivePeriodList()) {
             // we only support one window -- make sure it's the active one
             // we know there is at least on active window as a precondition to this method
-            if (isActive(alert)) {
+            if (isActive(now, timeRange)) {
                 HalfOpenTimestampRangeStructure window = new HalfOpenTimestampRangeStructure();
                 pt.setPublicationWindow(window);
                 if (timeRange.hasStart()) {
