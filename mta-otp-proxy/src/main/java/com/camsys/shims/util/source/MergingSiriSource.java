@@ -88,6 +88,7 @@ public class MergingSiriSource {
         fillPublicationWindow(outputPt, pt.getPublicationWindow());
         outputPt.setSummary(pt.getSummary());
         outputPt.setDescription(pt.getDescription());
+        outputPt.setAdvice(pt.getAdvice()); // place holder for long description
         outputPt.setPlanned(pt.isPlanned());
         outputPt.setReasonName(pt.getReasonName());
         outputPt.setPriority(pt.getPriority());

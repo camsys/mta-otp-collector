@@ -51,15 +51,13 @@ public class SiriDeserializerWithModifications extends SiriDeserializer {
     @Override
     public Siri deserialize(InputStream inputStream) throws IOException {
         String xml = IOUtils.toString(inputStream);
-        // here we undo some of the "liberties" that GMS has taken with the SIRI feed
-        // Description -> LegacyDescription (which means its lost)
-        // LongDescription -> Description
+        // some slight cleanup over previous GMS legacy conversions
+        // Description -> Stays as is
+        // Advice -> LongDescription
         // MessagePriority -> Priority
         if (_swapLongDescription) {
-            xml = xml.replace("<Description", "<LegacyDescription")
-                    .replace("</Description>", "</LegacyDescription>")
-                    .replace("<LongDescription>", "<Description>")
-                    .replace("</LongDescription>", "</Description>");
+            xml = xml.replace("<Advice", "<LongDescription")
+                    .replace("</Advice>", "</LongDescription>");
 
         }
 

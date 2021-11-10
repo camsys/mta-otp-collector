@@ -153,9 +153,10 @@ public class GtfsrtToSiriTransformer {
 
     private void fillPtSituationElement(PtSituationElementStructure pt, GtfsRealtime.Alert alert) {
 
-        pt.setSummary(getTranslation(alert.getHeaderText()));
-        // custom description or long description (based on siri or cis output)
-        pt.setDescription(getTranslation(alert.getDescriptionText()));
+        pt.setSummary(getTranslation(alert.getHeaderText())); // this will be reset if screenSummary is present
+        pt.setDescription(getTranslation(alert.getHeaderText())); // description is now the brief summary
+        pt.setAdvice(getTranslation(alert.getDescriptionText()));// will be LongDescription for GMS output
+
 
         Date now = new Date();
         for (GtfsRealtime.TimeRange timeRange : alert.getActivePeriodList()) {
