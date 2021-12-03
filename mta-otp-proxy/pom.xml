@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.kurtraschke</groupId>
             <artifactId>nyct-rt-proxy</artifactId>
-            <version>1.0.29</version>
+            <version>1.0.30</version>
         </dependency>
         <dependency>
             <groupId>org.onebusaway</groupId>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.onebusaway</groupId>
             <artifactId>onebusaway-gtfs-realtime-api</artifactId>
-            <version>1.2.24</version>
+            <version>1.2.25</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.protobuf-java-format</groupId>
