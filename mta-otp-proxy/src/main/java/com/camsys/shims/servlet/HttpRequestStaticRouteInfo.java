@@ -14,14 +14,7 @@ import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.services.GtfsDataService;
-
-import javax.servlet.ServletException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * get RouteInfo - shapes and points for a route
@@ -105,6 +98,7 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             }
             stops.add(stop);
         }
+        stops.sort(Comparator.comparing(ExtendedRouteBranchStop::getLocationIndex));
         AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
         Route route = gtfs != null ? gtfs.getRouteForId(aid) : null;
         RouteInfo info = new RouteInfo(stops, route);
