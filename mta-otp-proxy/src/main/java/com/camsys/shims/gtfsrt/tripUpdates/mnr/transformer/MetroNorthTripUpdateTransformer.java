@@ -47,6 +47,8 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
     private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
 
+    private static final Pattern _njtSdPattern = Pattern.compile("^(\\d{4})(\\d{2})(\\d{2})$");
+
     private GtfsDataService _gtfsDataService;
 
     private String _agencyId = "MNR";
@@ -86,16 +88,25 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         if (tripShortName == null && tu.hasVehicle() &&  tu.getVehicle().hasLabel()) {
             tripShortName = tu.getVehicle().getLabel();
         }
-        if (routeId == null || tripShortName == null || startDate == null) {
+        if (routeId == null || startDate == null) {
             _log.info("not enough info for tripUpdate routeId={} tripShortName={} startDate={}", routeId, tripShortName, startDate);
             return null;
         }
-        ServiceDate sd = parseDate(startDate);
+        
+        ServiceDate sd = null;
+        try { 
+        	sd = parseDate(startDate); 
+        } catch(Exception e) {
+        	try {
+        		sd = parseNjtDate(startDate);
+        	} catch(Exception e2) {}
+        }
+        
         Route route = _gtfsDataService.getRouteForId(new AgencyAndId(_agencyId, routeId));
         if (route == null || sd == null) {
             return null;
         }
-        ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, sd);
+        ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, tu.getTrip().getDirectionId() + "", sd, tu.getTrip().getStartTime());
         Set<String> stopIds = null;
         if (activatedTrip == null) {
             tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
@@ -205,7 +216,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         return activatedTrips;
     }
 
-    private ActivatedTrip findCorrectTrip(Route route, String tripShortName, ServiceDate date) {
+    private ActivatedTrip findCorrectTrip(Route route, String tripShortName, String directionId, ServiceDate date, String startTime) {
         if (date == null)
            return null;
         List<ActivatedTrip> candidates = new ArrayList<>();
@@ -221,8 +232,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             Set<AgencyAndId> serviceIdsToday = _gtfsDataService.getServiceIdsOnDate(date);
             Set<AgencyAndId> serviceIdsYesterday = _gtfsDataService.getServiceIdsOnDate(date.previous());
             for (Trip t : _gtfsDataService.getTripsForRoute(route)) {
-                if (t.getTripShortName().equals(tripShortName)) {
-                    boolean afterMidnight = tripStartsAfterMidnight(t);
+                if ((t.getTripShortName() != null && t.getTripShortName().equals(tripShortName)) ||
+                		(t.getDirectionId() != null && t.getDirectionId().equals(directionId))) {
+
+                	boolean afterMidnight = tripStartsAfterMidnight(t);
                     if (!afterMidnight && serviceIdsToday.contains(t.getServiceId())) {
                         candidates.add(new ActivatedTrip(t, date));
                     } else if (afterMidnight && serviceIdsYesterday.contains(t.getServiceId())) {
@@ -231,6 +244,30 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 }
             }
         }
+
+		String[] timeParts = startTime.split(":");
+        if(candidates.size() > 1 && startTime != null && timeParts.length == 3) {        
+       		int startTimeAsOffsetFromMidnight = (Integer.parseInt(timeParts[0]) * 3600) + (Integer.parseInt(timeParts[1]) * 60) + Integer.parseInt(timeParts[2]);
+
+        	int minimumDifference = Integer.MAX_VALUE;
+        	ActivatedTrip winningTrip = null;
+        	
+        	for(ActivatedTrip at : candidates) {
+        		List<StopTime> stopTimes = _gtfsDataService.getStopTimesForTrip(at.trip);
+        		StopTime start = stopTimes.get(0);
+
+        		int difference = Math.abs(startTimeAsOffsetFromMidnight - start.getDepartureTime());
+
+        		if(difference < minimumDifference) {        			
+        			winningTrip = at;
+        			minimumDifference = difference;
+        		}
+        	}        	
+
+        	if(winningTrip != null)
+        		candidates = List.of(winningTrip);
+        }
+        
         if (candidates.size() == 1)
             return candidates.get(0);
         else if (candidates.size() == 0)
@@ -245,7 +282,24 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         return startTime > (24 * 3600);
     }
 
-    private ServiceDate parseDate(String date) {
+    private ServiceDate parseNjtDate(String date) throws Exception {
+        Matcher matcher = _njtSdPattern.matcher(date);
+        if(!matcher.matches()) {
+            _log.info("error parsing date: " + date);
+            return null;
+        } else {
+            int year = Integer.parseInt(matcher.group(1));
+            int month = Integer.parseInt(matcher.group(2));
+            int day = Integer.parseInt(matcher.group(3));
+            
+            if(year < 2000 || month > 12)
+            	throw new Exception("Not a date");
+            
+            return new ServiceDate(year, month, day);
+        }
+    }
+    
+    private ServiceDate parseDate(String date) throws Exception {
         Matcher matcher = _sdPattern.matcher(date);
         if(!matcher.matches()) {
             _log.info("error parsing date: " + date);
@@ -254,6 +308,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             int year = Integer.parseInt(matcher.group(3));
             int month = Integer.parseInt(matcher.group(1));
             int day = Integer.parseInt(matcher.group(2));
+            
+            if(year < 2000 || month > 12)
+            	throw new Exception("Not a date");
+            
             return new ServiceDate(year, month, day);
         }
     }

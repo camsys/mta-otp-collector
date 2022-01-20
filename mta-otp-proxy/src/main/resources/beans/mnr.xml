@@ -10,6 +10,14 @@
         <property name="defaultCredential" ref="${mnr.gtfsrt.credential.key}" />
     </bean>
 
+    <bean name="njtFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+
+
     <!-- Metro North Trip Updates -->
     <bean name="mnrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.deserializer.MNRFeedMessageDeserializer" />
     <bean id="mnrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.transformer.MetroNorthTripUpdateTransformer">
@@ -18,8 +26,9 @@
         <property name="feedId" value="${mnr.feedid}" />
         <property name="startDateIsServiceDate" value="${mnr.use_service_date}" />
     </bean>
-    <bean id="mnrTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+    <bean id="mnrTask" class="com.camsys.shims.gtfsrt.tripUpdates.mnr.source.MetroNorthNJTSharedRouteInjector" autowire="byType">
         <property name="feedManager" ref="mnrFeedManager"/>
+        <property name="njtFeedManager" ref="njtFeedManager"/>
         <property name="transformer" ref="mnrTransformer" />
         <property name="deserializer" ref="mnrDeserializer" />
 
