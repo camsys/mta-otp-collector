@@ -47,43 +47,44 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 			InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT");
 			GtfsRealtime.FeedMessage njtMessage = deserializer.deserialize(njtFeedStream);
 		
-			 for (int i = 0; i < njtMessage.getEntityCount(); i++) {
-		            FeedEntity entity = njtMessage.getEntity(i);
-		            if (entity.hasTripUpdate()) {
-		            	if(entity.getTripUpdate().getTrip().getRouteId().equals("6")) {
-		        			GtfsRealtime.TripUpdate.Builder tub = GtfsRealtime.TripUpdate.newBuilder();
-		            		tub.mergeFrom(entity.getTripUpdate());
-		            		
-		            		switch(tub.getTripBuilder().getRouteId()) {
-		            			case "6":
-		            				tub.getTripBuilder().setRouteId("51");
-		            				break;
+			for (int i = 0; i < njtMessage.getEntityCount(); i++) {
+				FeedEntity entity = njtMessage.getEntity(i);
+				if (entity.hasTripUpdate()) {
+        			GtfsRealtime.TripUpdate.Builder tub = GtfsRealtime.TripUpdate.newBuilder();
+            		tub.mergeFrom(entity.getTripUpdate());
+            		
+            		switch(tub.getTripBuilder().getRouteId()) {
+            			case "6":
+            				tub.getTripBuilder().setRouteId("51");
+            				break;
 
-		            			case "13":
-		            				tub.getTripBuilder().setRouteId("50");
-		            				break;
-		            			
-		            			default:
-		            				continue;
-		            		}
-		            		
-		            		// clear stop IDs
-		            		for(int ii = 0; i < tub.getStopTimeUpdateCount(); i++) {
-		            			StopTimeUpdate.Builder stub = tub.getStopTimeUpdateBuilder(ii);		            			
-		            			stub.clearStopId();
-		            		}
-		            		
-		            		
-		            		
-		            		FeedEntity.Builder feb = FeedEntity.newBuilder();
-		            		feb.setTripUpdate(tub.build());
-		            		feb.setId("COPIED-FROM-NJT-" + entity.getId());
-		            		
-		        			responseBuilder.addEntity(feb.build());
-		            	}
-		            }
-		     }
-			
+            			case "13":
+            				tub.getTripBuilder().setRouteId("50");
+            				break;
+
+            			// only handle routes above--others are discarded
+            			default:
+            				continue;
+            		}
+            		
+            		tub.clearStopTimeUpdate();
+            		            		
+            		for(int ii = 0; ii < entity.getTripUpdate().getStopTimeUpdateCount(); ii++) {
+            			StopTimeUpdate sourceStu = entity.getTripUpdate().getStopTimeUpdate(ii);		            			
+            			StopTimeUpdate.Builder destStub = StopTimeUpdate.newBuilder();
+            			destStub.mergeFrom(sourceStu);
+            			destStub.clearStopId();
+
+            			tub.addStopTimeUpdate(destStub);
+            		}
+            		
+            		FeedEntity.Builder feb = FeedEntity.newBuilder();
+            		feb.setTripUpdate(tub.build());
+            		feb.setId("COPIED-FROM-NJT-" + entity.getId());
+            		
+        			responseBuilder.addEntity(feb.build());
+            	}
+            }
 			
  			GtfsRealtime.FeedHeader.Builder headerBuilder = GtfsRealtime.FeedHeader.newBuilder();
  			headerBuilder.mergeFrom(mnrMessage.getHeader());

@@ -126,7 +126,9 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         int delay = 0;
 
         for (StopTimeUpdate stu : tu.getStopTimeUpdateList()) {
-            if (!stopIds.contains(stu.getStopId())) {
+            if (!stu.getStopId().isEmpty() 
+            		&& !stopIds.contains(stu.getStopId()) 
+            		&& !stopIds.contains("NJT-" + stu.getStopId())) {
                 continue;
             }
             StopTimeUpdate.Builder stub = stu.toBuilder();
