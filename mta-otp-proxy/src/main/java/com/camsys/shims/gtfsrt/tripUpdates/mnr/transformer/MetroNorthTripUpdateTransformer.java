@@ -258,15 +258,17 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         if(candidates.size() > 1 && startTime != null) {
         	// NJT format of "HH:MM:SS"
         	String[] timeParts = startTime.split(":");
-        	if(timeParts.length != 3 && startTime.length() == 4) {        
+        	if(timeParts.length != 3) {
+        		if(startTime.length() != 4)
+        			return null;
+        		
         		// MNR format of HHMM
         		timeParts = new String[3];
         		timeParts[0] = startTime.substring(0,2);
         		timeParts[1] = startTime.substring(2,4);
         		timeParts[2] = "0";
-        	} else
-        		return null;
-        		        		
+        	} 
+        	
        		int startTimeAsOffsetFromMidnight = (Integer.parseInt(timeParts[0]) * 3600) + (Integer.parseInt(timeParts[1]) * 60) + Integer.parseInt(timeParts[2]);
 
         	int minimumDifference = Integer.MAX_VALUE;
@@ -284,11 +286,9 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         		}
         	}        	
 
-        	// winner needs to be within 15m of schedule, otherwise revert to prior logic of issuing
-        	// a GTFS-RT ADDED message
-        	if(winningTrip != null && minimumDifference < 15 * 60) {
+        	if(winningTrip != null) {
         		if(minimumDifference > 0)
-        			_log.warn("trip won with time diff of {}", minimumDifference);
+        			_log.warn("trip {} won with time diff of {}", winningTrip.trip, minimumDifference);
         		candidates = List.of(winningTrip);
         	}
         }
