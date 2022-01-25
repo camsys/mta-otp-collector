@@ -45,8 +45,10 @@ import java.util.stream.Collectors;
 
 public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
 
+	// MMDDYYYY used by MNR trips
     private static final Pattern _sdPattern = Pattern.compile("^(\\d{2})(\\d{2})(\\d{4})$");
 
+    // YYYYMMDD used by NJT trips
     private static final Pattern _njtSdPattern = Pattern.compile("^(\\d{4})(\\d{2})(\\d{2})$");
 
     private GtfsDataService _gtfsDataService;
@@ -84,6 +86,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         if (fe.hasVehicle() && fe.getVehicle().hasVehicle() && fe.getVehicle().getVehicle().hasLabel()) {
             tripShortName = fe.getVehicle().getVehicle().getLabel();
         }
+
         // tripShortName can come from either FeedEntity (old convention) or TripUpdate (new convention)
         if (tripShortName == null && tu.hasVehicle() &&  tu.getVehicle().hasLabel()) {
             tripShortName = tu.getVehicle().getLabel();
@@ -93,20 +96,19 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             return null;
         }
         
-        ServiceDate sd = null;
-        try { 
-        	sd = parseDate(startDate); 
-        } catch(Exception e) {
-        	try {
-        		sd = parseNjtDate(startDate);
-        	} catch(Exception e2) {}
+        ServiceDate sd = parseDate(startDate); 
+        if(sd == null) {
+            _log.error("invalid date={}", startDate);
+            return null;
         }
         
         Route route = _gtfsDataService.getRouteForId(new AgencyAndId(_agencyId, routeId));
         if (route == null || sd == null) {
             return null;
         }
+        
         ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, tu.getTrip().getDirectionId() + "", sd, tu.getTrip().getStartTime());
+
         Set<String> stopIds = null;
         if (activatedTrip == null) {
             tub.getTripBuilder().setTripId(tripShortName + "_" + sd.getAsString());
@@ -131,6 +133,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             		&& !stopIds.contains("NJT-" + stu.getStopId())) {
                 continue;
             }
+            
             StopTimeUpdate.Builder stub = stu.toBuilder();
             GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate ext = stub.getExtension(GtfsRealtimeMTARR.mtaRailroadStopTimeUpdate);
             if (ext.hasTrack()) {
@@ -138,10 +141,13 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 nyctExt.setActualTrack(ext.getTrack());
                 stub.setExtension(GtfsRealtimeNYCT.nyctStopTimeUpdate, nyctExt.build());
             }
+            
             if (stub.hasDeparture() && !stub.hasArrival()) {
                 stub.setArrival(stub.getDeparture());
             }
+            
             tub.addStopTimeUpdate(stub);
+            
             if (stub.hasDeparture() && stub.getDeparture().hasDelay())
                 delay = stub.getDeparture().getDelay();
         }
@@ -221,6 +227,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     private ActivatedTrip findCorrectTrip(Route route, String tripShortName, String directionId, ServiceDate date, String startTime) {
         if (date == null)
            return null;
+        
         List<ActivatedTrip> candidates = new ArrayList<>();
         if (_startDateIsServiceDate) {
             Set<AgencyAndId> serviceIds = _gtfsDataService.getServiceIdsOnDate(date);
@@ -247,8 +254,19 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             }
         }
 
-		String[] timeParts = startTime.split(":");
-        if(candidates.size() > 1 && startTime != null && timeParts.length == 3) {        
+        // if we have more than one trip matching in the GTFS, filter by time
+        if(candidates.size() > 1 && startTime != null) {
+        	// NJT format of "HH:MM:SS"
+        	String[] timeParts = startTime.split(":");
+        	if(timeParts.length != 3 && startTime.length() == 4) {        
+        		// MNR format of HHMM
+        		timeParts = new String[3];
+        		timeParts[0] = startTime.substring(0,2);
+        		timeParts[1] = startTime.substring(2,4);
+        		timeParts[2] = "0";
+        	} else
+        		return null;
+        		        		
        		int startTimeAsOffsetFromMidnight = (Integer.parseInt(timeParts[0]) * 3600) + (Integer.parseInt(timeParts[1]) * 60) + Integer.parseInt(timeParts[2]);
 
         	int minimumDifference = Integer.MAX_VALUE;
@@ -266,8 +284,13 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         		}
         	}        	
 
-        	if(winningTrip != null)
+        	// winner needs to be within 15m of schedule, otherwise revert to prior logic of issuing
+        	// a GTFS-RT ADDED message
+        	if(winningTrip != null && minimumDifference < 15 * 60) {
+        		if(minimumDifference > 0)
+        			_log.warn("trip won with time diff of {}", minimumDifference);
         		candidates = List.of(winningTrip);
+        	}
         }
         
         if (candidates.size() == 1)
@@ -283,39 +306,34 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         int startTime = _gtfsDataService.getStopTimesForTrip(trip).get(0).getDepartureTime();
         return startTime > (24 * 3600);
     }
-
-    private ServiceDate parseNjtDate(String date) throws Exception {
-        Matcher matcher = _njtSdPattern.matcher(date);
-        if(!matcher.matches()) {
-            _log.info("error parsing date: " + date);
-            return null;
-        } else {
-            int year = Integer.parseInt(matcher.group(1));
-            int month = Integer.parseInt(matcher.group(2));
-            int day = Integer.parseInt(matcher.group(3));
-            
-            if(year < 2000 || month > 12)
-            	throw new Exception("Not a date");
-            
-            return new ServiceDate(year, month, day);
-        }
-    }
     
-    private ServiceDate parseDate(String date) throws Exception {
-        Matcher matcher = _sdPattern.matcher(date);
-        if(!matcher.matches()) {
-            _log.info("error parsing date: " + date);
-            return null;
-        } else {
+    private ServiceDate parseDate(String date) {
+    	Matcher matcher = _sdPattern.matcher(date);
+
+    	if(matcher.matches()) {
             int year = Integer.parseInt(matcher.group(3));
             int month = Integer.parseInt(matcher.group(1));
             int day = Integer.parseInt(matcher.group(2));
-            
-            if(year < 2000 || month > 12)
-            	throw new Exception("Not a date");
+       
+            // must be an NJT format? 
+            if(year < 2000 || month > 12) {            
+            	matcher = _njtSdPattern.matcher(date);
+                if(!matcher.matches()) {
+                    return null;
+                } else {
+                    year = Integer.parseInt(matcher.group(1));
+                    month = Integer.parseInt(matcher.group(2));
+                    day = Integer.parseInt(matcher.group(3));
+                    
+                    if(year < 2000 || month > 12)
+                    	return null;                    
+                }
+            }
             
             return new ServiceDate(year, month, day);
         }
+    	
+    	return null;
     }
 
     private String formatDate(ServiceDate sd) {

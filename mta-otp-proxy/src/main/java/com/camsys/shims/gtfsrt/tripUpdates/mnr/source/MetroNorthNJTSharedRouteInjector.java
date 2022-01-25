@@ -15,16 +15,10 @@ package com.camsys.shims.gtfsrt.tripUpdates.mnr.source;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeSource;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.camsys.shims.factory.CredentialFactory;
 import com.camsys.shims.util.deserializer.Deserializer;
 import com.camsys.shims.util.source.TransformingGtfsRealtimeSource;
 import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
-import com.google.transit.realtime.GtfsRealtime.TripUpdate;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.kurtraschke.nyctrtproxy.FeedManager;
 
@@ -62,13 +56,14 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
             				tub.getTripBuilder().setRouteId("50");
             				break;
 
-            			// only handle routes above--others are discarded
+            			// only merge NJT routes above--others are discarded
             			default:
             				continue;
             		}
             		
             		tub.clearStopTimeUpdate();
-            		            		
+
+            		// copy stops without stop IDs since we want to match by sequence vs. ID
             		for(int ii = 0; ii < entity.getTripUpdate().getStopTimeUpdateCount(); ii++) {
             			StopTimeUpdate sourceStu = entity.getTripUpdate().getStopTimeUpdate(ii);		            			
             			StopTimeUpdate.Builder destStub = StopTimeUpdate.newBuilder();
