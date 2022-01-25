@@ -107,7 +107,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             return null;
         }
         
-        ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, tu.getTrip().getDirectionId() + "", sd, tu.getTrip().getStartTime());
+        ActivatedTrip activatedTrip = findCorrectTrip(route, tripShortName, tu.getTrip().getDirectionId() + "", sd, tu.getTrip().getStartTime(), fe.getId().startsWith("COPIED-FROM-NJT-"));
 
         Set<String> stopIds = null;
         if (activatedTrip == null) {
@@ -224,7 +224,7 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
         return activatedTrips;
     }
 
-    private ActivatedTrip findCorrectTrip(Route route, String tripShortName, String directionId, ServiceDate date, String startTime) {
+    private ActivatedTrip findCorrectTrip(Route route, String tripShortName, String directionId, ServiceDate date, String startTime, boolean isNjtCopied) {
         if (date == null)
            return null;
         
@@ -241,8 +241,8 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
             Set<AgencyAndId> serviceIdsToday = _gtfsDataService.getServiceIdsOnDate(date);
             Set<AgencyAndId> serviceIdsYesterday = _gtfsDataService.getServiceIdsOnDate(date.previous());
             for (Trip t : _gtfsDataService.getTripsForRoute(route)) {
-                if ((t.getTripShortName() != null && t.getTripShortName().equals(tripShortName)) ||
-                		(t.getDirectionId() != null && t.getDirectionId().equals(directionId))) {
+                if ((t.getTripShortName() != null && !t.getTripShortName().isEmpty() && t.getTripShortName().equals(tripShortName)) ||
+                	((t.getTripShortName() == null || t.getTripShortName().isEmpty()) && t.getDirectionId() != null && t.getDirectionId().equals(directionId) && isNjtCopied)) {
 
                 	boolean afterMidnight = tripStartsAfterMidnight(t);
                     if (!afterMidnight && serviceIdsToday.contains(t.getServiceId())) {
