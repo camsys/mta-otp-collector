@@ -63,12 +63,11 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
             		
             		tub.clearStopTimeUpdate();
 
-            		// copy stops without stop IDs since we want to match by sequence vs. ID
             		for(int ii = 0; ii < entity.getTripUpdate().getStopTimeUpdateCount(); ii++) {
             			StopTimeUpdate sourceStu = entity.getTripUpdate().getStopTimeUpdate(ii);		            			
             			StopTimeUpdate.Builder destStub = StopTimeUpdate.newBuilder();
             			destStub.mergeFrom(sourceStu);
-            			destStub.clearStopId();
+//            			destStub.clearStopId();
 
             			tub.addStopTimeUpdate(destStub);
             		}
