@@ -67,8 +67,12 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
             			StopTimeUpdate sourceStu = entity.getTripUpdate().getStopTimeUpdate(ii);		            			
             			StopTimeUpdate.Builder destStub = StopTimeUpdate.newBuilder();
             			destStub.mergeFrom(sourceStu);
-//            			destStub.clearStopId();
-
+            			
+            			// remove these since they are relative to the feed's timestamp,
+            			// and we'll be merging feeds
+            			destStub.getDepartureBuilder().clearDelay();
+            			destStub.getArrivalBuilder().clearDelay();
+            			
             			tub.addStopTimeUpdate(destStub);
             		}
             		
