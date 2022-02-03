@@ -98,7 +98,8 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             }
             stops.add(stop);
         }
-        stops.sort(Comparator.comparing(ExtendedRouteBranchStop::getLocationIndex));
+        stops.sort(Comparator.comparing(ExtendedRouteBranchStop::getLocationIndex, 
+        		Comparator.nullsFirst(Comparator.naturalOrder())));
         AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
         Route route = gtfs != null ? gtfs.getRouteForId(aid) : null;
         RouteInfo info = new RouteInfo(stops, route);
