@@ -14,12 +14,18 @@ import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.services.GtfsDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * get RouteInfo - shapes and points for a route
  */
 public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<RouteInfo> {
+
+    private static final Logger _log = LoggerFactory.getLogger(HttpRequestStaticRouteInfo.class);
 
     private String _stopsUrl = null;
 
@@ -98,8 +104,9 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             }
             stops.add(stop);
         }
-//        stops.sort(Comparator.comparing(ExtendedRouteBranchStop::getLocationIndex, 
-//        		Comparator.nullsFirst(Comparator.naturalOrder())));
+
+        sortStops(stops);
+
         AgencyAndId aid = AgencyAndId.convertFromString(routeId, ':');
         Route route = gtfs != null ? gtfs.getRouteForId(aid) : null;
         RouteInfo info = new RouteInfo(stops, route);
@@ -110,6 +117,21 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
             addLirrSystemMap(info);
         }
         return info;
+    }
+
+    public void sortStops(List<ExtendedRouteBranchStop> stops){
+        try {
+            stops.sort((s1, s2) -> {
+                String locationIndex1 = s1.getLocationIndex();
+                String locationIndex2 = s2.getLocationIndex();
+                Double seq1 = Double.parseDouble(locationIndex1);
+                Double seq2 = Double.parseDouble(locationIndex2);
+                return seq1.compareTo(seq2);
+            });
+        }catch (Exception e){
+            _log.warn("Unable to sort stops", e);
+            return;
+        }
     }
 
     protected CsvToJsonTransformer<RouteBranchStop> getStopTransformer() {
