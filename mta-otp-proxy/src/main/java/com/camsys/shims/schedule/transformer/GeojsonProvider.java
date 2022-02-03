@@ -8,8 +8,10 @@ import org.onebusaway.cloud.api.ExternalServices;
 import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 import org.onebusaway.cloud.api.InputStreamConsumer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 public class GeojsonProvider {
     private String url;
@@ -28,11 +30,16 @@ public class GeojsonProvider {
         _mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public FeatureCollection getGeojson() {
+    public FeatureCollection getGeojson() throws Exception {
         if (_cache && geojson != null) {
             return geojson;
         }
-        if (url.startsWith("s3://")) {
+        if (url.startsWith("file://")) {
+        	String input = Files.readString(new File(url.replace("file://", "")).toPath());        	
+            geojson = _mapper.readValue(input, FeatureCollection.class);
+        	return geojson;
+            
+        } else if (url.startsWith("s3://")) {
             ExternalResult result = _externalServices.getFileAsStream(url, new InputStreamConsumer() {
                 @Override
                 public void accept(InputStream input) throws IOException {

@@ -134,7 +134,14 @@ public class HttpRequestStaticRouteInfo extends AbstractHttpRequestStaticData<Ro
     }
 
     private void addLirrSystemMap(RouteInfo info) {
-        FeatureCollection collection = getGeojsonProvider().getGeojson();
+        FeatureCollection collection = null;
+		try {
+			collection = getGeojsonProvider().getGeojson();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
         for (Feature feature : collection.getFeatures()) {
             info.addGeometry(feature);
         }
