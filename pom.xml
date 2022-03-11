@@ -78,6 +78,17 @@
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>com.amashchenko.maven.plugin</groupId>
+					<artifactId>gitflow-maven-plugin</artifactId>
+					<version>1.18.0</version>
+					<configuration>
+						<commitMessages>
+							<releaseStartMessage>Update versions to @{version} for release</releaseStartMessage>
+							<releaseFinishMessage>Update for next development version</releaseFinishMessage>
+						</commitMessages>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<extensions>
