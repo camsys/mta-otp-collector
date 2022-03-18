@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.camsys</groupId>
         <artifactId>mta-otp-collector</artifactId>
-        <version>0.0.107-SNAPSHOT</version>
+        <version>0.0.107.1</version>
     </parent>
     <artifactId>mta-otp-proxy</artifactId>
     <packaging>war</packaging>
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>com.kurtraschke</groupId>
             <artifactId>nyct-rt-proxy</artifactId>
-            <version>1.0.32.1</version>
+            <version>1.0.33.1</version>
         </dependency>
         <dependency>
             <groupId>org.onebusaway</groupId>
@@ -87,17 +87,17 @@
         <dependency>
             <groupId>com.camsys</groupId>
             <artifactId>mta-otp-elevators</artifactId>
-            <version>0.0.107-SNAPSHOT</version>
+            <version>0.0.107.1</version>
         </dependency>
         <dependency>
             <groupId>com.camsys</groupId>
             <artifactId>mta-otp-plannedwork</artifactId>
-            <version>0.0.107-SNAPSHOT</version>
+            <version>0.0.107.1</version>
         </dependency>
         <dependency>
             <groupId>com.camsys</groupId>
             <artifactId>mta-gms-service-status</artifactId>
-            <version>0.0.107-SNAPSHOT</version>
+            <version>0.0.107.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
