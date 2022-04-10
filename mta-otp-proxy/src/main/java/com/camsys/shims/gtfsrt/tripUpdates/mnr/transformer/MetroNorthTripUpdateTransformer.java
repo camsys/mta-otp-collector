@@ -205,6 +205,10 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
                 List<Trip> trips = _gtfsDataService.getTripsForServiceId(serviceId);
                 for (Trip trip : trips) {
                     List<StopTime> stopTimes = _gtfsDataService.getStopTimesForTrip(trip);
+                    if (stopTimes == null || stopTimes.isEmpty()) {
+                        // bad data -- empty trip
+                        continue;
+                    }
                     long startTime = sd.getAsDate().getTime() + (stopTimes.get(0).getDepartureTime() * 1000);
                     long endTime = sd.getAsDate().getTime() + (stopTimes.get(stopTimes.size() - 1).getArrivalTime() * 1000);
 
@@ -303,7 +307,12 @@ public class MetroNorthTripUpdateTransformer extends TripUpdateTransformer {
     }
 
     private boolean tripStartsAfterMidnight(Trip trip) {
-        int startTime = _gtfsDataService.getStopTimesForTrip(trip).get(0).getDepartureTime();
+        List<StopTime> stopTimesForTrip = _gtfsDataService.getStopTimesForTrip(trip);
+        if (stopTimesForTrip == null || stopTimesForTrip.isEmpty()) {
+            _log.warn("no trips found for " + trip.getId());
+            return false;
+        }
+        int startTime = stopTimesForTrip.get(0).getDepartureTime();
         return startTime > (24 * 3600);
     }
     
