@@ -21,8 +21,12 @@ import com.google.transit.realtime.GtfsRealtime;
 import com.google.transit.realtime.GtfsRealtime.FeedEntity;
 import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.kurtraschke.nyctrtproxy.FeedManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSource<GtfsRealtime.FeedMessage> {
+
+	private static final Logger _log = LoggerFactory.getLogger(MetroNorthNJTSharedRouteInjector.class);
 
 	private FeedManager njtFeedManager;
 
@@ -37,10 +41,20 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 
 			GtfsRealtime.FeedMessage mnrMessage = super.getMessage(feedUrl, deserializer);
 			responseBuilder.mergeFrom(mnrMessage);
-		
-			InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT");
-			GtfsRealtime.FeedMessage njtMessage = deserializer.deserialize(njtFeedStream);
-		
+
+			GtfsRealtime.FeedMessage njtMessage = null;
+			try {
+				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT");
+				njtMessage = deserializer.deserialize(njtFeedStream);
+			} catch (Exception any) {
+				_log.error("njt parsing failed: ",  any);
+				return mnrMessage;
+			}
+
+			if (njtMessage == null) {
+				return mnrMessage;
+			}
+
 			for (int i = 0; i < njtMessage.getEntityCount(); i++) {
 				FeedEntity entity = njtMessage.getEntity(i);
 				if (entity.hasTripUpdate()) {
@@ -90,9 +104,8 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 
 			return responseBuilder.build();
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			_log.error("exception in NJR/MNR merge: ", e);
 			return null;
 		}
 		
