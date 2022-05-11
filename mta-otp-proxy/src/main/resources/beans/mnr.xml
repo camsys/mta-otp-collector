@@ -12,7 +12,7 @@
 
     <bean name="njtFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
-            <value>http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto</value>
+            <value>${njt.feedmanager}</value>
         </property>
         <property name="defaultCredential" ref="NoOpCredential" />
     </bean>
