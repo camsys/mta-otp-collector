@@ -12,7 +12,7 @@
 
     <bean name="njtFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
-            <value>${njt.feedmanager}</value><!--            <value>${njt.gtfsrt.url}</value>-->
+            <value>${njt.gtfsrt.url}</value>
         </property>
         <property name="defaultCredential" ref="NoOpCredential" />
     </bean>
