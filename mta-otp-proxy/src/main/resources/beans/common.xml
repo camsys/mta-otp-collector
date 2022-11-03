@@ -129,7 +129,7 @@
 
 
     <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
-    <context:property-placeholder location="file:///opt/tomcat_collector/conf/collector.properties" />
+    <context:property-placeholder location="classpath:collector.properties" />
     <context:property-placeholder location="classpath:maven-version.properties" />
 
 
