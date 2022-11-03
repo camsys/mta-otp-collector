@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean name="gtfsDataServiceProvider" class="com.camsys.shims.util.gtfs_provider.GtfsDataServiceProviderImpl" />
+
+    <!-- gtfs services -->
+    <bean id="amkGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${amk.gtfs.path}" />
+    </bean>
+
+    <bean id="mnrGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${mnr.gtfs.path}" />
+    </bean>
+
+    <bean id="lirrGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${lirr.gtfs.path}" />
+    </bean>
+
+    <bean id="busGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${mtabus.gtfs.path}" />
+    </bean>
+
+    <bean id="subwayGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${subway.gtfs.path}" />
+    </bean>
+
+    <bean id="njtGtfsService" class="com.camsys.shims.factory.GtfsDataServiceFactory" autowire="byType">
+        <property name="gtfsPath" value="${njt_rail.gtfs.path}" />
+    </bean>
+
+    <!-- Route adapters: Map from GMS API to GTFS route ID -->
+
+    <bean name="defaultGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.DefaultGtfsRouteAdapter" />
+
+    <bean name="subwayGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.AgencyReplacementRouteAdapter">
+        <property name="agencyId" value="MTASBWY" />
+    </bean>
+
+    <bean name="lirrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.RouteNameAdapter">
+        <property name="gtfsAgencyId">
+            <list>
+                <value>${lirr.feedid}</value>
+            </list>
+        </property>
+        <property name="gtfsMap" ref="routeNameGtfsMap" />
+    </bean>
+
+    <bean name="mnrGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.RouteNameAdapter">
+        <property name="gtfsAgencyId">
+            <list>
+                <value>${mnr.feedid}</value>
+                <value>${njt.feedid}</value>
+            </list>
+        </property>
+        <property name="gtfsMap" ref="routeNameGtfsMap" />
+    </bean>
+
+    <bean name="njtRailGtfsRouteAdapter" class="com.camsys.shims.service_status.adapters.RouteNameAdapter">
+        <property name="gtfsAgencyId">
+            <list>
+                <value>${njt.feedid}</value>
+                <value>${mnr.feedid}</value>
+            </list>
+        </property>
+        <property name="gtfsMap" ref="routeNameGtfsMap" />
+    </bean>
+
+</beans>

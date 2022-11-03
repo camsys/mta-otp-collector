@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <!-- siri alerts deserializers -->
+    <!-- can split off to separate beans if different alert feeds require different white lists -->
+    <bean name="siriDeserializerWithModifications" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
+        <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
+        <property name="filterLmm" value="true" />
+    </bean>
+    <bean name="siriDeserializerWithoutHtmlWithLongDescription" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
+        <property name="htmlCleanupUtil" ref="noHtmlUtil" />
+        <property name="swapLongDescription" value="true"/>
+    </bean>
+
+    <bean name="siriDeserializerWithoutHtml" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializerWithModifications">
+        <property name="htmlCleanupUtil" ref="noHtmlUtil" />
+        <property name="swapLongDescription" value="false"/>
+    </bean>
+
+    <!-- shared resources -->
+    <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
+    <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
+    <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
+        <property name="autoExpirySec" value="${gms.alert.expiry}" />
+    </bean>
+    <bean name="forwarderTransformer" class="com.camsys.shims.gtfsrt.alerts.ForwarderTransformer" />
+
+    <bean name="atisGtfsMap" class="com.camsys.shims.atis.AtisGtfsMap" init-method="init" />
+    <bean name="routeNameGtfsMap" class="com.camsys.shims.util.gtfs.RouteNameGtfsMap" init-method="init" />
+
+    <!-- html white-list -->
+    <bean name="htmlCleanupUtil" class="com.camsys.shims.util.HtmlCleanupUtil" >
+        <property name="htmlTagWhiteList">
+            <array>
+                <value>p</value>
+                <value>br</value>
+                <value>ol</value>
+                <value>ul</value>
+                <value>li</value>
+                <value>dl</value>
+                <value>table</value>
+                <value>th</value>
+                <value>tr</value>
+                <value>td</value>
+                <value>span</value>
+                <value>b</value>
+                <value>strong</value>
+                <value>div</value>
+                <value>a</value>
+            </array>
+        </property>
+        <property name="htmlAttributesWhiteList">
+            <array>
+                <value>class</value>
+                <value>href</value>
+                <value>target</value>
+            </array>
+        </property>
+    </bean>
+    <bean name="noHtmlUtil" class="com.camsys.shims.util.HtmlCleanupUtil" >
+        <property name="htmlTagWhiteList">
+            <array>
+            </array>
+        </property>
+        <property name="htmlAttributesWhiteList">
+            <array>
+            </array>
+        </property>
+        <property name="htmlCharacterBlackList">
+            <array>
+                <value>&amp;amp;</value>
+                <value>&amp;nbsp;</value>
+                <value>&amp;bull;</value>
+            </array>
+        </property>
+    </bean>
+    <!-- monitoring object for healthcheck -->
+    <bean id="serviceStatusMonitor" class="com.camsys.shims.service_status.source.ServiceStatusMonitor" autowire="byType">
+    </bean>
+
+    <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck">
+        <property name="monitor" ref="serviceStatusMonitor" />
+    </bean>
+    <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
+    <bean id="mtaApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="${mta.api.key}" />
+        <property name="keyName" value="x-api-key" />
+    </bean>
+    <bean id="lmmCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="application/x-protobuf" />
+        <property name="keyName" value="Accept" />
+    </bean>
+
+    <bean id="datamineApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_param" />
+        <property name="key" value="${datamine.key}" />
+    </bean>
+    <bean id="mtaqaApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="external_profile" />
+        <property name="key" value="${mta.s3qa.key}" />
+        <property name="value" value="us-east-2" />
+    </bean>
+    <bean id="camsysS3ApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="external_profile" />
+        <property name="key" value="${camsys.profile.key}" />
+        <property name="value" value="us-east-1" />
+    </bean>
+    <bean id="mnrStagingApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="${mnr.staging.api.key}" />
+        <property name="keyName" value="x-api-key" />
+    </bean>
+    <bean id="mtaInternalDataApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="${mta.internaldata.key}" />
+        <property name="keyName" value="x-api-key" />
+    </bean>
+    
+    <bean id="NoOpCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="no_op" />
+    </bean>
+
+
+    <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
+    <context:property-placeholder location="file:///opt/tomcat_collector/conf/collector.properties"/>
+    <context:property-placeholder location="classpath:maven-version.properties" />
+
+
+
+</beans>

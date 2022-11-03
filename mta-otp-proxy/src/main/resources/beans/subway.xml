@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- subway - this is essentially equivalent to Kurt's ProxyModule class  -->
+    <bean class="org.onebusaway.gtfs_realtime.exporter.GtfsRealtimeExporterImpl" id="subwayTuExporter" />
+
+    <bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" />
+
+    <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType" name="lazyTripMatcher">
+        <property name="gtfsDataService" ref="subwayGtfsService"/>
+        <property name="agencyMatchId" value="${subway.feedid}" />
+        <property name="allowServiceDayCoercion" value="false" />
+    </bean>
+
+    <bean class="com.kurtraschke.nyctrtproxy.services.TripActivator" name="tripActivator">
+        <property name="agencyMatchId" value="${subway.feedid}" />
+        <property name="gtfsDataService" ref="subwayGtfsService" />
+    </bean>
+
+    <bean class="com.kurtraschke.nyctrtproxy.services.DirectionsService" id="directionsService" init-method="init" autowire="byType">
+        <property name="gtfsDataService" ref="subwayGtfsService" />
+        <property name="directionCsv" value="directions.csv" />
+    </bean>
+
+    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3MapStopIdTransformStrategy" id="stopIdTransformStrategy" init-method="init">
+        <property name="url" value="${subway.stop_map.url}" />
+    </bean>
+
+    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3SubwayFilterStrategy" id="subwayFilterStrategy" init-method="init">
+        <property name="url" value="${subway.route_stops.csv}" />
+        <property name="profile" value="${subway.route_stops.profile}" />
+        <property name="file" value="${subway.route_stops.file}" />
+        <property name="targetUrl" value="${subway.route_stops.targeturl}" />
+        <property name="localPath" value="${subway.route_stops.localpath}" />
+    </bean>
+
+    <bean class="com.kurtraschke.nyctrtproxy.services.TripUpdateProcessor" autowire="byType">
+        <property name="directionsService" ref="directionsService" />
+        <property name="stopIdTransformStrategy" ref="stopIdTransformStrategy" />
+        <property name="stopFilterStrategy" ref="subwayFilterStrategy" />
+        <property name="cloudwatchNamespace" value="${subway.cloudwatch.namespace}" />
+    </bean>
+
+
+    <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">
+        <property name="feedManager" ref="subwayFeedManager" />
+        <property name="tripUpdatesSink" ref="subwayTuExporter" />
+        <property name="feedIds" value="[1, 2, 11, 16, 21, 26, 31, 36, 51]" />
+    </bean>
+
+    <bean id="subwayTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="subwayTuExporter" />
+    </bean>
+
+    <!-- Subway alerts: merge from service status and elevators -->
+    <bean name="subwayAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">
+        <constructor-arg>
+            <list>
+                <ref bean="subwayLMMAlerts" />
+                <ref bean="subwayElevatorAlerts" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="subwayServiceAlerts" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="subwayAlertTask" />
+    </bean>
+
+    <bean name="subwayAlertsLMMFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${subway.lmm.url}</value>
+        </property>
+        <property name="timeout">
+            <value>10000</value>
+        </property>
+        <property name="defaultCredential" ref="lmmCredential" />
+    </bean>
+
+    <bean name="subwayLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="subwayAlertsLMMFeedManager" />
+        <property name="deserializer" ref="gtfsrt" />
+        <property name="transformer" ref="forwarderTransformer" />
+        <property name="NTries" value="1" /> <!-- don't retry LMM by request -->
+    </bean>
+
+    <!-- Subway Elevators -->
+    <bean name="elevatorsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.deserializer.SubwayElevatorsDeserializer" />
+    <bean name="elevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer.SubwayElevatorsTransformer">
+        <property name="stopsProvider" ref="subwayElevatorProvider" />
+    </bean>
+    <bean name="subwayElevatorsFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${subway.elev.url}</value>
+        </property>
+        <property name="defaultCredential" ref="mtaApiCredential" />
+    </bean>
+
+    <bean id="subwayElevatorAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
+        <property name="feedManager" ref="subwayElevatorsFeedManager" />
+        <property name="transformer" ref="elevatorsTransformer" />
+        <property name="deserializer" ref="elevatorsDeserializer" />
+    </bean>
+    <bean id="subwayElevatorProvider" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider.S3CsvElevatorToStopsProvider" init-method="init">
+        <property name="url" value="${subway.elev.csv}" />
+    </bean>
+
+    <bean name="subwayFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>http://datamine.mta.info/mta_esi.php</value>
+        </property>
+        <property name="defaultCredential" ref="datamineApiCredential" />
+        <!-- for DEV testing only -->
+        <property name="feedToUrlOverride">
+            <map>
+                <entry key="1" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs" />
+                <entry key="2" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-l" />
+                <entry key="11" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-si" />
+                <entry key="16" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-nqrw" />
+                <entry key="21" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-bdfm" />
+                <entry key="26" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-ace" />
+                <entry key="31" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-g" />
+                <entry key="36" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-jz" />
+                <entry key="51" value="https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2Fgtfs-7" />
+            </map>
+        </property>
+        <property name="feedToCredentialOverride">
+            <map>
+                <entry key="1" value-ref="mtaApiCredential" />
+                <entry key="2" value-ref="mtaApiCredential" />
+                <entry key="11" value-ref="mtaApiCredential" />
+                <entry key="16" value-ref="mtaApiCredential" />
+                <entry key="21" value-ref="mtaApiCredential" />
+                <entry key="26" value-ref="mtaApiCredential" />
+                <entry key="31" value-ref="mtaApiCredential" />
+                <entry key="36" value-ref="mtaApiCredential" />
+                <entry key="51" value-ref="mtaApiCredential" />
+            </map>
+        </property>
+
+    </bean>
+    <!-- this was for a debug UI for subway predictions, to grab predictions direct from the source RT feed -->
+    <bean name="subwayStopTimes" class="com.camsys.shims.servlet.HttpRequestSubwayStopTimes">
+    <property name="feedManager" ref="subwayFeedManager" />
+    </bean>
+</beans>

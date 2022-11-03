@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Amtrak Vehicle Positions -->
+    <bean id="amkVehiclePositionsSource" class="com.camsys.shims.util.source.AmtrakStaticGtfsRealtimeSource">
+        <property name="gtfsDataService" ref="amkGtfsService" />
+    </bean>
+    <bean id="amkVehiclePositions" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
+        <property name="source" ref="amkVehiclePositionsSource" />
+    </bean>
+
+
+
+</beans>

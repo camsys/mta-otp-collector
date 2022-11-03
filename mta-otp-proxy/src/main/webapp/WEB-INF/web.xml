@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="proxy" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>onebusaway-admin-webapp</display-name>
+
+    <!-- spring config -->
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:beans/*.xml
+        </param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>busTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>subwayTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>subwayServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>allServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>amkVehiclePositions</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>mnrTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>mnrVehiclePositions</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+
+    <servlet>
+        <servlet-name>mnrServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>lirrTripUpdates</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>lirrVehiclePositions</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>lirrServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>busServiceAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>siriBusCISOutputAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+
+    <servlet>
+        <servlet-name>serviceStatus</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>routeBranchStop</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>routeInfo</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>subwayRouteStops</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+
+    <servlet>
+        <servlet-name>subwayStopTimes</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>healthcheck</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>serverInfo</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet-mapping>
+        <servlet-name>allServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/ALL/alerts</url-pattern>
+    </servlet-mapping>
+    <!-- a second path for cache disambiguation purposes -->
+    <servlet-mapping>
+        <servlet-name>allServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/filtered/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>subwayTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>subwayServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTASBWY/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>amkVehiclePositions</servlet-name>
+        <url-pattern>/realtime/gtfsrt/AMK/vehiclePositions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mnrTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MNR/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mnrVehiclePositions</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MNR/vehiclePositions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>mnrServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MNR/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>lirrTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>lirrVehiclePositions</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/vehiclePositions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>lirrServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/LIRR/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>busServiceAlerts</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTABUS/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>siriBusCISOutputAlerts</servlet-name>
+        <url-pattern>/realtime/siri/MTABUS/alerts</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>busTripUpdates</servlet-name>
+        <url-pattern>/realtime/gtfsrt/MTABUS/tripUpdates</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NYCWF</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NYCWF/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NJT</servlet-name>
+        <url-pattern>/realtime/gtfsrt/NJT/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>serviceStatus</servlet-name>
+        <url-pattern>/realtime/serviceStatus</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>routeBranchStop</servlet-name>
+        <url-pattern>/schedule/stopsForRoute</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>routeInfo</servlet-name>
+        <url-pattern>/schedule/routeInfo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>subwayRouteStops</servlet-name>
+        <url-pattern>/schedule/MTASBWY/stopsForRoute</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>subwayStopTimes</servlet-name>
+        <url-pattern>/realtime/MTASBWY/stopTimes</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>busSiri</servlet-name>
+        <url-pattern>/realtime/MTABUS/siri/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>healthcheck</servlet-name>
+        <url-pattern>/healthcheck</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>serverInfo</servlet-name>
+        <url-pattern>/serverInfo</url-pattern>
+    </servlet-mapping>
+
+    <!-- proxy config -->
+
+    <servlet>
+        <servlet-name>NYCWF</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://nycferry.connexionz.net/rtt/public/utility/gtfsrealtime.aspx/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>NJT</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://standards.xcmdata.org/TransitDE/rest/GTFSController</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>busSiri</servlet-name>
+        <servlet-class>org.mitre.dsmiley.httpproxy.ProxyServlet</servlet-class>
+        <init-param>
+            <param-name>targetUri</param-name>
+            <param-value>http://bustime.mta.info/api/siri/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>log</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+
+        <init-param>
+            <param-name>cors.allowOrigin</param-name>
+            <param-value>*</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+</web-app>
