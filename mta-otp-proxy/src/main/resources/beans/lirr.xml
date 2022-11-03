@@ -77,6 +77,7 @@
         </property>
     </bean>
 
+<<<<<<< HEAD
     <bean name="lirrSirFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
             <value>${lirr.gms.url}</value>
@@ -90,6 +91,8 @@
         <property name="transformer" ref="lirrSiriTransformer" />
     </bean>
 
+=======
+>>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <bean name="lirrLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
         <property name="feedManager" ref="lirrAlertsLMMFeedManager" />
         <property name="deserializer" ref="gtfsrt" />
@@ -102,7 +105,10 @@
         <constructor-arg>
             <list>
                 <ref bean="lirrLMMAlerts" />
+<<<<<<< HEAD
                 <ref bean="lirrSiriAlerts" />
+=======
+>>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
                 <ref bean="lirrEleTask" />
             </list>
         </constructor-arg>
