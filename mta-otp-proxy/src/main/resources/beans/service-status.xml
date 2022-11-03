@@ -4,21 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- tasks -->
-<<<<<<< HEAD
-    <bean id="busServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
-        <property name="id" value="bus"/>
-        <property name="transformer" ref="serviceStatusTransformer" />
-        <property name="deserializer" ref="siriDeserializerWithModifications" />
-        <property name="sourceUrl" value="${mtabus.gms.url}" />
-        <property name="mode" value="bus" />
-        <property name="gtfsDataServices" >
-                <list><ref bean="busGtfsService" /></list>
-        </property>
-
-        <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
-    </bean>
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <!-- GtfsRtStatusTransformer -->
     <bean id="busLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="id" value="busLMM"/>
@@ -33,21 +18,6 @@
         <property name="gtfsRouteAdapter" ref="defaultGtfsRouteAdapter" />
     </bean>
 
-<<<<<<< HEAD
-    <bean id="subwayServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
-        <property name="id" value="subway"/>
-        <property name="transformer" ref="serviceStatusTransformer" />
-        <property name="deserializer" ref="siriDeserializerWithModifications" />
-        <property name="sourceUrl" value="${subway.gms.url}" />
-        <property name="mode" value="subway" />
-        <property name="gtfsDataServices" >
-            <list><ref bean="subwayGtfsService" /></list>
-        </property>
-
-        <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
-    </bean>
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <!-- GtfsRtStatusTransformer -->
     <bean id="subwayLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="id" value="subwayLMM"/>
@@ -61,21 +31,6 @@
         <property name="gtfsRouteAdapter" ref="subwayGtfsRouteAdapter" />
     </bean>
 
-<<<<<<< HEAD
-    <bean id="mnrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
-        <property name="id" value="mnr"/>
-        <property name="transformer" ref="serviceStatusTransformer" />
-        <property name="deserializer" ref="siriDeserializerWithModifications" />
-        <property name="sourceUrl" value="${mnr.gms.url}" />
-        <property name="mode" value="rail" />
-        <property name="gtfsDataServices" >
-            <list><ref bean="mnrGtfsService" /></list>
-        </property>
-        <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
-        <property name="inServiceTrueRoutes" value="MNR_wassaic" />
-    </bean>
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <!-- GtfsRtStatusTransformer -->
     <bean id="mnrLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="id" value="mnrLMM"/>
@@ -92,22 +47,6 @@
         <property name="gtfsRouteAdapter" ref="mnrGtfsRouteAdapter" />
     </bean>
 
-<<<<<<< HEAD
-    <bean id="lirrServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
-        <property name="id" value="lirr"/>
-        <property name="transformer" ref="serviceStatusTransformer" />
-        <property name="deserializer" ref="siriDeserializerWithModifications" />
-        <property name="sourceUrl" value="${lirr.gms.url}" />
-        <property name="mode" value="rail" />
-        <property name="gtfsDataServices">
-        <list>
-            <ref bean="lirrGtfsService" />
-        </list>
-        </property>
-        <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
-    </bean>
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <!-- GtfsRtStatusTransformer -->
     <bean id="lirrLMMServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
         <property name="id" value="lirrLMM"/>
@@ -123,44 +62,6 @@
         <property name="gtfsRouteAdapter" ref="lirrGtfsRouteAdapter" />
     </bean>
 
-<<<<<<< HEAD
-
-    <bean id="njtRailServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
-        <property name="id" value="njt"/>
-        <property name="transformer" ref="serviceStatusTransformer" />
-        <property name="deserializer" ref="siriDeserializerWithModifications" />
-        <property name="sourceUrl" value="${mnr.gms.url}" />
-        <property name="mode" value="rail" />
-        <property name="gtfsDataServices">
-            <list>
-                <ref bean="njtGtfsService" />
-            </list>
-        </property>
-        <property name="gtfsRouteAdapter" ref="njtRailGtfsRouteAdapter" />
-    </bean>
-
-    <bean id="gmsServiceStatusTask" class="com.camsys.shims.service_status.source.TransformingServiceStatusSource" autowire="byType">
-        <property name="id" value="gms"/>
-        <property name="transformer" ref="gmsServiceStatusTransformer" />
-        <property name="deserializer" ref="gmsServiceStatusDeserializer" />
-        <property name="sourceUrl" value="${all.gms.url}" />
-        <property name="gtfsDataServices"><null /></property>
-        <property name="gtfsRouteAdapter"><null /></property>
-    </bean>
-
-    <bean name="serviceStatusTask" class="com.camsys.shims.service_status.source.MergingServiceStatusSource">
-        <constructor-arg>
-            <list>
-                <ref bean="busServiceStatusTask" />
-                <ref bean="busLMMServiceStatusTask" />
-                <ref bean="subwayServiceStatusTask" />
-                <ref bean="subwayLMMServiceStatusTask" />
-                <ref bean="mnrServiceStatusTask" />
-                <ref bean="mnrLMMServiceStatusTask" />
-                <ref bean="lirrServiceStatusTask" />
-                <ref bean="lirrLMMServiceStatusTask" />
-                <ref bean="njtRailServiceStatusTask" />
-=======
     <bean name="serviceStatusTask" class="com.camsys.shims.service_status.source.MergingServiceStatusSource">
         <constructor-arg>
             <list>
@@ -168,7 +69,6 @@
                 <ref bean="subwayLMMServiceStatusTask" />
                 <ref bean="mnrLMMServiceStatusTask" />
                 <ref bean="lirrLMMServiceStatusTask" />
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
             </list>
         </constructor-arg>
         <property name="subwayGtfsDataService" ref="subwayGtfsService"/>
@@ -185,13 +85,6 @@
         <property name="source" ref="serviceStatusTask" />
     </bean>
 
-<<<<<<< HEAD
-    <bean id="gmsServiceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">
-        <property name="source" ref="gmsServiceStatusTask" />
-    </bean>
-
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <!-- service status -->
     <bean name="serviceStatusTransformer" class="com.camsys.shims.service_status.transformer.SiriToServiceStatusTransformer" />
     <bean name="gtfsServiceStatusTransformer" class="com.camsys.shims.service_status.transformer.GtfsRtStatusTransformer" >

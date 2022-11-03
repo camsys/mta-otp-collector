@@ -14,21 +14,10 @@
         <constructor-arg>
             <list>
                 <ref bean="busLMMAlerts" />
-<<<<<<< HEAD
-                <ref bean="busSiriAlerts" />
-                <ref bean="subwayLMMAlerts" />
-                <ref bean="subwayStatusAlerts" />
-                <ref bean="subwayElevatorAlerts" />
-                <ref bean="mnrSiriAlerts" />
-                <ref bean="mnrLMMAlerts" />
-                <ref bean="mnrEleTask" />
-                <ref bean="lirrSiriAlerts" />
-=======
                 <ref bean="subwayLMMAlerts" />
                 <ref bean="subwayElevatorAlerts" />
                 <ref bean="mnrLMMAlerts" />
                 <ref bean="mnrEleTask" />
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
                 <ref bean="lirrLMMAlerts" />
                 <ref bean="lirrEleTask" />
             </list>

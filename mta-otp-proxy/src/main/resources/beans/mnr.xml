@@ -87,22 +87,6 @@
         </property>
     </bean>
 
-<<<<<<< HEAD
-    <bean name="mnrSiriFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
-        <property name="baseUrl">
-            <value>${mnr.gms.url}</value>
-        </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
-    </bean>
-
-    <bean name="mnrSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
-        <property name="feedManager" ref="mnrSiriFeedManager" />
-        <property name="deserializer" ref="siriDeserializerWithModifications" />
-        <property name="transformer" ref="mnrSiriTransformer" />
-    </bean>
-
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <bean name="mnrLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
         <property name="feedManager" ref="mnrAlertsLMMFeedManager" />
         <property name="deserializer" ref="gtfsrt" />
@@ -115,10 +99,6 @@
         <constructor-arg>
             <list>
                 <ref bean="mnrLMMAlerts" />
-<<<<<<< HEAD
-                <ref bean="mnrSiriAlerts" />
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
                 <ref bean="mnrEleTask" />
             </list>
         </constructor-arg>

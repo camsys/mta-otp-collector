@@ -70,14 +70,14 @@ public class S3SubwayFilterStrategy extends AbstractS3CsvProvider implements Sto
         }
     }
 
-    @Override
-    public void update() throws Exception {
-        S3Services s3Services = new S3Services();
-        clearClosedStops();
-        s3Services.fetch(getUrl(), getFile(), getLocalPath(), new CredentialContainer(getProfile()));
-        s3Services.put(getTargetUrl() + "/vc." + ZonedDateTime.now().toInstant().toEpochMilli() + "/" + getFile(), getLocalPath() + "/" + getFile());
-        super.update();
-    }
+//    @Override
+//    public void update() throws Exception {
+//        S3Services s3Services = new S3Services();
+//        clearClosedStops();
+//        s3Services.fetch(getUrl(), getFile(), getLocalPath(), new CredentialContainer(getProfile()));
+//        s3Services.put(getTargetUrl() + "/vc." + ZonedDateTime.now().toInstant().toEpochMilli() + "/" + getFile(), getLocalPath() + "/" + getFile());
+//        super.update();
+//    }
 
     private Set<String> getClosedStops() {
         if (_closedStops == null) {

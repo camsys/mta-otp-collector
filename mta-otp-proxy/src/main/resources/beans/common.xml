@@ -25,13 +25,6 @@
     <!-- shared resources -->
     <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
     <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
-<<<<<<< HEAD
-    <bean name="gmsServiceStatusDeserializer" class="com.camsys.shims.service_status.deserializer.GmsServiceStatusDeserializer" />
-    <bean name="gmsServiceStatusTransformer" class="com.camsys.shims.service_status.transformer.GmsServiceStatusTransformer">
-        <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
-    </bean>
-=======
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
     <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
         <property name="autoExpirySec" value="${gms.alert.expiry}" />
     </bean>
@@ -136,11 +129,7 @@
 
 
     <bean class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager" />
-<<<<<<< HEAD
-    <context:property-placeholder location="classpath:collector.properties" />
-=======
-    <context:property-placeholder location="file:///opt/tomcat_collector/conf/collector.properties"/>
->>>>>>> b093d409b038ac7397b2c15f58812a17923fae16
+    <context:property-placeholder location="file:///opt/tomcat_collector/conf/collector.properties" />
     <context:property-placeholder location="classpath:maven-version.properties" />
 
 
