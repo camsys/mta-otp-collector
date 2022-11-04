@@ -17,21 +17,14 @@
         <task:scheduled ref="busTask" method="update" fixed-delay="${scheduler.busTask.delay}"/>
         <task:scheduled ref="busServiceAlertMergeTask" method="update" fixed-delay="${scheduler.busServiceAlertMergeTask.delay}" />
         <task:scheduled ref="busAllCISSiriOutputAlerts" method="update" fixed-delay="${scheduler.busAllCISSiriOutputAlerts.delay}" />
-        <task:scheduled ref="busAllGMSSiriOutputAlerts" method="update" fixed-delay="${scheduler.busAllGMSSiriOutputAlerts.delay}" />
         <task:scheduled ref="serviceStatusTask" method="update" fixed-delay="${scheduler.serviceStatusTask.delay}" />
-        <task:scheduled ref="gmsServiceStatusTask" method="update" fixed-delay="${scheduler.gmsServiceStatusTask.delay}" />
         <task:scheduled ref="subwayFilterStrategy" method="update" fixed-delay="${scheduler.subwayFilterStrategy.delay}" />
         <task:scheduled ref="gtfsDataServiceProvider" method="update" cron="${gtfs.reload.cron}" />
         <!-- service status loads begin -->
-        <task:scheduled ref="busServiceStatusTask" method="update" fixed-delay="${scheduler.busServiceStatusTask.delay}"/>
         <task:scheduled ref="busLMMServiceStatusTask" method="update" fixed-delay="${scheduler.busLMMServiceStatusTask.delay}"/>
-        <task:scheduled ref="subwayServiceStatusTask" method="update" fixed-delay="${scheduler.subwayServiceStatusTask.delay}"/>
         <task:scheduled ref="subwayLMMServiceStatusTask" method="update" fixed-delay="${scheduler.subwayLMMServiceStatusTask.delay}"/>
-        <task:scheduled ref="mnrServiceStatusTask" method="update" fixed-delay="${scheduler.mnrServiceStatusTask.delay}"/>
         <task:scheduled ref="mnrLMMServiceStatusTask" method="update" fixed-delay="${scheduler.mnrLMMServiceStatusTask.delay}"/>
-        <task:scheduled ref="lirrServiceStatusTask" method="update" fixed-delay="${scheduler.lirrServiceStatusTask.delay}"/>
         <task:scheduled ref="lirrLMMServiceStatusTask" method="update" fixed-delay="${scheduler.lirrLMMServiceStatusTask.delay}"/>
-        <task:scheduled ref="njtRailServiceStatusTask" method="update" fixed-delay="${scheduler.njtRailServiceStatusTask.delay}"/>
         <!-- service status loads end -->
     </task:scheduled-tasks>
 

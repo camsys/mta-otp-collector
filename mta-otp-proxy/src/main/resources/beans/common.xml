@@ -25,10 +25,6 @@
     <!-- shared resources -->
     <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
     <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
-    <bean name="gmsServiceStatusDeserializer" class="com.camsys.shims.service_status.deserializer.GmsServiceStatusDeserializer" />
-    <bean name="gmsServiceStatusTransformer" class="com.camsys.shims.service_status.transformer.GmsServiceStatusTransformer">
-        <property name="htmlCleanupUtil" ref="htmlCleanupUtil" />
-    </bean>
     <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
         <property name="autoExpirySec" value="${gms.alert.expiry}" />
     </bean>

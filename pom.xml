@@ -103,7 +103,7 @@
 	<modules>
 		<module>mta-otp-proxy</module>
 		<module>mta-otp-elevators</module>
-		<module>mta-gms-service-status</module>
+<!--		<module>mta-gms-service-status</module>-->
 		<module>mta-otp-plannedwork</module>
 	</modules>
 </project>
