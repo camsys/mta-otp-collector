@@ -23,6 +23,7 @@ import com.google.transit.realtime.GtfsRealtime.TripUpdate.StopTimeUpdate;
 import com.kurtraschke.nyctrtproxy.FeedManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSource<GtfsRealtime.FeedMessage> {
 
@@ -33,18 +34,22 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 	public void setNjtFeedManager(FeedManager njtFeedManager) {
 		this.njtFeedManager = njtFeedManager;
 	}
+
+	private String njtPortJervisRouteId;
+
+	private String njtPascackValleyRouteId;
 	
 	@Override
 	public GtfsRealtime.FeedMessage getMessage(String feedUrl, Deserializer<GtfsRealtime.FeedMessage> deserializer){
 		try {
-			GtfsRealtime.FeedMessage.Builder responseBuilder = GtfsRealtime.FeedMessage.newBuilder();
+ 			GtfsRealtime.FeedMessage.Builder responseBuilder = GtfsRealtime.FeedMessage.newBuilder();
 
 			GtfsRealtime.FeedMessage mnrMessage = super.getMessage(feedUrl, deserializer);
 			responseBuilder.mergeFrom(mnrMessage);
 
 			GtfsRealtime.FeedMessage njtMessage = null;
 			try {
-				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT");
+				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT","Mozilla/5.0 Firefox/26.0");
 				njtMessage = deserializer.deserialize(njtFeedStream);
 			} catch (Exception any) {
 				_log.error("njt parsing failed: ",  any);
@@ -60,19 +65,13 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 				if (entity.hasTripUpdate()) {
         			GtfsRealtime.TripUpdate.Builder tub = GtfsRealtime.TripUpdate.newBuilder();
             		tub.mergeFrom(entity.getTripUpdate());
-            		
-            		switch(tub.getTripBuilder().getRouteId()) {
-            			case "6":
-            				tub.getTripBuilder().setRouteId("51");
-            				break;
+            		String routeId = tub.getTripBuilder().getRouteId();
 
-            			case "13":
-            				tub.getTripBuilder().setRouteId("50");
-            				break;
-
-            			// only merge NJT routes above--others are discarded
-            			default:
-            				continue;
+            		if(routeId==njtPascackValleyRouteId){
+						tub.getTripBuilder().setRouteId("50");
+					}
+					if(routeId==njtPortJervisRouteId){
+						tub.getTripBuilder().setRouteId("51");
             		}
             		
             		tub.clearStopTimeUpdate();
@@ -111,5 +110,12 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 		
 		
 	}
-    
+
+	public void setNjtPascackValleyRouteId(String njtPascackValleyRouteId) {
+		this.njtPascackValleyRouteId = njtPascackValleyRouteId;
+	}
+
+	public void setNjtPortJervisRouteId(String njtPortJervisRouteId) {
+		this.njtPortJervisRouteId = njtPortJervisRouteId;
+	}
 }
