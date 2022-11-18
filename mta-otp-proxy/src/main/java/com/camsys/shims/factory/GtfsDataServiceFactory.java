@@ -24,6 +24,7 @@ import org.onebusaway.gtfs.services.GtfsRelationalDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,13 +63,25 @@ public class GtfsDataServiceFactory implements FactoryBean<GtfsDataService> {
         GtfsReader reader = new GtfsReader();
         reader.setEntityStore(dao);
         try {
-            reader.setInputLocation(new File(path));
+            if (path.startsWith("classpath:")) {
+                // support classpath loading of data for testing
+                reader.setInputLocation(getFileFromClassPath(path));
+            } else {
+                reader.setInputLocation(new File(path));
+            }
             reader.run();
             reader.close();
         } catch (IOException e) {
             throw new RuntimeException("Failure while reading GTFS", e);
         }
         return dao;
+    }
+
+    private static File getFileFromClassPath(String path) throws IOException {
+        String shortPath = path.replaceFirst("classpath:", "");
+        ClassPathResource classPathResource = new ClassPathResource(shortPath);
+        if (!classPathResource.exists()) throw new RuntimeException("resource not found on classpath: " + shortPath);
+        return classPathResource.getFile();
     }
 
 }
