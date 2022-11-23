@@ -4,6 +4,8 @@ import org.apache.commons.collections4.map.PassiveExpiringMap;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.onebusaway.cloud.api.ExternalServices;
+import org.onebusaway.cloud.api.ExternalServicesBridgeFactory;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.model.StopTime;
@@ -29,6 +31,8 @@ public class LIRRSolariDataService {
 
     private static Logger _log = LoggerFactory.getLogger(LIRRSolariDataService.class);
 
+    private ExternalServices externalServices = new ExternalServicesBridgeFactory().getExternalServices();
+
     private String endpointUrl = null;
 
     private String username = null;
@@ -45,6 +49,7 @@ public class LIRRSolariDataService {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private String _namespace;
     private Long now = null;
     private int tripWindowInMinutes = 90;
     private List<Trip> cachedActiveTrips = null;
@@ -83,6 +88,10 @@ public class LIRRSolariDataService {
 
     public void setTripWindowInMinutes(int tripWindowInMinutes) {
         this.tripWindowInMinutes = tripWindowInMinutes;
+    }
+
+    public void setNamespace(String namespace) {
+        this._namespace = namespace;
     }
 
     public int getTripCount() {
@@ -390,8 +399,10 @@ public class LIRRSolariDataService {
 
 
     private void resetStats() {
+        publishMetric("tripCount", tripCount);
+        publishMetric("matchCount", matchCount);
         // reset stats
-        _log.info("resetting stats");
+        _log.info("resetting stats (tripCount={}, matchCount={})", tripCount, matchCount);
         tripCount = 0;
         matchCount = 0;
     }
@@ -491,6 +502,12 @@ public class LIRRSolariDataService {
                     _log.error("issue parsing Solari packet {}", e, e);
                 }
             }
+        }
+    }
+
+    public void publishMetric(String name, double value) {
+        if (externalServices.isInstancePrimary()) {
+            externalServices.publishMetric(_namespace, name, "feed", "LI-SOLARI", value);
         }
     }
 }

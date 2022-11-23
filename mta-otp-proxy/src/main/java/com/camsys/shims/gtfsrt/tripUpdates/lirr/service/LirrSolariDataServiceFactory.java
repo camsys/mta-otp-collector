@@ -18,6 +18,8 @@ public class LirrSolariDataServiceFactory {
 
     private String topic = null;
 
+    private String namespace = null;
+
     private Set<String> stationIdWhitelist = null;
 
     private GtfsDataService gtfsDataService = null;
@@ -30,6 +32,7 @@ public class LirrSolariDataServiceFactory {
             service.setUsername(username);
             service.setPassword(password);
             service.setTopic(topic);
+            service.setNamespace(namespace);
             service.setStationIdWhitelist(stationIdWhitelist);
             service.setGtfsDataService(gtfsDataService);
             service.connect();
@@ -55,6 +58,10 @@ public class LirrSolariDataServiceFactory {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public void setStationIdWhitelist(Set<String> stationIdWhitelist) {

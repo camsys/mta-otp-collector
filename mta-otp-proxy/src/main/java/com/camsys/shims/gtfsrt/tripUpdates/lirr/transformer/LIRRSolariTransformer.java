@@ -38,7 +38,7 @@ public class LIRRSolariTransformer implements GtfsRealtimeTransformer<GtfsRealti
         Map<StopTimeUpdateKey, StopTimeUpdateAddon> externalUpdates = _dataService.getUpdateCache();
         GtfsRealtime.FeedMessage.Builder builder = GtfsRealtime.FeedMessage.newBuilder();
         builder.setHeader(message.getHeader());
-
+        int entityCount = 0;
         try {
             for (int i = 0; i < message.getEntityCount(); i++) {
                 GtfsRealtime.FeedEntity entity = message.getEntity(i);
@@ -47,12 +47,14 @@ public class LIRRSolariTransformer implements GtfsRealtimeTransformer<GtfsRealti
                     if (tu != null) {
                         GtfsRealtime.FeedEntity.Builder feb = entity.toBuilder().setTripUpdate(tu);
                         builder.addEntity(feb);
+                        entityCount++;
                     }
                 } else {
                     builder.addEntity(entity);
                 }
             }
 
+            _log.info("{} externalUpdates added to feed of size {}", externalUpdates.size(), entityCount);
             for (StopTimeUpdateAddon trainUpdate : externalUpdates.values()) {
                 // synthetic trip to match signage
                 GtfsRealtime.FeedEntity.Builder feb = createTripUpdateEntity(trainUpdate);
@@ -79,14 +81,6 @@ public class LIRRSolariTransformer implements GtfsRealtimeTransformer<GtfsRealti
 
         GtfsRealtime.TripDescriptor.Builder td = GtfsRealtime.TripDescriptor.newBuilder();
         td.setTripId(trainUpdate.getTripId().getId());
-
-        // stop time event -> departure
-        if (trainUpdate.getPredictedDeparture() > 0) {
-            GtfsRealtime.TripUpdate.StopTimeEvent.Builder departure = GtfsRealtime.TripUpdate.StopTimeEvent.newBuilder();
-            departure.setTime(trainUpdate.getPredictedDeparture());
-            stub.setDeparture(departure);
-        }
-
 
         // extensions
         GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate.Builder rrExt = GtfsRealtimeMTARR.MtaRailroadStopTimeUpdate.newBuilder();
@@ -156,6 +150,8 @@ public class LIRRSolariTransformer implements GtfsRealtimeTransformer<GtfsRealti
             rrExt.setTrainStatus(update.getStatus());
         stub.setExtension(GtfsRealtimeMTARR.mtaRailroadStopTimeUpdate, rrExt.build());
 
+        // this synthetic update needs a prediction -- we carry it over from Solari
+        // we deliberately don't contradict existing prediction however
         if (update.getPredictedDeparture() > 0) {
             GtfsRealtime.TripUpdate.StopTimeEvent.Builder departure = GtfsRealtime.TripUpdate.StopTimeEvent.newBuilder();
             departure.setTime(update.getPredictedDeparture());
