@@ -3,6 +3,29 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <!--  Solari Signage integration -->
+    <bean id="lirrSolariServiceFactory" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.service.LirrSolariDataServiceFactory">
+        <property name="gtfsDataService" ref="lirrGtfsService" />
+        <property name="stationIdWhitelist">
+            <set>
+                <value>ATL</value>
+                <value>NYK</value>
+                <value>JAM</value>
+                <value>GCT</value>
+            </set>
+        </property>
+        <property name="endpointUrl" value="${lirr.solari.endpoint}"/>
+        <property name="username" value="${lirr.solari.username}"/>
+        <property name="password" value="${lirr.solari.password}"/>
+        <property name="topic" value="${lirr.solari.topic}"/>
+    </bean>
+
+    <!-- create solari data service via factory -->
+    <bean name="lirrSolari"
+          class="com.camsys.shims.gtfsrt.tripUpdates.lirr.service.LIRRSolariDataService"
+          factory-bean="lirrSolariServiceFactory"
+          factory-method="getService">
+    </bean>
     <bean name="lirrTUFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
             <value>${lirr.gtfsrt.url}</value>
@@ -12,6 +35,11 @@
 
     <!-- LIRR trip updates -->
     <bean name="lirrDeserializer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.deserializer.LIRRFeedMessageDeserializer" />
+    <bean id="lirrSolariTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LIRRSolariTransformer">
+        <property name="dataService" ref="lirrSolari" />
+        <property name="agencyId" value="LI" />
+    </bean>
+
     <bean id="lirrTransformer" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LIRRTripUpdateTransformer">
         <property name="namespace" value="${cloudwatch.namespace}" />
         <property name="feedId" value="${lirr.feedid}" />
@@ -22,8 +50,13 @@
         <property name="transformer" ref="lirrTransformer" />
         <property name="deserializer" ref="lirrDeserializer" />
     </bean>
+    <bean id="lirrTripUpdatesSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource">
+        <property name="upstream" ref="lirrTask" />
+        <property name="transformer" ref="lirrSolariTransformer" />
+
+    </bean>
     <bean id="lirrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
-        <property name="source" ref="lirrTask" />
+        <property name="source" ref="lirrTripUpdatesSource" /> <!-- chain through Solari -->
     </bean>
     <bean id="lirrStopIdTransformStrategy" class="com.camsys.shims.gtfsrt.tripUpdates.lirr.transformer.LirrPoiStopTransformStrategy" init-method="init">
         <property name="url" value="${lirr.cutover_stops.url}"/>

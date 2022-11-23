@@ -1,8 +1,11 @@
 package com.camsys.shims.gtfsrt.tripUpdates.lirr.service;
 
+import org.apache.commons.collections4.map.PassiveExpiringMap;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.onebusaway.gtfs.model.AgencyAndId;
+import org.onebusaway.gtfs.model.Stop;
 import org.onebusaway.gtfs.model.StopTime;
 import org.onebusaway.gtfs.model.Trip;
 import org.onebusaway.gtfs.model.calendar.LocalizedServiceId;
@@ -43,12 +46,14 @@ public class LIRRSolariDataService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private Long now = null;
-    private long tripWindowInMinutes = 90;
+    private int tripWindowInMinutes = 90;
     private List<Trip> cachedActiveTrips = null;
     private long cachedActiveTripsTime = 0;
     private long cacheTimeMillis = 5 * 60 * 1000;
     private int tripCount = 0;
     private int matchCount = 0;
+    private Map<String, AgencyAndId> stopCodeToStopIdMap = new HashMap<>();
+    private Map<StopTimeUpdateKey, StopTimeUpdateAddon> updateCache = new PassiveExpiringMap<StopTimeUpdateKey, StopTimeUpdateAddon>(5*60*1000);
 
     private Connection connection = null;
 
@@ -76,7 +81,7 @@ public class LIRRSolariDataService {
        this.gtfsDataService = gtfsDataService;
     }
 
-    public void setTripWindowInMinutes(long tripWindowInMinutes) {
+    public void setTripWindowInMinutes(int tripWindowInMinutes) {
         this.tripWindowInMinutes = tripWindowInMinutes;
     }
 
@@ -86,6 +91,9 @@ public class LIRRSolariDataService {
 
     public int getMatchCount() {
         return matchCount;
+    }
+    public Map<StopTimeUpdateKey, StopTimeUpdateAddon> getUpdateCache() {
+        return updateCache;
     }
 
     void resetActiveTrips() {
@@ -179,7 +187,7 @@ public class LIRRSolariDataService {
                 continue;
             }
             if (!potentialTrips.isEmpty()) {
-                cacheTripDetails(potentialTrips.get(0), train);
+                cacheTripDetails(stationCode, potentialTrips.get(0), train);
                 // keep some stats on how well our matching performed
                 logMatch();
             } else {
@@ -226,11 +234,55 @@ public class LIRRSolariDataService {
         return potentialTrips;
     }
 
-    // this is where we will build up internal beans for GTFS-RT consumption
-    // TODO implement this
-    private void cacheTripDetails(Trip potentialTrip, JsonNode train) {
-        _log.info("train " + train.get("trainNumber") + " with prediction "
-                + train.get("predictedDateTime") + " and track=" + train.get("track"));
+    // update expiring cache of internal beans for GTFS-RT consumption
+    private void cacheTripDetails(String stationCode, Trip potentialTrip, JsonNode train) {
+        AgencyAndId stopId = getStopIdForStopCode(stationCode);
+        StopTimeUpdateAddon update = getTrainAsBean(potentialTrip, stopId, train);
+        StopTimeUpdateKey key = new StopTimeUpdateKey(potentialTrip.getId(), stopId);
+        updateCache.put(key, update);
+    }
+
+    private AgencyAndId getStopIdForStopCode(String stationCode) {
+        if (stopCodeToStopIdMap.containsKey(stationCode))
+            return stopCodeToStopIdMap.get(stationCode);
+        for (Stop stop : gtfsDataService.getAllStops()) {
+            if (stationCode.equals(stop.getCode())) {
+                stopCodeToStopIdMap.put(stop.getCode(), stop.getId());
+                return stop.getId();
+            }
+        }
+        return null; // not found!
+    }
+
+    private StopTimeUpdateAddon getTrainAsBean(Trip trip, AgencyAndId stopId, JsonNode train) {
+        StopTimeUpdateAddon update = new StopTimeUpdateAddon();
+        update.setTripId(trip.getId());
+        update.setStopId(stopId);
+        update.setTripHeadsign(train.get("destinationLocation").get("name").asText());
+        update.setTrack(train.get("track").asText(null)); // accept null as default
+        update.setPeakCode(getOffPeakCode(train.get("peakCode").asText()));
+        update.setStatus(train.get("status").asText());
+        update.setScheduledDeparture(parseTrainDate(train.get("scheduleDateTime").asText()));
+        update.setPredictedDeparture(parseTrainDate(train.get("predictedDateTime").asText()));
+        return update;
+    }
+
+    // TODO: this keys/values in this method need to be verified
+    private int getOffPeakCode(String s) {
+        if (s == null) {
+            _log.error("null peak code");
+            return -1;
+        }
+        if ("O".equals(s))
+            return 0;
+        if ("P".equals(s))
+            return 1;
+        if ("A".equals(s)) {
+            _log.info("A off peak code -- needs translated");
+            return 2; // TODO!!!!!!!!!!
+        }
+        _log.error("unexpected peak code {}", s);
+        return -2;
     }
 
     // match the trip_id and trip direction to solari packet
@@ -259,30 +311,71 @@ public class LIRRSolariDataService {
         }
     }
 
-
-    // filter trips to active serviceId and a configurable window
-    // config minutes > trip start time > trip end time > config minutes
-    // package private for unit tests
     List<Trip> getActiveTrips(long now) {
         if (now - cachedActiveTripsTime > cacheTimeMillis
-            || cachedActiveTrips == null) {
+                || cachedActiveTrips == null) {
             resetStats();
             List<Trip> activeTrips = new ArrayList<>();
-            for (Trip tripForAgency : gtfsDataService.getAllTrips()) {
-                // first check -- is the trip serviceId active today
-                // TODO: handle service day boundaries
-                // or if we are near a day boundary, check next/previous day as well
-                if (isActiveServiceId(now, tripForAgency)) {
-                    // next is the trip window within our timespan
-                    if (isTripInTimeWindow(now, tripForAgency)) {
-                        activeTrips.add(tripForAgency);
-                    }
-                }
+
+            // handle yesterday's service ids if still active
+            if (yesterdayInWindow(now)) {
+                activeTrips.addAll(getActiveTripsNoCache(yesterdaysWindow(now)));
+            }
+            activeTrips.addAll(getActiveTripsNoCache(now));
+            if (tommorrowInWindow(now)) {
+                // handle tomorrow's service ids if they will be active
+                activeTrips.addAll(getActiveTripsNoCache(tomorrowsWindow(now)));
             }
             cachedActiveTrips = activeTrips;
             cachedActiveTripsTime = getCurrentTime();
         }
         return cachedActiveTrips;
+    }
+
+    long tomorrowsWindow(long now) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(now);
+        c.add(Calendar.MINUTE, tripWindowInMinutes);
+        return c.getTimeInMillis();
+    }
+
+    boolean tommorrowInWindow(long now) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(now);
+        int today = c.get(Calendar.DAY_OF_YEAR);
+        c.add(Calendar.MINUTE, tripWindowInMinutes);
+        return today != c.get(Calendar.DAY_OF_YEAR);
+    }
+
+    long yesterdaysWindow(long now) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(now);
+        c.add(Calendar.MINUTE, -tripWindowInMinutes);
+        return c.getTimeInMillis();
+    }
+
+    boolean yesterdayInWindow(long now) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(now);
+        int today = c.get(Calendar.DAY_OF_YEAR);
+        c.add(Calendar.MINUTE, -tripWindowInMinutes);
+        return today != c.get(Calendar.DAY_OF_YEAR);
+    }
+
+    // filter trips to active serviceId and a configurable window
+    // config minutes > trip start time > trip end time > config minutes
+    // package private for unit tests
+    List<Trip> getActiveTripsNoCache(long now) {
+        List<Trip> activeTrips = new ArrayList<>();
+        for (Trip tripForAgency : gtfsDataService.getAllTrips()) {
+            if (isActiveServiceId(now, tripForAgency)) {
+                // next is the trip window within our timespan
+                if (isTripInTimeWindow(now, tripForAgency)) {
+                    activeTrips.add(tripForAgency);
+                }
+            }
+        }
+        return activeTrips;
     }
 
     private void logTrip() {
@@ -377,7 +470,8 @@ public class LIRRSolariDataService {
                         JsonNode jsonMessage = toJson(rawJson);
                         JsonNode stationLocation = jsonMessage.get("location");
                         String stationCode = stationLocation.get("code").asText();
-                        if (stationIdWhitelist.contains(stationCode))
+                        // we are only interested in certain stops, ignore if it's not one of those
+                        if (!stationIdWhitelist.contains(stationCode))
                             continue; // discard
 
                         processMessage(jsonMessage);
