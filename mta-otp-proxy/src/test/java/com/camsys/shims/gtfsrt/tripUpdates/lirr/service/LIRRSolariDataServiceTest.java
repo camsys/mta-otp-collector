@@ -159,7 +159,6 @@ public class LIRRSolariDataServiceTest {
         assertEquals(key.getStopId(), value.getStopId());
         assertEquals("Far Rockaway", value.getTripHeadsign());
         assertEquals("3", value.getTrack());
-        assertEquals(0, value.getPeakCode());
         assertEquals("ON TIME", value.getStatus());
         assertEquals(1669048920000l, value.getScheduledDeparture());
         assertEquals(1669048920000l, value.getPredictedDeparture());
@@ -183,7 +182,6 @@ public class LIRRSolariDataServiceTest {
         assertEquals(key.getStopId(), value.getStopId());
         assertEquals("Port Washington", value.getTripHeadsign());
         assertNull(value.getTrack());
-        assertEquals(0, value.getPeakCode());
         assertEquals("ON TIME", value.getStatus());
         assertEquals(1669049340000l, value.getScheduledDeparture());
         assertEquals(1669049340000l, value.getPredictedDeparture());
@@ -196,7 +194,6 @@ public class LIRRSolariDataServiceTest {
         assertEquals(key.getStopId(), value.getStopId());
         assertEquals("Huntington", value.getTripHeadsign());
         assertEquals("20", value.getTrack());
-        assertEquals(0, value.getPeakCode());
         assertEquals("ON TIME", value.getStatus());
         assertEquals(1669048920000l, value.getScheduledDeparture());
         assertEquals(1669048920000l, value.getPredictedDeparture());

@@ -11,7 +11,6 @@ public class StopTimeUpdateAddon {
     private AgencyAndId stopId;
     private String tripHeadsign;
     private String track;
-    private int peakCode;
     private String status;
 
     private long scheduledDeparture;
@@ -48,14 +47,6 @@ public class StopTimeUpdateAddon {
 
     public void setTrack(String track) {
         this.track = track;
-    }
-
-    public int getPeakCode() {
-        return peakCode;
-    }
-
-    public void setPeakCode(int peakCode) {
-        this.peakCode = peakCode;
     }
 
     public String getStatus() {

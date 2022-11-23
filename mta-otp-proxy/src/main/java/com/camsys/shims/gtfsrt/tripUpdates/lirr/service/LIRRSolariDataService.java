@@ -269,29 +269,10 @@ public class LIRRSolariDataService {
         update.setStopId(stopId);
         update.setTripHeadsign(train.get("destinationLocation").get("name").asText());
         update.setTrack(train.get("track").asText(null)); // accept null as default
-        update.setPeakCode(getOffPeakCode(train.get("peakCode").asText()));
         update.setStatus(train.get("status").asText());
         update.setScheduledDeparture(parseTrainDate(train.get("scheduleDateTime").asText()));
         update.setPredictedDeparture(parseTrainDate(train.get("predictedDateTime").asText()));
         return update;
-    }
-
-    // TODO: this keys/values in this method need to be verified
-    private int getOffPeakCode(String s) {
-        if (s == null) {
-            _log.error("null peak code");
-            return -1;
-        }
-        if ("O".equals(s))
-            return 0;
-        if ("P".equals(s))
-            return 1;
-        if ("A".equals(s)) {
-            _log.info("A off peak code -- needs translated");
-            return 2; // TODO!!!!!!!!!!
-        }
-        _log.error("unexpected peak code {}", s);
-        return -2;
     }
 
     // match the trip_id and trip direction to solari packet
