@@ -109,10 +109,23 @@
             org.springframework.web.context.support.HttpRequestHandlerServlet
         </servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>siriGMSOutputAlerts</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
 
 
     <servlet>
         <servlet-name>serviceStatus</servlet-name>
+        <servlet-class>
+            org.springframework.web.context.support.HttpRequestHandlerServlet
+        </servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>gmsServiceStatus</servlet-name>
         <servlet-class>
             org.springframework.web.context.support.HttpRequestHandlerServlet
         </servlet-class>
@@ -219,6 +232,10 @@
     <servlet-mapping>
         <servlet-name>siriBusCISOutputAlerts</servlet-name>
         <url-pattern>/realtime/siri/MTABUS/alerts</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>siriGMSOutputAlerts</servlet-name>
+        <url-pattern>/realtime/siri/MTABUS/alerts-gms</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
