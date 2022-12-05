@@ -14,6 +14,7 @@
         <constructor-arg>
             <list>
                 <ref bean="busLMMAlerts" />
+                <ref bean="busSiriAlerts" />
                 <ref bean="subwayLMMAlerts" />
                 <ref bean="subwayElevatorAlerts" />
                 <ref bean="mnrLMMAlerts" />
