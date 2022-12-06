@@ -28,18 +28,18 @@
         <property name="transformer" ref="busTransformer" />
         <property name="deserializer" ref="gtfsrt" />
     </bean>
-<!--    <bean name="busAlertManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">-->
-<!--        <property name="baseUrl">-->
-<!--            <value>${mtabus.gms.url}</value>-->
-<!--        </property>-->
-<!--        <property name="defaultCredential" ref="NoOpCredential" />-->
-<!--    </bean>-->
-<!--    <bean name="busCISAlertManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">-->
-<!--        <property name="baseUrl">-->
-<!--            <value>${mtabus.gms.cis.url}</value>-->
-<!--        </property>-->
-<!--        <property name="defaultCredential" ref="NoOpCredential" />-->
-<!--    </bean>-->
+    <bean name="busAlertManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${mtabus.gms.url}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
+    <bean name="busCISAlertManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
+        <property name="baseUrl">
+            <value>${mtabus.gms.cis.url}</value>
+        </property>
+        <property name="defaultCredential" ref="NoOpCredential" />
+    </bean>
 
     <bean id="busTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
         <property name="source" ref="busTask" />
@@ -50,16 +50,16 @@
         <constructor-arg>
             <list>
                 <ref bean="busLMMAlerts" />
-<!--                <ref bean="busSiriAlerts" />-->
+                <ref bean="busSiriAlerts" />
             </list>
         </constructor-arg>
     </bean>
 
-<!--    <bean name="busSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">-->
-<!--        <property name="feedManager" ref="busAlertManager" />-->
-<!--        <property name="deserializer" ref="siriDeserializerWithModifications" />-->
-<!--        <property name="transformer" ref="siriTransformer" />-->
-<!--    </bean>-->
+    <bean name="busSiriAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
+        <property name="feedManager" ref="busAlertManager" />
+        <property name="deserializer" ref="siriDeserializerWithModifications" />
+        <property name="transformer" ref="siriTransformer" />
+    </bean>
 
     <bean name="busLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
         <property name="feedManager" ref="busAlertsLMMFeedManager" />
@@ -74,11 +74,11 @@
     </bean>
 
     <bean name="busGMSSiriOutputAlerts" class="com.camsys.shims.util.source.SiriForwarder">
-        <property name="feedManager" ref="busAlertsLMMFeedManager" />
+        <property name="feedManager" ref="busAlertManager" />
         <property name="deserializer" ref="siriDeserializerWithoutHtmlWithLongDescription" />
     </bean>
     <bean name="busCISSiriOutputAlerts" class="com.camsys.shims.util.source.SiriForwarder">
-        <property name="feedManager" ref="busAlertsLMMFeedManager" />
+        <property name="feedManager" ref="busCISAlertManager" />
         <property name="deserializer" ref="siriDeserializerWithoutHtml" />
     </bean>
 
