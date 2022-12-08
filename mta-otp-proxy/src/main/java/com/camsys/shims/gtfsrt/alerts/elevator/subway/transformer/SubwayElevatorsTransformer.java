@@ -29,8 +29,12 @@ import com.google.transit.realtime.GtfsRealtimeOneBusAway.OneBusAwayEntitySelect
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -74,13 +78,14 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
 
     private FeedEntity outageToEntity(OutageType outage, String stopId) {
         Alert.Builder alert = Alert.newBuilder();
+        String desc = outageDescription(outage);
+        String elevatorId = outage.getEquipment() + "-" + hash(desc); // prevent duplicate ids
         OneBusAwayEntitySelector elevatorExtension = OneBusAwayEntitySelector.newBuilder()
-                .setElevatorId(outage.getEquipment()).build();
+                .setElevatorId(elevatorId).build();
         EntitySelector.Builder informedEntity = EntitySelector.newBuilder()
                 .setStopId(stopId)
                 .setExtension(GtfsRealtimeOneBusAway.obaEntitySelector, elevatorExtension);
         alert.addInformedEntity(informedEntity);
-        String desc = outageDescription(outage);
         alert.setHeaderText(translatedString(desc));
         alert.setDescriptionText(translatedString(desc));
         alert.addActivePeriod(TimeRange.newBuilder()
@@ -121,7 +126,21 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
                         .setLanguage("en"));
     }
 
-    public void setStopsProvider(ElevatorToStopsProvider stopsProvider) {
+    private String hash(String s) {
+        try {
+            MessageDigest hashFunction = null;
+            hashFunction = MessageDigest.getInstance("MD5");
+            StringBuilder input = new StringBuilder();
+            input.append(s);
+            byte[] hash = hashFunction.digest(input.toString().getBytes("UTF-8"));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+            _log.error("MD5 not supported!");
+            return s;
+        }
+    }
+
+            public void setStopsProvider(ElevatorToStopsProvider stopsProvider) {
         _stopsProvider = stopsProvider;
     }
 }
