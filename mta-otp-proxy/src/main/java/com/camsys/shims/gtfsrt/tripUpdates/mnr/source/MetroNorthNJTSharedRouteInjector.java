@@ -38,6 +38,8 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 	private String njtPortJervisRouteId;
 
 	private String njtPascackValleyRouteId;
+
+	private String njtUserAgent = "Mozilla/5.0 Firefox/26.0";
 	
 	@Override
 	public GtfsRealtime.FeedMessage getMessage(String feedUrl, Deserializer<GtfsRealtime.FeedMessage> deserializer){
@@ -49,10 +51,10 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 
 			GtfsRealtime.FeedMessage njtMessage = null;
 			try {
-				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT","Mozilla/5.0 Firefox/26.0");
+				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT",njtUserAgent);
 				njtMessage = deserializer.deserialize(njtFeedStream);
 			} catch (Exception any) {
-				_log.error("njt parsing failed: ",  any);
+				_log.error("njt parsing failed with user agent " +njtUserAgent + ": ",  any);
 				return mnrMessage;
 			}
 
@@ -118,4 +120,6 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 	public void setNjtPortJervisRouteId(String njtPortJervisRouteId) {
 		this.njtPortJervisRouteId = njtPortJervisRouteId;
 	}
+
+	public void setNjtUserAgent(String njtUserAgent) {this.njtUserAgent = njtUserAgent;}
 }
