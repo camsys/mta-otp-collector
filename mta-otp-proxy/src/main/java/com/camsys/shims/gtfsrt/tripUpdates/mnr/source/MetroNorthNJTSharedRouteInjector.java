@@ -53,6 +53,7 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 			try {
 				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT",njtUserAgent);
 				njtMessage = deserializer.deserialize(njtFeedStream);
+				njtFeedStream.close();
 			} catch (Exception any) {
 				_log.error("njt parsing failed with user agent " +njtUserAgent + ": ",  any);
 				return mnrMessage;
