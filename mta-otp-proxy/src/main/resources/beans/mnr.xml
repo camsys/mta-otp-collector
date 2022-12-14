@@ -33,6 +33,7 @@
         <property name="deserializer" ref="mnrDeserializer" />
         <property name="njtPortJervisRouteId"><value>${mnr.njt_port_jervis.route_id}</value></property>
         <property name="njtPascackValleyRouteId"><value>${mnr.njt_pascack_valley.route_id}</value></property>
+        <property name="njtRtFeedUrl"><value>${njt.gtfsrt.url}</value></property>
 <!--        <property name="overrideMimeType" value="application/pb" />-->
     </bean>
     <bean id="mnrTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">

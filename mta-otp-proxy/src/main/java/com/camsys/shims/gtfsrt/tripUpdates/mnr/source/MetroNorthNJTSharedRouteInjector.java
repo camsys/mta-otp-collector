@@ -35,6 +35,8 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 		this.njtFeedManager = njtFeedManager;
 	}
 
+	private String njtRtFeedUrl;
+
 	private String njtPortJervisRouteId;
 
 	private String njtPascackValleyRouteId;
@@ -49,7 +51,7 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 
 			GtfsRealtime.FeedMessage njtMessage = null;
 			try {
-				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT");
+				InputStream njtFeedStream = njtFeedManager.getStream(njtRtFeedUrl, "NJT");
 				njtMessage = deserializer.deserialize(njtFeedStream);
 				njtFeedStream.close();
 			} catch (Exception any) {
@@ -119,5 +121,7 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 	public void setNjtPortJervisRouteId(String njtPortJervisRouteId) {
 		this.njtPortJervisRouteId = njtPortJervisRouteId;
 	}
+
+	public void setNjtRtFeedUrl(String njtRtFeedUrl){this.njtRtFeedUrl = njtRtFeedUrl;}
 
 }
