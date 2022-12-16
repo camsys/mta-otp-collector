@@ -69,11 +69,10 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
         			GtfsRealtime.TripUpdate.Builder tub = GtfsRealtime.TripUpdate.newBuilder();
             		tub.mergeFrom(entity.getTripUpdate());
             		String routeId = tub.getTripBuilder().getRouteId();
-
-            		if(routeId==njtPascackValleyRouteId){
+            		if(routeId.equals(njtPascackValleyRouteId)){
 						tub.getTripBuilder().setRouteId("50");
 					}
-					if(routeId==njtPortJervisRouteId){
+					if(routeId.equals(njtPortJervisRouteId)){
 						tub.getTripBuilder().setRouteId("51");
             		}
             		
@@ -115,11 +114,11 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 	}
 
 	public void setNjtPascackValleyRouteId(String njtPascackValleyRouteId) {
-		this.njtPascackValleyRouteId = njtPascackValleyRouteId;
+		this.njtPascackValleyRouteId = njtPascackValleyRouteId.split(":")[1];
 	}
 
 	public void setNjtPortJervisRouteId(String njtPortJervisRouteId) {
-		this.njtPortJervisRouteId = njtPortJervisRouteId;
+		this.njtPortJervisRouteId = njtPortJervisRouteId.split(":")[1];
 	}
 
 	public void setNjtRtFeedUrl(String njtRtFeedUrl){this.njtRtFeedUrl = njtRtFeedUrl;}
