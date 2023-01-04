@@ -34,10 +34,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOutagesType> {
 
@@ -58,7 +55,7 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
         message.setHeader(header);
 
         List<OutageType> outages = obj.getOutage();
-
+        Set<String> elevatorIds = new HashSet<>();
         for (OutageType outage : outages) {
             Collection<String> stopIds = _stopsProvider.getStopsForElevator(outage.getEquipment());
             if (stopIds.isEmpty()) {
@@ -66,8 +63,13 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
                 continue;
             }
             for (String stopId : stopIds) {
-                FeedEntity fe = outageToEntity(outage, stopId);
-                message.addEntity(fe);
+                FeedEntityAndId feAndId = outageToEntity(outage, stopId);
+                if (!elevatorIds.contains(feAndId.id)) {
+                    elevatorIds.add(feAndId.id);
+                    message.addEntity(feAndId.fe);
+                } else {
+                    _log.debug("discarding duplicate " + feAndId.id);
+                }
             }
         }
 
@@ -76,10 +78,11 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
         return message.build();
     }
 
-    private FeedEntity outageToEntity(OutageType outage, String stopId) {
+    private FeedEntityAndId outageToEntity(OutageType outage, String stopId) {
         Alert.Builder alert = Alert.newBuilder();
         String desc = outageDescription(outage);
         String elevatorId = outage.getEquipment() + "-" + hash(desc); // prevent duplicate ids
+        String feId = stopId + "#" + elevatorId;
         OneBusAwayEntitySelector elevatorExtension = OneBusAwayEntitySelector.newBuilder()
                 .setElevatorId(elevatorId).build();
         EntitySelector.Builder informedEntity = EntitySelector.newBuilder()
@@ -93,8 +96,8 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
                 .setEnd(stringToDate(outage.getEstimatedreturntoservice())));
         FeedEntity.Builder builder = FeedEntity.newBuilder()
                 .setAlert(alert)
-                .setId(stopId + "#" + outage.getEquipment());
-        return builder.build();
+                .setId(feId);
+        return new FeedEntityAndId(builder.build(), feId);
     }
 
     private String outageDescription(OutageType outage) {
@@ -142,5 +145,14 @@ public class SubwayElevatorsTransformer implements GtfsRealtimeTransformer<NYCOu
 
             public void setStopsProvider(ElevatorToStopsProvider stopsProvider) {
         _stopsProvider = stopsProvider;
+    }
+
+    private static class FeedEntityAndId {
+        private FeedEntity fe;
+        private String id;
+        public FeedEntityAndId(FeedEntity fe, String id) {
+            this.fe = fe;
+            this.id = id;
+        }
     }
 }
