@@ -35,6 +35,8 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 		this.njtFeedManager = njtFeedManager;
 	}
 
+	private String njtRtFeedUrl;
+
 	private String njtPortJervisRouteId;
 
 	private String njtPascackValleyRouteId;
@@ -49,10 +51,11 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 
 			GtfsRealtime.FeedMessage njtMessage = null;
 			try {
-				InputStream njtFeedStream = njtFeedManager.getStream("http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto", "NJT","Mozilla/5.0 Firefox/26.0");
+				InputStream njtFeedStream = njtFeedManager.getStream(njtRtFeedUrl, "NJT");
 				njtMessage = deserializer.deserialize(njtFeedStream);
+				njtFeedStream.close();
 			} catch (Exception any) {
-				_log.error("njt parsing failed: ",  any);
+				_log.error("njt parsing failed ",  any);
 				return mnrMessage;
 			}
 
@@ -66,11 +69,10 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
         			GtfsRealtime.TripUpdate.Builder tub = GtfsRealtime.TripUpdate.newBuilder();
             		tub.mergeFrom(entity.getTripUpdate());
             		String routeId = tub.getTripBuilder().getRouteId();
-
-            		if(routeId==njtPascackValleyRouteId){
+            		if(routeId.equals(njtPascackValleyRouteId)){
 						tub.getTripBuilder().setRouteId("50");
 					}
-					if(routeId==njtPortJervisRouteId){
+					if(routeId.equals(njtPortJervisRouteId)){
 						tub.getTripBuilder().setRouteId("51");
             		}
             		
@@ -112,10 +114,13 @@ public class MetroNorthNJTSharedRouteInjector extends TransformingGtfsRealtimeSo
 	}
 
 	public void setNjtPascackValleyRouteId(String njtPascackValleyRouteId) {
-		this.njtPascackValleyRouteId = njtPascackValleyRouteId;
+		this.njtPascackValleyRouteId = njtPascackValleyRouteId.split(":")[1];
 	}
 
 	public void setNjtPortJervisRouteId(String njtPortJervisRouteId) {
-		this.njtPortJervisRouteId = njtPortJervisRouteId;
+		this.njtPortJervisRouteId = njtPortJervisRouteId.split(":")[1];
 	}
+
+	public void setNjtRtFeedUrl(String njtRtFeedUrl){this.njtRtFeedUrl = njtRtFeedUrl;}
+
 }
