@@ -22,10 +22,19 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 public class SubwayElevatorsDeserializer implements Deserializer<NYCOutagesType> {
 
     private Unmarshaller _um;
+    private Map<String, String> _headers;
+    public void setApiHeaders(Map<String, String> headers) {
+        _headers = headers;
+    }
+    @Override
+    public Map<String, String> getApiHeaders() {
+        return _headers;
+    }
 
     public SubwayElevatorsDeserializer() throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(NYCOutagesType.class);

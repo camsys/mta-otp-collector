@@ -19,11 +19,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 //@rbrown: No longer used since the API for elevators changed.  However leaving here just in case.
 public class StatusResultsDeserializer implements Deserializer<StatusResults> {
 
     private ObjectMapper _mapper;
+    private Map<String, String> _headers;
+    public void setApiHeaders(Map<String, String> headers) {
+        _headers = headers;
+    }
+    @Override
+    public Map<String, String> getApiHeaders() {
+        return _headers;
+    }
 
     public StatusResultsDeserializer() {
         _mapper = new ObjectMapper();
