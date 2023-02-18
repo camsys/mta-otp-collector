@@ -7,14 +7,14 @@
         <property name="baseUrl">
             <value>${mnr.gtfsrt.url}</value>
         </property>
-        <property name="defaultCredential" ref="${mnr.gtfsrt.credential.key}" />
+        <property name="defaultCredentials" ref="${mnr.gtfsrt.credential.key}" />
     </bean>
 
     <bean name="njtFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
             <value>http://standards.xcmdata.org/TransitDE/rest/GTFSController/downloadProto</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredentials" ref="NoOpCredential" />
     </bean>
 
 
@@ -61,7 +61,7 @@
         <property name="baseUrl">
             <value>${mnr.traintime.stations}</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredentials" ref="NoOpCredential" />
     </bean>
 
     <bean id="mnrEleTask" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.source.MetroNorthStationsToGtfsRealtimeSources" autowire="byType">
@@ -81,7 +81,7 @@
         <property name="baseUrl">
             <value>${mnr.lmm.url}</value>
         </property>
-        <property name="defaultCredential" ref="lmmCredential" />
+        <property name="defaultCredentials" ref="lmmCredential" />
         <property name="timeout">
             <value>10000</value>
         </property>
