@@ -107,7 +107,7 @@
     </bean>
     <bean id="lmmCredential2" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
         <property name="type" value="api_key_header" />
-        <property name="key" value="eT1HTeRAKa4KILwTRZSxQ6ovwhMgJZR6POKRc94i" />
+        <property name="key" value="${lmm.api.key}" />
         <property name="keyName" value="x-api-key" />
     </bean>
 
