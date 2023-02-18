@@ -18,10 +18,19 @@ import com.google.transit.realtime.GtfsRealtimeExtensions;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 public class FeedMessageDeserializer implements Deserializer<FeedMessage> {
 
     private static final ExtensionRegistry _extensionRegistry;
+    private Map<String, String> _headers;
+    public void setApiHeaders(Map<String, String> headers) {
+        _headers = headers;
+    }
+    @Override
+    public Map<String, String> getApiHeaders() {
+        return _headers;
+    }
 
     static {
         _extensionRegistry = ExtensionRegistry.newInstance();

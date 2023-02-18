@@ -23,7 +23,13 @@
     </bean>
 
     <!-- shared resources -->
-    <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" />
+    <bean name="gtfsrt" class="com.camsys.shims.util.deserializer.FeedMessageDeserializer" >
+        <property name="apiHeaders">
+            <map>
+                <entry key="x-api-key" value="${lmm.api.key}"/>
+            </map>
+        </property>
+    </bean>
     <bean name="siriDeserializer" class="com.camsys.shims.gtfsrt.alerts.siri.deserializer.SiriDeserializer" />
     <bean name="siriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
         <property name="autoExpirySec" value="${gms.alert.expiry}" />
