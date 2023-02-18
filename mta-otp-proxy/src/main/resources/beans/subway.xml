@@ -75,7 +75,7 @@
         <property name="timeout">
             <value>10000</value>
         </property>
-        <property name="defaultCredential" ref="lmmCredential" />
+        <property name="defaultCredentials" ref="lmmCredential" />
     </bean>
 
     <bean name="subwayLMMAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource">
@@ -94,7 +94,7 @@
         <property name="baseUrl">
             <value>${subway.elev.url}</value>
         </property>
-        <property name="defaultCredential" ref="mtaApiCredential" />
+        <property name="defaultCredentials" ref="mtaApiCredential" />
     </bean>
 
     <bean id="subwayElevatorAlerts" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
@@ -110,7 +110,7 @@
         <property name="baseUrl">
             <value>http://datamine.mta.info/mta_esi.php</value>
         </property>
-        <property name="defaultCredential" ref="datamineApiCredential" />
+        <property name="defaultCredentials" ref="datamineApiCredential" />
         <!-- for DEV testing only -->
         <property name="feedToUrlOverride">
             <map>

@@ -11,13 +11,13 @@
         <property name="baseUrl">
             <value>${mtabus.gtfsrt.url}</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredentials" ref="NoOpCredential" />
     </bean>
     <bean name="busAlertsLMMFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
             <value>${bus.lmm.url}</value>
         </property>
-        <property name="defaultCredential" ref="lmmCredential" />
+        <property name="defaultCredentials" ref="lmmCredential" />
         <property name="timeout">
             <value>10000</value>
         </property>
@@ -32,13 +32,13 @@
         <property name="baseUrl">
             <value>${mtabus.gms.url}</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredentials" ref="NoOpCredential" />
     </bean>
     <bean name="busCISAlertManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
             <value>${mtabus.gms.cis.url}</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredentials" ref="NoOpCredential" />
     </bean>
 
     <bean id="busTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
