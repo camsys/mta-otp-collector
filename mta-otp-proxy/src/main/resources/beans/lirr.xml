@@ -7,7 +7,7 @@
         <property name="baseUrl">
             <value>${lirr.gtfsrt.url}</value>
         </property>
-        <property name="defaultCredential" ref="${lirr.gtfsrt.credential.key}" />
+        <property name="defaultCredentials" ref="${lirr.gtfsrt.credential.key}" />
     </bean>
 
     <!-- LIRR trip updates -->
@@ -52,7 +52,7 @@
         <property name="baseUrl">
             <value>${lirr.traintime.elev}</value>
         </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
+        <property name="defaultCredentials" ref="NoOpCredential" />
     </bean>
 
     <bean id="lirrEleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
@@ -71,7 +71,7 @@
         <property name="baseUrl">
             <value>${lirr.lmm.url}</value>
         </property>
-        <property name="defaultCredential" ref="lmmCredential" />
+        <property name="defaultCredentials" ref="lmmCredential" />
         <property name="timeout">
             <value>10000</value>
         </property>

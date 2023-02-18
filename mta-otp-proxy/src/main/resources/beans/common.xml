@@ -87,43 +87,56 @@
         <property name="monitor" ref="serviceStatusMonitor" />
     </bean>
     <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
-    <bean id="mtaApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="mtaApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="api_key_header" />
         <property name="key" value="${mta.api.key}" />
         <property name="keyName" value="x-api-key" />
     </bean>
-    <bean id="lmmCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="lmmCredential" class="com.camsys.shims.factory.ChainedCredentialFactory" autowire="byType">
+        <property name="credentials">
+            <list>
+                <ref bean="lmmCredential1"/>
+                <ref bean="lmmCredential2"/>
+            </list>
+        </property>
+    </bean>
+    <bean id="lmmCredential1" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
         <property name="type" value="api_key_header" />
         <property name="key" value="application/x-protobuf" />
         <property name="keyName" value="Accept" />
     </bean>
+    <bean id="lmmCredential2" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+        <property name="type" value="api_key_header" />
+        <property name="key" value="${lmm.api.key}" />
+        <property name="keyName" value="x-api-key" />
+    </bean>
 
-    <bean id="datamineApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="datamineApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="api_key_param" />
         <property name="key" value="${datamine.key}" />
     </bean>
-    <bean id="mtaqaApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="mtaqaApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="external_profile" />
         <property name="key" value="${mta.s3qa.key}" />
         <property name="value" value="us-east-2" />
     </bean>
-    <bean id="camsysS3ApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="camsysS3ApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="external_profile" />
         <property name="key" value="${camsys.profile.key}" />
         <property name="value" value="us-east-1" />
     </bean>
-    <bean id="mnrStagingApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="mnrStagingApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="api_key_header" />
         <property name="key" value="${mnr.staging.api.key}" />
         <property name="keyName" value="x-api-key" />
     </bean>
-    <bean id="mtaInternalDataApiCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="mtaInternalDataApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="api_key_header" />
         <property name="key" value="${mta.internaldata.key}" />
         <property name="keyName" value="x-api-key" />
     </bean>
     
-    <bean id="NoOpCredential" class="com.camsys.shims.factory.CredentialFactory" autowire="byType">
+    <bean id="NoOpCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">
         <property name="type" value="no_op" />
     </bean>
 
