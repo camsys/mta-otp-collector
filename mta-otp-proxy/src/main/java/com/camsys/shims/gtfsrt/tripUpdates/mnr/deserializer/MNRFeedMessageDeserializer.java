@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -34,6 +35,14 @@ import org.slf4j.LoggerFactory;
 
 public class MNRFeedMessageDeserializer implements Deserializer<GtfsRealtime.FeedMessage> {
     private static final ExtensionRegistry _extensionRegistry;
+	private Map<String, String> _headers;
+	public void setApiHeaders(Map<String, String> headers) {
+		_headers = headers;
+	}
+	@Override
+	public Map<String, String> getApiHeaders() {
+		return _headers;
+	}
 
     private static final Logger _log = LoggerFactory.getLogger(MNRFeedMessageDeserializer.class);
 

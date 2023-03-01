@@ -152,6 +152,11 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
         }
         HttpGet get = new HttpGet(sourceUrl);
         get.setHeader("accept", deserializer.getMimeType());
+        if (deserializer.getApiHeaders() != null) {
+            for (String headerKey : deserializer.getApiHeaders().keySet()) {
+                get.setHeader(headerKey, deserializer.getApiHeaders().get(headerKey));
+            }
+        }
 
         T siri = null;
         for (int tries = 0; tries < _nTries; tries++) {
