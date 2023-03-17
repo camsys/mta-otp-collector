@@ -54,22 +54,22 @@
     </bean>
 
     <!-- Metro North Elevators -->
-    <bean name="mnrStationResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StationResultsDeserializer" />
-    <bean name="mnrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer.MetroNorthElevatorAlertsTransformer" />
+<!--    <bean name="mnrStationResultsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.deserializer.StationResultsDeserializer" />-->
+<!--    <bean name="mnrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.transformer.MetroNorthElevatorAlertsTransformer" />-->
 
-    <bean name="mnrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
-        <property name="baseUrl">
-            <value>${mnr.traintime.stations}</value>
-        </property>
-        <property name="defaultCredential" ref="NoOpCredential" />
-    </bean>
+<!--    <bean name="mnrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">-->
+<!--        <property name="baseUrl">-->
+<!--            <value>${mnr.traintime.stations}</value>-->
+<!--        </property>-->
+<!--        <property name="defaultCredential" ref="NoOpCredential" />-->
+<!--    </bean>-->
 
-    <bean id="mnrEleTask" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.source.MetroNorthStationsToGtfsRealtimeSources" autowire="byType">
-        <property name="feedManager" ref="mnrEleFeedManager" />
-        <property name="transformer" ref="mnrElevatorsTransformer" />
-        <property name="deserializer" ref="mnrStationResultsDeserializer" />
-        <property name="statusSourceUrl" value="${mnr.traintime.elev}" />
-    </bean>
+<!--    <bean id="mnrEleTask" class="com.camsys.shims.gtfsrt.alerts.elevator.mnr.source.MetroNorthStationsToGtfsRealtimeSources" autowire="byType">-->
+<!--        <property name="feedManager" ref="mnrEleFeedManager" />-->
+<!--        <property name="transformer" ref="mnrElevatorsTransformer" />-->
+<!--        <property name="deserializer" ref="mnrStationResultsDeserializer" />-->
+<!--        <property name="statusSourceUrl" value="${mnr.traintime.elev}" />-->
+<!--    </bean>-->
 
     <!-- Metro North alerts -->
     <bean name="mnrSiriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
@@ -113,7 +113,7 @@
             <list>
                 <ref bean="mnrLMMAlerts" />
                 <ref bean="mnrSiriAlerts" />
-                <ref bean="mnrEleTask" />
+<!--                <ref bean="mnrEleTask" />-->
             </list>
         </constructor-arg>
     </bean>
