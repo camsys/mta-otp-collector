@@ -79,21 +79,21 @@
     </bean>
 
     <!-- LIRR Elevators -->
-    <bean name="lirrStationsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.deserializer.StationsDeserializer" />
-    <bean name="lirrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.transformer.LirrElevatorAlertsTransformer" />
+<!--    <bean name="lirrStationsDeserializer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.deserializer.StationsDeserializer" />-->
+<!--    <bean name="lirrElevatorsTransformer" class="com.camsys.shims.gtfsrt.alerts.elevator.lirr.transformer.LirrElevatorAlertsTransformer" />-->
 
-    <bean name="lirrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
-        <property name="baseUrl">
-            <value>${lirr.traintime.elev}</value>
-        </property>
-        <property name="defaultCredentials" ref="NoOpCredential" />
-    </bean>
+<!--    <bean name="lirrEleFeedManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">-->
+<!--        <property name="baseUrl">-->
+<!--            <value>${lirr.traintime.elev}</value>-->
+<!--        </property>-->
+<!--        <property name="defaultCredentials" ref="NoOpCredential" />-->
+<!--    </bean>-->
 
-    <bean id="lirrEleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">
-        <property name="feedManager" ref="lirrEleFeedManager"/>
-        <property name="transformer" ref="lirrElevatorsTransformer" />
-        <property name="deserializer" ref="lirrStationsDeserializer" />
-    </bean>
+<!--    <bean id="lirrEleTask" class="com.camsys.shims.util.source.TransformingGtfsRealtimeSource" autowire="byType">-->
+<!--        <property name="feedManager" ref="lirrEleFeedManager"/>-->
+<!--        <property name="transformer" ref="lirrElevatorsTransformer" />-->
+<!--        <property name="deserializer" ref="lirrStationsDeserializer" />-->
+<!--    </bean>-->
 
     <!-- LIRR service alerts -->
     <bean name="lirrSiriTransformer" class="com.camsys.shims.gtfsrt.alerts.siri.transformer.SiriToGtfsrtTransformer">
@@ -123,7 +123,7 @@
         <constructor-arg>
             <list>
                 <ref bean="lirrLMMAlerts" />
-                <ref bean="lirrEleTask" />
+<!--                <ref bean="lirrEleTask" />-->
             </list>
         </constructor-arg>
     </bean>
