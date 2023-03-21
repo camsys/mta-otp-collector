@@ -99,7 +99,7 @@
         <constructor-arg>
             <list>
                 <ref bean="mnrLMMAlerts" />
-                <ref bean="mnrEleTask" />
+<!--                <ref bean="mnrEleTask" />-->
             </list>
         </constructor-arg>
     </bean>
