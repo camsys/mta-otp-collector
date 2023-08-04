@@ -83,6 +83,8 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="transformer" ref="forwarderTransformer" />
         <property name="NTries" value="1" /> <!-- don't retry LMM by request -->
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="mtasubway"/>
     </bean>
 
     <!-- Subway Elevators -->
@@ -101,6 +103,8 @@
         <property name="feedManager" ref="subwayElevatorsFeedManager" />
         <property name="transformer" ref="elevatorsTransformer" />
         <property name="deserializer" ref="elevatorsDeserializer" />
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="mtasubway"/>
     </bean>
     <bean id="subwayElevatorProvider" class="com.camsys.shims.gtfsrt.alerts.elevator.subway.stops_provider.S3CsvElevatorToStopsProvider" init-method="init">
         <property name="url" value="${subway.elev.csv}" />

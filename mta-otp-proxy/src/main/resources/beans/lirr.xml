@@ -50,6 +50,8 @@
         <property name="feedManager" ref="lirrTUFeedManager"/>
         <property name="transformer" ref="lirrTransformer" />
         <property name="deserializer" ref="lirrDeserializer" />
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="lirr"/>
     </bean>
     <bean id="lirrTripUpdatesSource" class="com.camsys.shims.util.source.ChainedGtfsRealtimeSource">
         <property name="upstream" ref="lirrTask" />
@@ -116,6 +118,8 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="transformer" ref="forwarderTransformer" />
         <property name="NTries" value="1" /> <!-- don't retry LMM by request -->
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="lirr"/>
     </bean>
 
 

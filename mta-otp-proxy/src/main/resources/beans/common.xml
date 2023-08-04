@@ -86,11 +86,11 @@
         </property>
     </bean>
     <!-- monitoring object for healthcheck -->
-    <bean id="serviceStatusMonitor" class="com.camsys.shims.service_status.source.ServiceStatusMonitor" autowire="byType">
+    <bean id="realtimeMonitor" class="com.camsys.shims.util.source.RealTimeMonitor" autowire="byType">
     </bean>
 
     <bean name="healthcheck" class="com.camsys.shims.servlet.HttpRequestHealthcheck">
-        <property name="monitor" ref="serviceStatusMonitor" />
+        <property name="monitor" ref="realtimeMonitor" />
     </bean>
     <bean name="serverInfo" class="com.camsys.shims.servlet.HttpRequestServerInfo" />
     <bean id="mtaApiCredential" class="com.camsys.shims.factory.CredentialsFactory" autowire="byType">

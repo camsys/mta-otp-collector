@@ -5,6 +5,7 @@ import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.transformer.ServiceStatusTransformer;
 import com.camsys.shims.util.deserializer.Deserializer;
+import com.camsys.shims.util.source.RealTimeMonitor;
 import com.kurtraschke.nyctrtproxy.FeedManager;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -61,7 +62,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
     // debug name of feed
     protected String _id;
 
-    protected ServiceStatusMonitor _monitor;
+    protected RealTimeMonitor _monitor;
 
     protected List<GtfsDataService> _gtfsDataServices = new ArrayList<GtfsDataService>();
 
@@ -83,7 +84,7 @@ public class TransformingServiceStatusSource<T> implements ServiceStatusSource
 
     public void setId(String id) { _id = id; }
 
-    public void setMonitor(ServiceStatusMonitor monitor) {
+    public void setMonitor(RealTimeMonitor monitor) {
         _monitor = monitor;
     }
 

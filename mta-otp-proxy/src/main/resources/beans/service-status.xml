@@ -78,7 +78,7 @@
 <!--        <property name="bannedRouteIds">-->
 <!--            <array></array>-->
 <!--        </property>-->
-<!--        <property name="serviceStatusMonitor" ref="serviceStatusMonitor" />-->
+<!--        <property name="realtimeMonitor" ref="realtimeMonitor" />-->
 <!--    </bean>-->
 
 <!--    <bean id="serviceStatus" class="com.camsys.shims.servlet.HttpRequestServiceStatus">-->

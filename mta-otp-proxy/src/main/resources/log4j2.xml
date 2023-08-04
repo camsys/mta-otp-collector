@@ -21,9 +21,9 @@
     <Loggers>
         <Logger name="org.springframework.beans.factory" level="INFO"/>
         <Root level="info">
-            <AppenderRef ref="FileLogger"/>
+<!--            <AppenderRef ref="FileLogger"/>-->
             <!-- uncomment for typical console logging -->
-<!--            <AppenderRef ref="Console"/>-->
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

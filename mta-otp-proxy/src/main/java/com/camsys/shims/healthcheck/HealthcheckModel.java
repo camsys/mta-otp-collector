@@ -12,7 +12,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 package com.camsys.shims.healthcheck;
 
-import com.camsys.shims.service_status.source.ServiceStatusMonitor;
+import com.camsys.shims.util.source.RealTimeMonitor;
 
 import java.util.Date;
 import java.util.Map;
@@ -35,9 +35,10 @@ public class HealthcheckModel {
 
     public Map<String, Long> getLastExecutionTimeMap() { return lastExecutionTimeMap; }
 
-    public HealthcheckModel(Date serviceStatusLastUpdated, int stopsForRoute, ServiceStatusMonitor monitor) {
+    public HealthcheckModel(Date serviceStatusLastUpdated, int stopsForRoute, RealTimeMonitor monitor) {
         this.serviceStatusLastUpdated = serviceStatusLastUpdated;
         this.stopsForRoute = stopsForRoute;
         this.lastExecutionTimeMap = monitor.getMap();
     }
+
 }

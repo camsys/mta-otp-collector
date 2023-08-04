@@ -27,6 +27,8 @@
         <property name="feedManager" ref="busManager" />
         <property name="transformer" ref="busTransformer" />
         <property name="deserializer" ref="gtfsrt" />
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="mtabus"/>
     </bean>
     <bean name="busAlertManager" class="com.kurtraschke.nyctrtproxy.FeedManager"  autowire="byType">
         <property name="baseUrl">
@@ -59,6 +61,8 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="transformer" ref="forwarderTransformer" />
         <property name="NTries" value="1" /> <!-- don't retry LMM by request -->
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="bus"/>
     </bean>
 
     <bean name="busLMMSiriOutputAlerts" class="com.camsys.shims.util.source.TransformingSiriSource">

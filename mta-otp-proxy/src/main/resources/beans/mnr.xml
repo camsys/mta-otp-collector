@@ -87,6 +87,8 @@
         <property name="deserializer" ref="gtfsrt" />
         <property name="transformer" ref="forwarderTransformer" />
         <property name="NTries" value="1" /> <!-- don't retry LMM by request -->
+        <property name="monitor" ref="realtimeMonitor"/>
+        <property name="feedId" value="mnr"/>
     </bean>
 
 

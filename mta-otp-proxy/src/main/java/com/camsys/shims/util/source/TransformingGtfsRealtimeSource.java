@@ -33,6 +33,9 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
     private static final String feedId = "_default";
 
+    protected String _feedName = "unnamed";
+    public void setFeedId(String name) { this._feedName = name; }
+
     protected FeedManager _feedManager;
 
     protected FeedMessage _feedMessage;
@@ -40,6 +43,8 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
     protected GtfsRealtimeTransformer<T> _transformer;
 
     protected Deserializer<T> _deserializer;
+
+    protected RealTimeMonitor _monitor;
 
     protected int _nTries = 5;
 
@@ -66,6 +71,9 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
         this._deserializer = deserializer;
     }
 
+    public void setMonitor(RealTimeMonitor monitor) {
+        _monitor = monitor;
+    }
 
     @Override
     public void update() {
@@ -74,6 +82,15 @@ public class TransformingGtfsRealtimeSource<T> implements UpdatingGtfsRealtimeSo
 
             if (message != null) {
                 _feedMessage = _transformer.transform(message);
+                if (_feedMessage != null) {
+                    if (_feedMessage.hasHeader()) {
+                        if (_feedMessage.getHeader().hasTimestamp()) {
+                            if (_monitor != null) {
+                                _monitor.update(_feedName, _feedMessage.getHeader().getTimestamp());
+                            }
+                        }
+                    }
+                }
             } else {
                 // clear out cached message
                 _feedMessage = createEmptyFeedMessage();

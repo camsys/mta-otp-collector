@@ -3,6 +3,7 @@ package com.camsys.shims.service_status.source;
 import com.camsys.shims.service_status.model.RouteDetail;
 import com.camsys.shims.service_status.model.ServiceStatus;
 import com.camsys.shims.service_status.model.StatusDetail;
+import com.camsys.shims.util.source.RealTimeMonitor;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.Route;
 import org.onebusaway.gtfs.model.Trip;
@@ -32,7 +33,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
     private static final String LIRR_AGENCY = "LI";
     private static final String MNR_AGENCY = "MNR";
 
-    private ServiceStatusMonitor _monitor;
+    private RealTimeMonitor _monitor;
 
     private List<ServiceStatusSource> _sources;
 
@@ -67,7 +68,7 @@ public class MergingServiceStatusSource implements ServiceStatusSource
          _bannedRouteIds = banned;
     };
 
-    public void setServiceStatusMonitor(ServiceStatusMonitor monitor) { _monitor = monitor; }
+    public void setRealTimeMonitor(RealTimeMonitor monitor) { _monitor = monitor; }
 
     public MergingServiceStatusSource(List<ServiceStatusSource> sources) {
         _sources = sources;
