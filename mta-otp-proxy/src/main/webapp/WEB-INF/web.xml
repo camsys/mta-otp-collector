@@ -25,12 +25,12 @@
         </servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>subwayTripUpdates</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>subwayTripUpdates</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
     <servlet>
         <servlet-name>subwayServiceAlerts</servlet-name>
@@ -46,12 +46,12 @@
         </servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>amkVehiclePositions</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>amkVehiclePositions</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
     <servlet>
         <servlet-name>mnrTripUpdates</servlet-name>
@@ -111,41 +111,41 @@
     </servlet>
 
 
-    <servlet>
-        <servlet-name>serviceStatus</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>serviceStatus</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
-    <servlet>
-        <servlet-name>routeBranchStop</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>routeBranchStop</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
-    <servlet>
-        <servlet-name>routeInfo</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>routeInfo</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
-    <servlet>
-        <servlet-name>subwayRouteStops</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>subwayRouteStops</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
 
-    <servlet>
-        <servlet-name>subwayStopTimes</servlet-name>
-        <servlet-class>
-            org.springframework.web.context.support.HttpRequestHandlerServlet
-        </servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>subwayStopTimes</servlet-name>-->
+<!--        <servlet-class>-->
+<!--            org.springframework.web.context.support.HttpRequestHandlerServlet-->
+<!--        </servlet-class>-->
+<!--    </servlet>-->
 
     <servlet>
         <servlet-name>healthcheck</servlet-name>
@@ -176,18 +176,18 @@
         <servlet-name>allServiceAlerts</servlet-name>
         <url-pattern>/realtime/gtfsrt/filtered/alerts</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>subwayTripUpdates</servlet-name>
-        <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>subwayTripUpdates</servlet-name>-->
+<!--        <url-pattern>/realtime/gtfsrt/MTASBWY/tripUpdates</url-pattern>-->
+<!--    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>subwayServiceAlerts</servlet-name>
         <url-pattern>/realtime/gtfsrt/MTASBWY/alerts</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>amkVehiclePositions</servlet-name>
-        <url-pattern>/realtime/gtfsrt/AMK/vehiclePositions</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>amkVehiclePositions</servlet-name>-->
+<!--        <url-pattern>/realtime/gtfsrt/AMK/vehiclePositions</url-pattern>-->
+<!--    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>mnrTripUpdates</servlet-name>
         <url-pattern>/realtime/gtfsrt/MNR/tripUpdates</url-pattern>
@@ -233,26 +233,26 @@
         <servlet-name>NJT</servlet-name>
         <url-pattern>/realtime/gtfsrt/NJT/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>serviceStatus</servlet-name>
-        <url-pattern>/realtime/serviceStatus</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>routeBranchStop</servlet-name>
-        <url-pattern>/schedule/stopsForRoute</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>routeInfo</servlet-name>
-        <url-pattern>/schedule/routeInfo</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>subwayRouteStops</servlet-name>
-        <url-pattern>/schedule/MTASBWY/stopsForRoute</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>subwayStopTimes</servlet-name>
-        <url-pattern>/realtime/MTASBWY/stopTimes</url-pattern>
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>serviceStatus</servlet-name>-->
+<!--        <url-pattern>/realtime/serviceStatus</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>routeBranchStop</servlet-name>-->
+<!--        <url-pattern>/schedule/stopsForRoute</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>routeInfo</servlet-name>-->
+<!--        <url-pattern>/schedule/routeInfo</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>subwayRouteStops</servlet-name>-->
+<!--        <url-pattern>/schedule/MTASBWY/stopsForRoute</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>subwayStopTimes</servlet-name>-->
+<!--        <url-pattern>/realtime/MTASBWY/stopTimes</url-pattern>-->
+<!--    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>busSiri</servlet-name>
         <url-pattern>/realtime/MTABUS/siri/*</url-pattern>

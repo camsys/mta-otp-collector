@@ -4,12 +4,12 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- Amtrak Vehicle Positions -->
-    <bean id="amkVehiclePositionsSource" class="com.camsys.shims.util.source.AmtrakStaticGtfsRealtimeSource">
-        <property name="gtfsDataService" ref="amkGtfsService" />
-    </bean>
-    <bean id="amkVehiclePositions" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
-        <property name="source" ref="amkVehiclePositionsSource" />
-    </bean>
+<!--    <bean id="amkVehiclePositionsSource" class="com.camsys.shims.util.source.AmtrakStaticGtfsRealtimeSource">-->
+<!--        <property name="gtfsDataService" ref="amkGtfsService" />-->
+<!--    </bean>-->
+<!--    <bean id="amkVehiclePositions" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">-->
+<!--        <property name="source" ref="amkVehiclePositionsSource" />-->
+<!--    </bean>-->
 
 
 

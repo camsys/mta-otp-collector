@@ -49,27 +49,27 @@ public class HttpRequestHealthcheck implements HttpRequestHandler {
 
     private HealthcheckModel getHealthcheck() throws IOException {
         // check service status
-        URL serviceStatusUrl = new URL("http://" + _hostname + ":" + _port + "/realtime/serviceStatus");
-        ServiceStatus status = _mapper.readValue(serviceStatusUrl, ServiceStatus.class);
-
-        if ((new Date().getTime() - status.getLastUpdated().getTime()) > (_gracePeriodSec * 1000)) {
-            _log.error("FATAL:  serviceStatusURL has lastUpdated time of " + new Date(status.getLastUpdated().getTime())
-            + ", configured grace=" + _gracePeriodSec);
-            // monitoring will catch this -- don't bring down the service
-//            throw new RuntimeException("Service status API is too old.");
-        }
+//        URL serviceStatusUrl = new URL("http://" + _hostname + ":" + _port + "/realtime/serviceStatus");
+//        ServiceStatus status = _mapper.readValue(serviceStatusUrl, ServiceStatus.class);
+//
+//        if ((new Date().getTime() - status.getLastUpdated().getTime()) > (_gracePeriodSec * 1000)) {
+//            _log.error("FATAL:  serviceStatusURL has lastUpdated time of " + new Date(status.getLastUpdated().getTime())
+//            + ", configured grace=" + _gracePeriodSec);
+//            // monitoring will catch this -- don't bring down the service
+////            throw new RuntimeException("Service status API is too old.");
+//        }
 
         // check stops for route
-        URL stopsForRouteUrl = new URL("http://" + _hostname + ":" + _port + "/schedule/stopsForRoute");
-        List<?> stopsForRoute = _mapper.readValue(stopsForRouteUrl, List.class);
+//        URL stopsForRouteUrl = new URL("http://" + _hostname + ":" + _port + "/schedule/stopsForRoute");
+//        List<?> stopsForRoute = _mapper.readValue(stopsForRouteUrl, List.class);
+//
+//        if (stopsForRoute.size() < _minStopsForRoute) {
+//            _log.error("FATAL:  stopsForRouteUrl has count of " + stopsForRoute.size()
+//            + ", configured min=" + _minStopsForRoute);
+//            throw new RuntimeException("no stops for route in data!");
+//        }
 
-        if (stopsForRoute.size() < _minStopsForRoute) {
-            _log.error("FATAL:  stopsForRouteUrl has count of " + stopsForRoute.size()
-            + ", configured min=" + _minStopsForRoute);
-            throw new RuntimeException("no stops for route in data!");
-        }
-
-        return new HealthcheckModel(status.getLastUpdated(), stopsForRoute.size(), _monitor);
+        return new HealthcheckModel(new Date(0), 0, _monitor);
     }
 
     public void setHostname(String hostname) {

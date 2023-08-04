@@ -8,51 +8,51 @@
 
     <bean id="cloudwatchService" class="com.kurtraschke.nyctrtproxy.services.CloudwatchProxyDataListener" />
 
-    <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType" name="lazyTripMatcher">
-        <property name="gtfsDataService" ref="subwayGtfsService"/>
-        <property name="agencyMatchId" value="${subway.feedid}" />
-        <property name="allowServiceDayCoercion" value="false" />
-    </bean>
+<!--    <bean class="com.kurtraschke.nyctrtproxy.services.LazyTripMatcher" autowire="byType" name="lazyTripMatcher">-->
+<!--        <property name="gtfsDataService" ref="subwayGtfsService"/>-->
+<!--        <property name="agencyMatchId" value="${subway.feedid}" />-->
+<!--        <property name="allowServiceDayCoercion" value="false" />-->
+<!--    </bean>-->
 
-    <bean class="com.kurtraschke.nyctrtproxy.services.TripActivator" name="tripActivator">
-        <property name="agencyMatchId" value="${subway.feedid}" />
-        <property name="gtfsDataService" ref="subwayGtfsService" />
-    </bean>
+<!--    <bean class="com.kurtraschke.nyctrtproxy.services.TripActivator" name="tripActivator">-->
+<!--        <property name="agencyMatchId" value="${subway.feedid}" />-->
+<!--        <property name="gtfsDataService" ref="subwayGtfsService" />-->
+<!--    </bean>-->
 
-    <bean class="com.kurtraschke.nyctrtproxy.services.DirectionsService" id="directionsService" init-method="init" autowire="byType">
-        <property name="gtfsDataService" ref="subwayGtfsService" />
-        <property name="directionCsv" value="directions.csv" />
-    </bean>
+<!--    <bean class="com.kurtraschke.nyctrtproxy.services.DirectionsService" id="directionsService" init-method="init" autowire="byType">-->
+<!--        <property name="gtfsDataService" ref="subwayGtfsService" />-->
+<!--        <property name="directionCsv" value="directions.csv" />-->
+<!--    </bean>-->
 
-    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3MapStopIdTransformStrategy" id="stopIdTransformStrategy" init-method="init">
-        <property name="url" value="${subway.stop_map.url}" />
-    </bean>
+<!--    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3MapStopIdTransformStrategy" id="stopIdTransformStrategy" init-method="init">-->
+<!--        <property name="url" value="${subway.stop_map.url}" />-->
+<!--    </bean>-->
 
-    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3SubwayFilterStrategy" id="subwayFilterStrategy" init-method="init">
-        <property name="url" value="${subway.route_stops.csv}" />
-        <property name="profile" value="${subway.route_stops.profile}" />
-        <property name="file" value="${subway.route_stops.file}" />
-        <property name="targetUrl" value="${subway.route_stops.targeturl}" />
-        <property name="localPath" value="${subway.route_stops.localpath}" />
-    </bean>
+<!--    <bean class="com.camsys.shims.gtfsrt.tripUpdates.subway.S3SubwayFilterStrategy" id="subwayFilterStrategy" init-method="init">-->
+<!--        <property name="url" value="${subway.route_stops.csv}" />-->
+<!--        <property name="profile" value="${subway.route_stops.profile}" />-->
+<!--        <property name="file" value="${subway.route_stops.file}" />-->
+<!--        <property name="targetUrl" value="${subway.route_stops.targeturl}" />-->
+<!--        <property name="localPath" value="${subway.route_stops.localpath}" />-->
+<!--    </bean>-->
 
-    <bean class="com.kurtraschke.nyctrtproxy.services.TripUpdateProcessor" autowire="byType">
-        <property name="directionsService" ref="directionsService" />
-        <property name="stopIdTransformStrategy" ref="stopIdTransformStrategy" />
-        <property name="stopFilterStrategy" ref="subwayFilterStrategy" />
-        <property name="cloudwatchNamespace" value="${subway.cloudwatch.namespace}" />
-    </bean>
+<!--    <bean class="com.kurtraschke.nyctrtproxy.services.TripUpdateProcessor" autowire="byType">-->
+<!--        <property name="directionsService" ref="directionsService" />-->
+<!--        <property name="stopIdTransformStrategy" ref="stopIdTransformStrategy" />-->
+<!--        <property name="stopFilterStrategy" ref="subwayFilterStrategy" />-->
+<!--        <property name="cloudwatchNamespace" value="${subway.cloudwatch.namespace}" />-->
+<!--    </bean>-->
 
 
-    <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">
-        <property name="feedManager" ref="subwayFeedManager" />
-        <property name="tripUpdatesSink" ref="subwayTuExporter" />
-        <property name="feedIds" value="[1, 2, 11, 16, 21, 26, 31, 36, 51]" />
-    </bean>
+<!--    <bean class="com.kurtraschke.nyctrtproxy.ProxyProvider" id="subwayTuTask" init-method="start" autowire="byType">-->
+<!--        <property name="feedManager" ref="subwayFeedManager" />-->
+<!--        <property name="tripUpdatesSink" ref="subwayTuExporter" />-->
+<!--        <property name="feedIds" value="[1, 2, 11, 16, 21, 26, 31, 36, 51]" />-->
+<!--    </bean>-->
 
-    <bean id="subwayTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">
-        <property name="source" ref="subwayTuExporter" />
-    </bean>
+<!--    <bean id="subwayTripUpdates" class="com.camsys.shims.servlet.HttpRequestGtfsRealtimeSink">-->
+<!--        <property name="source" ref="subwayTuExporter" />-->
+<!--    </bean>-->
 
     <!-- Subway alerts: merge from service status and elevators -->
     <bean name="subwayAlertTask" class="com.camsys.shims.util.source.MergingGtfsRealtimeSource">

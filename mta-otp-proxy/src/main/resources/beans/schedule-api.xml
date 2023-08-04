@@ -2,31 +2,31 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean name="routeBranchStopReader" class="com.camsys.shims.schedule.transformer.RouteBranchStopReader" />
+<!--    <bean name="routeBranchStopReader" class="com.camsys.shims.schedule.transformer.RouteBranchStopReader" />-->
 
-    <bean name="routeShapePointReader" class="com.camsys.shims.schedule.transformer.RouteShapePointReader" />
+<!--    <bean name="routeShapePointReader" class="com.camsys.shims.schedule.transformer.RouteShapePointReader" />-->
 
-    <bean name="routeBranchStop" class="com.camsys.shims.servlet.HttpRequestStaticData">
-        <property name="sourceUrl" value="${schedule.route_stops}" />
-        <property name="csvReader" ref="routeBranchStopReader" />
-        <property name="cacheExpireSec" value="${schedule.route_stops.expiry}" />
-    </bean>
+<!--    <bean name="routeBranchStop" class="com.camsys.shims.servlet.HttpRequestStaticData">-->
+<!--        <property name="sourceUrl" value="${schedule.route_stops}" />-->
+<!--        <property name="csvReader" ref="routeBranchStopReader" />-->
+<!--        <property name="cacheExpireSec" value="${schedule.route_stops.expiry}" />-->
+<!--    </bean>-->
 
-    <bean name="routeInfo" class="com.camsys.shims.servlet.HttpRequestStaticRouteInfo" autowire="byType">
-        <property name="stopsUrl" value="${schedule.route_stops}" />
-        <property name="shapeUrl" value="${schedule.route_shapes}" />
-        <property name="stopReader" ref="routeBranchStopReader" />
-        <property name="shapeReader" ref="routeShapePointReader" />
-        <property name="lirrSystemMapUrl" value="${schedule.lirr_map}" />
-    </bean>
+<!--    <bean name="routeInfo" class="com.camsys.shims.servlet.HttpRequestStaticRouteInfo" autowire="byType">-->
+<!--        <property name="stopsUrl" value="${schedule.route_stops}" />-->
+<!--        <property name="shapeUrl" value="${schedule.route_shapes}" />-->
+<!--        <property name="stopReader" ref="routeBranchStopReader" />-->
+<!--        <property name="shapeReader" ref="routeShapePointReader" />-->
+<!--        <property name="lirrSystemMapUrl" value="${schedule.lirr_map}" />-->
+<!--    </bean>-->
 
-    <bean name="csvMapReader" class="com.camsys.shims.schedule.transformer.CsvMapReader" />
+<!--    <bean name="csvMapReader" class="com.camsys.shims.schedule.transformer.CsvMapReader" />-->
 
-    <bean name="subwayRouteStops" class="com.camsys.shims.servlet.HttpRequestStaticData">
-        <property name="csvReader" ref="csvMapReader" />
-        <property name="sourceUrl" value="${subway.schedule.route_stops.csv}" />
-        <property name="profile" value="${subway.schedule.route_stops.profile}" />
-        <property name="cacheExpireSec" value="${subway.route_stops.expiry}" />
-    </bean>
+<!--    <bean name="subwayRouteStops" class="com.camsys.shims.servlet.HttpRequestStaticData">-->
+<!--        <property name="csvReader" ref="csvMapReader" />-->
+<!--        <property name="sourceUrl" value="${subway.schedule.route_stops.csv}" />-->
+<!--        <property name="profile" value="${subway.schedule.route_stops.profile}" />-->
+<!--        <property name="cacheExpireSec" value="${subway.route_stops.expiry}" />-->
+<!--    </bean>-->
 
 </beans>
