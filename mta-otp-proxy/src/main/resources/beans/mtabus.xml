@@ -65,7 +65,7 @@
         <property name="feedManager" ref="busAlertsLMMFeedManager" />
         <property name="deserializer" ref="gtfsrt" />
         <property name="transformer" ref="forwarderTransformer" />
-        <property name="NTries" value="1" /> <!-- don't retry LMM by request -->
+        <property name="NTries" value="2" /> <!-- retry politely -->
     </bean>
 
     <bean name="busLMMSiriOutputAlerts" class="com.camsys.shims.util.source.TransformingSiriSource">
