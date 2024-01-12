@@ -3,11 +3,7 @@
     <parent>
         <groupId>com.camsys</groupId>
         <artifactId>mta-otp-collector</artifactId>
-<<<<<<< HEAD
-        <version>0.3.6</version>
-=======
         <version>0.3.7-SNAPSHOT</version>
->>>>>>> develop
     </parent>
     <artifactId>mta-otp-plannedwork</artifactId>
     <packaging>jar</packaging>
