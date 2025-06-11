@@ -31,6 +31,7 @@ import uk.org.siri.siri.SituationSourceTypeEnumeration;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Convert Mercury GTFS-RT to SIRI and provide as a legacy integration strategy
@@ -297,8 +298,13 @@ public class GtfsrtToSiriTransformer {
         return bi;
     }
     private DefaultedTextStructure getTranslation(GtfsRealtime.TranslatedString descriptionText) {
-        if (descriptionText != null && descriptionText.getTranslationList().size() > 0)
+        if (descriptionText != null && descriptionText.getTranslationList().size() > 0) {
+            List<GtfsRealtime.TranslatedString.Translation> htmlTranslations = descriptionText.getTranslationList().stream().filter(t -> t.getLanguage().equalsIgnoreCase("EN-HTML")).collect(Collectors.toList());
+            if (htmlTranslations.size() > 0) {
+                return toText(htmlTranslations.get(0).getText());
+            }
             return toText(descriptionText.getTranslation(0).getText());
+        }
         return null;
     }
 
