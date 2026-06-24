@@ -173,6 +173,12 @@ public class GtfsrtToSiriTransformer {
                 }
             }
         }
+        // alerts with no active periods are implicitly always active — create an open-ended window
+        if (pt.getPublicationWindow() == null) {
+            HalfOpenTimestampRangeStructure window = new HalfOpenTimestampRangeStructure();
+            window.setStartTime(now);
+            pt.setPublicationWindow(window);
+        }
 
         GtfsRealtimeServiceStatus.MercuryAlert mercuryAlert = null;
         if (alert.hasExtension(GtfsRealtimeServiceStatus.mercuryAlert)) {

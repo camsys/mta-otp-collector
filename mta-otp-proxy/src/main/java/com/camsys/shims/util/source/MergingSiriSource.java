@@ -98,6 +98,7 @@ public class MergingSiriSource {
     }
 
     private void fillConsequences(PtSituationElementStructure outputPt, PtConsequencesStructure consequences) {
+        if (consequences == null) return;
         PtConsequencesStructure outputConsequence = new PtConsequencesStructure();
         outputPt.setConsequences(outputConsequence);
         for (PtConsequenceStructure consequence : consequences.getConsequence()) {
@@ -114,9 +115,12 @@ public class MergingSiriSource {
     }
 
     private void fillAffects(PtSituationElementStructure output, AffectsScopeStructure affects) {
+        if (affects == null) return;
         AffectsScopeStructure outputAffects = new AffectsScopeStructure();
         output.setAffects(outputAffects);
-        fillVehicleJourneys(outputAffects, affects.getVehicleJourneys());
+        if (affects.getVehicleJourneys() != null) {
+            fillVehicleJourneys(outputAffects, affects.getVehicleJourneys());
+        }
     }
 
     private void fillVehicleJourneys(AffectsScopeStructure output, AffectsScopeStructure.VehicleJourneys vehicleJourneys) {
@@ -140,12 +144,14 @@ public class MergingSiriSource {
     }
 
     private void fillSource(PtSituationElementStructure output, SituationSourceStructure source) {
+        if (source == null) return;
         SituationSourceStructure outputSource = new SituationSourceStructure();
         outputSource.setSourceType(source.getSourceType());
         output.setSource(outputSource);
     }
 
     private void fillPublicationWindow(PtSituationElementStructure output, HalfOpenTimestampRangeStructure window) {
+        if (window == null) return;
         HalfOpenTimestampRangeStructure outputWindow = new HalfOpenTimestampRangeStructure();
         output.setPublicationWindow(outputWindow);
         outputWindow.setStartTime(window.getStartTime());
