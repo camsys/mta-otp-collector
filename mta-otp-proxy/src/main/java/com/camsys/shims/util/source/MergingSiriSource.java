@@ -1,5 +1,8 @@
 package com.camsys.shims.util.source;
 
+import com.camsys.shims.gtfsrt.alerts.elevator.subway.transformer.SubwayElevatorsTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.org.siri.siri.AffectedVehicleJourneyStructure;
 import uk.org.siri.siri.AffectsScopeStructure;
 import uk.org.siri.siri.HalfOpenTimestampRangeStructure;
@@ -27,6 +30,8 @@ public class MergingSiriSource {
         return _siri;
     }
 
+    private static Logger _log = LoggerFactory.getLogger(MergingSiriSource.class);
+
 
     public void update() {
         Siri all = new Siri();
@@ -52,8 +57,8 @@ public class MergingSiriSource {
 
             } else {
                 if (output.getServiceDelivery().getResponseTimestamp() != null
-                && output.getServiceDelivery().getResponseTimestamp().getTime() <
-                   inputSd.getResponseTimestamp().getTime()) {
+                        && output.getServiceDelivery().getResponseTimestamp().getTime() <
+                        inputSd.getResponseTimestamp().getTime()) {
                     output.getServiceDelivery().setResponseTimestamp(inputSd.getResponseTimestamp());
                 }
             }
@@ -73,28 +78,37 @@ public class MergingSiriSource {
 
     private void fillSituations(SituationExchangeDeliveryStructure output, SituationExchangeDeliveryStructure.Situations inputSituations) {
         SituationExchangeDeliveryStructure.Situations outputSituation = new SituationExchangeDeliveryStructure.Situations();
-        output.setSituations(outputSituation);
+        output.setSituations(outputSituation);;
         for (PtSituationElementStructure pt : inputSituations.getPtSituationElement()) {
-            fillPtSituationElement(outputSituation, pt);
+            try {
+                fillPtSituationElement(outputSituation, pt);
+            } catch (Exception e) {
+                _log.error("Error filling PtSituationElement: " + e.getMessage(), e);
+            }
         }
 
     }
 
     private void fillPtSituationElement(SituationExchangeDeliveryStructure.Situations output, PtSituationElementStructure pt) {
         PtSituationElementStructure outputPt = new PtSituationElementStructure();
-        output.getPtSituationElement().add(outputPt);
-        outputPt.setCreationTime(pt.getCreationTime());
-        outputPt.setSituationNumber(pt.getSituationNumber());
-        fillPublicationWindow(outputPt, pt.getPublicationWindow());
-        outputPt.setSummary(pt.getSummary());
-        outputPt.setDescription(pt.getDescription());
-        outputPt.setAdvice(pt.getAdvice()); // place holder for long description
-        outputPt.setPlanned(pt.isPlanned());
-        outputPt.setReasonName(pt.getReasonName());
-        outputPt.setPriority(pt.getPriority());
-        fillSource(outputPt, pt.getSource());
-        fillAffects(outputPt, pt.getAffects());
-        fillConsequences(outputPt, pt.getConsequences());
+        try {
+            output.getPtSituationElement().add(outputPt);
+            outputPt.setCreationTime(pt.getCreationTime());
+            outputPt.setSituationNumber(pt.getSituationNumber());
+            fillPublicationWindow(outputPt, pt.getPublicationWindow());
+            outputPt.setSummary(pt.getSummary());
+            outputPt.setDescription(pt.getDescription());
+            outputPt.setAdvice(pt.getAdvice()); // place holder for long description
+            outputPt.setPlanned(pt.isPlanned());
+            outputPt.setReasonName(pt.getReasonName());
+            outputPt.setPriority(pt.getPriority());
+            fillSource(outputPt, pt.getSource());
+            fillAffects(outputPt, pt.getAffects());
+            fillConsequences(outputPt, pt.getConsequences());
+        } catch (Exception e){
+            e.printStackTrace();
+            output.getPtSituationElement().remove(outputPt);
+        }
     }
 
     private void fillConsequences(PtSituationElementStructure outputPt, PtConsequencesStructure consequences) {
