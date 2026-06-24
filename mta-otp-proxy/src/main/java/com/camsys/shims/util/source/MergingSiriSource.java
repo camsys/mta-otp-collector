@@ -90,8 +90,8 @@ public class MergingSiriSource {
     }
 
     private void fillPtSituationElement(SituationExchangeDeliveryStructure.Situations output, PtSituationElementStructure pt) {
+        PtSituationElementStructure outputPt = new PtSituationElementStructure();
         try {
-            PtSituationElementStructure outputPt = new PtSituationElementStructure();
             output.getPtSituationElement().add(outputPt);
             outputPt.setCreationTime(pt.getCreationTime());
             outputPt.setSituationNumber(pt.getSituationNumber());
@@ -107,6 +107,7 @@ public class MergingSiriSource {
             fillConsequences(outputPt, pt.getConsequences());
         } catch (Exception e){
             e.printStackTrace();
+            output.getPtSituationElement().remove(outputPt);
         }
     }
 
