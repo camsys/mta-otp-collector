@@ -33,6 +33,7 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
     private static Logger _log = LoggerFactory.getLogger(HttpRequestSiriSink.class);
     private static final String GMS_TYPE = "gms";
     private static final String CIS_TYPE = "cis";
+    private static final String CONTENT_TYPE = "application/xml;charset=UTF-8";
 
     private MergingSiriSource _siriSource;
     private JAXBContext _context = null;
@@ -53,6 +54,10 @@ public class HttpRequestSiriSink implements HttpRequestHandler {
 
     @Override
     public void handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+
+        // Must be set before getWriter(): without a charset the servlet spec defaults to
+        // ISO-8859-1, which turned characters like U+2019 (’) into '?' (OBANYC-4185).
+        httpServletResponse.setContentType(CONTENT_TYPE);
 
         if (_siriSource == null || _siriSource.getFeed() == null) {
             httpServletResponse.getWriter().print("<Siri xmlns:ns2=\"http://www.ifopt.org.uk/acsb\" xmlns=\"http://www.siri.org.uk/siri\" xmlns:ns4=\"http://datex2.eu/schema/1_0/1_0\" xmlns:ns3=\"http://www.ifopt.org.uk/ifopt\"></Siri>");
